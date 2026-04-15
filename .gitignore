@@ -3,3 +3,6 @@ __pycache__
 .vscode
 .claude
 .codex
+
+*.log
+var
