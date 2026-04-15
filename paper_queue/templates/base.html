@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-mark">PR</div>
+        <div>
+        <a class="brand" href="/">Paper Reading Queue</a>
+          <p class="tagline">Host queue for Claude skill driven paper notes</p>
+        </div>
+      </div>
+    </header>
+    {% block content %}{% endblock %}
+  </div>
+  <script src="/static/app.js?v={{ asset_version }}"></script>
+</body>
+</html>

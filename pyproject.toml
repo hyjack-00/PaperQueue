@@ -1,0 +1,8 @@
+[project]
+name = "paper-reading-queue"
+version = "0.1.0"
+description = "Minimal queue UI for Claude/NotebookLM paper reading workflow"
+requires-python = ">=3.11"
+
+[project.scripts]
+paper-queue = "paper_queue.cli:main"

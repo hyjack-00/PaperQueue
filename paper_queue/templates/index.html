@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="grid-two">
+  <div class="card submit-card">
+    <h2>Submit Paper</h2>
+    <form method="post" action="/submit">
+      <label for="paper-input">Paper title or URL</label>
+      <textarea id="paper-input" name="input" rows="4" placeholder="Paper title, arXiv URL, or PDF link" required></textarea>
+
+      <label for="notebook_id">Notebook</label>
+      <select id="notebook_id" name="notebook_id" required>
+        <option value="">Loading notebooks...</option>
+      </select>
+      <input type="hidden" id="notebook_title" name="notebook_title" value="">
+      <p class="warning" id="notebook_error" hidden></p>
+      <button type="submit">Add To Queue</button>
+    </form>
+  </div>
+
+  <div class="card status-card" data-system-status>
+    <h2>Runtime Status</h2>
+    <div class="status-list">
+      <div><span>Claude</span><strong class="{{ 'ok' if system_status.claude_ok else 'bad' }}">{{ 'ready' if system_status.claude_ok else 'missing' }}</strong></div>
+      <div><span>NotebookLM Auth</span><strong class="{{ 'ok' if system_status.auth_ok else 'bad' }}">{{ system_status.auth_message }}</strong></div>
+      <div><span>Skill</span><strong class="{{ 'ok' if system_status.skill_ok else 'bad' }}">{{ 'installed' if system_status.skill_ok else 'missing' }}</strong></div>
+      <div><span>Nextcloud</span><strong class="{{ 'ok' if system_status.nextcloud_ok else 'bad' }}">{{ system_status.nextcloud_message }}</strong></div>
+      <div><span>Paper Root</span><strong class="{{ 'ok' if system_status.paper_root_exists else 'bad' }}">{{ system_status.paper_root }}</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="card table-card" data-jobs-table>
+  <div class="card-head">
+    <h2>Queue</h2>
+    <span class="muted">Paper title first, compact date, clear status</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Paper</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Notebook</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for job in jobs %}
+      <tr data-job-row data-job-id="{{ job.id }}">
+        <td class="paper-col">
+          <a class="paper-link" href="/jobs/{{ job.id }}">{{ job.display_title }}</a>
+          {% if job.latest_log %}
+          <div class="mini-log">{{ job.latest_log }}</div>
+          {% endif %}
+        </td>
+        <td class="date-col">{{ job.short_created_at }}</td>
+        <td><span class="badge badge-{{ job.status }}">{{ job.status }}</span></td>
+        <td>{{ job.notebook_title }}</td>
+        <td class="actions">
+          <a class="button-link" href="/jobs/{{ job.id }}">Details</a>
+          {% if job.status == 'failed' %}
+          <form method="post" action="/api/jobs/{{ job.id }}/retry" data-retry-form>
+            <button type="submit" class="link-button">Retry</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% if job.status == 'failed' or job.status == 'waiting_auth' or job.status == 'blocked_nextcloud' or job.status == 'running' %}
+      <tr class="expand-row">
+        <td colspan="5">
+          <div class="expand-box">
+            <div><strong>Stage:</strong> {{ job.stage }}</div>
+            {% if job.error_message %}
+            <div><strong>Error:</strong> {{ job.error_message }}</div>
+            {% endif %}
+            {% for log in job.recent_logs %}
+            <div class="recent-log">{{ log.created_at[:10] }} [{{ log.level }}] {{ log.message }}</div>
+            {% endfor %}
+          </div>
+        </td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
