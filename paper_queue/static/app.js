@@ -7,6 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const jobsTable = document.querySelector("[data-jobs-table]");
   const jobsBody = jobsTable?.querySelector("tbody");
   const statusCard = document.querySelector("[data-system-status]");
+  const submitForm = document.querySelector("[data-submit-form]");
+  const submitButton = document.querySelector("[data-submit-button]");
+  const submitFeedback = document.querySelector("[data-submit-feedback]");
   const notebookCacheKey = "paper-queue:notebooks";
   const expandedJobs = new Set();
   let currentJobs = [];
@@ -20,7 +23,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const shortDate = (value) => (value ? String(value).slice(0, 10) : "-");
   const displayTitle = (job) => job.display_title || job.paper_title || job.input_text || "-";
-  const displayNotebook = (job) => job.display_notebook || job.notebook_title || "Auto route";
+  const displayTopic = (job) => job.display_topic || job.notebook_title || "Auto route";
+  const displayVersion = (job) => job.display_version || job.framework_version || "-";
+
+  const iconSvg = {
+    info: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c5.5 0 9.5 5.5 9.5 7s-4 7-9.5 7S2.5 13.5 2.5 12 6.5 5 12 5Zm0 2C8.1 7 5 10.8 4.2 12 5 13.2 8.1 17 12 17s7-3.8 7.8-5C19 10.8 15.9 7 12 7Zm0 2.5A2.5 2.5 0 1 1 9.5 12 2.5 2.5 0 0 1 12 9.5Z"/></svg>',
+    retry: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a7 7 0 1 1-6.7 9h2.1A5 5 0 1 0 9 8.8V12H4V7h2.2l1.5 1.5A6.9 6.9 0 0 1 12 5Z"/></svg>',
+    delete: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 6h2v8h-2V9Zm4 0h2v8h-2V9ZM7 9h2v8H7V9Zm-1 11h12a2 2 0 0 0 2-2V8H4v10a2 2 0 0 0 2 2Z"/></svg>',
+  };
 
   const syncNotebookTitle = () => {
     if (!notebookSelect || !notebookTitleInput) return;
@@ -125,17 +135,19 @@ document.addEventListener("DOMContentLoaded", () => {
         <td class="paper-col">
           <a class="paper-link" href="/jobs/${job.id}">${escapeHtml(displayTitle(job))}</a>
         </td>
-        <td class="date-col">${escapeHtml(shortDate(job.created_at))}</td>
+        <td class="version-col">${escapeHtml(displayVersion(job))}</td>
         <td>
           ${hasExpandable
             ? `<button type="button" class="badge-button badge badge-${escapeHtml(job.status)}" data-toggle-job="${job.id}" aria-expanded="${expandedJobs.has(job.id)}">${escapeHtml(job.status)}</button>`
             : `<span class="badge badge-${escapeHtml(job.status)}">${escapeHtml(job.status)}</span>`}
         </td>
-        <td>${escapeHtml(displayNotebook(job))}</td>
+        <td>${escapeHtml(displayTopic(job))}</td>
         <td class="actions">
-          <a class="button-link" href="/jobs/${job.id}">Details</a>
-          ${job.status === "failed" ? `<button type="button" class="ghost-button" data-retry-job="${job.id}">Retry</button>` : ""}
-          <button type="button" class="ghost-button danger-button" data-delete-job="${job.id}">Delete</button>
+          <a class="icon-button" href="/jobs/${job.id}" aria-label="View details" title="View details">${iconSvg.info}</a>
+          ${(job.status === "failed" || (job.status === "completed" && !job.is_latest_version))
+            ? `<button type="button" class="icon-button" data-retry-job="${job.id}" aria-label="Retry" title="Retry">${iconSvg.retry}</button>`
+            : ""}
+          <button type="button" class="icon-button danger-button" data-delete-job="${job.id}" aria-label="Delete" title="Delete">${iconSvg.delete}</button>
         </td>
       </tr>
       ${hasExpandable ? renderExpandable(job) : ""}
@@ -207,6 +219,31 @@ document.addEventListener("DOMContentLoaded", () => {
     await refreshStatus();
   };
 
+  const pushSubmittingRow = (inputText) => {
+    const tempId = `temp-${Date.now()}`;
+    const job = {
+      id: tempId,
+      status: "submitting",
+      input_text: inputText,
+      display_title: inputText,
+      display_topic: "Auto route",
+      display_version: "pending",
+      recent_logs: [],
+      is_latest_version: false,
+    };
+    currentJobs = [job, ...currentJobs];
+    renderJobs(currentJobs);
+    return tempId;
+  };
+
+  const replaceSubmittingRow = (tempId, realJobs) => {
+    currentJobs = currentJobs.filter((job) => String(job.id) !== String(tempId));
+    if (realJobs) {
+      currentJobs = realJobs;
+    }
+    renderJobs(currentJobs);
+  };
+
   if (notebookSelect && notebookTitleInput) {
     notebookSelect.addEventListener("change", syncNotebookTitle);
     manualNotebookToggle?.addEventListener("change", () => {
@@ -262,6 +299,47 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       await postAction(form.action);
     });
+  });
+
+  submitForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(submitForm);
+    const inputText = String(formData.get("input") || "").trim();
+    if (!inputText) {
+      return;
+    }
+    submitButton?.setAttribute("disabled", "disabled");
+    if (submitFeedback) {
+      submitFeedback.hidden = false;
+      submitFeedback.textContent = "Submitting...";
+    }
+    const tempId = pushSubmittingRow(inputText);
+    try {
+      const response = await fetch("/submit", {
+        method: "POST",
+        body: formData,
+        headers: { Accept: "application/json" },
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw new Error(payload.error || "submit failed");
+      }
+      submitForm.reset();
+      setNotebookOverride(Boolean(manualNotebookToggle?.checked));
+      await refreshJobs();
+      await refreshStatus();
+      replaceSubmittingRow(tempId, currentJobs);
+      if (submitFeedback) {
+        submitFeedback.textContent = `Queued as #${payload.job_id}`;
+      }
+    } catch (error) {
+      replaceSubmittingRow(tempId, currentJobs.filter((job) => String(job.id) !== String(tempId)));
+      if (submitFeedback) {
+        submitFeedback.textContent = error instanceof Error ? error.message : "submit failed";
+      }
+    } finally {
+      submitButton?.removeAttribute("disabled");
+    }
   });
 
   refreshStatus().catch(() => {});

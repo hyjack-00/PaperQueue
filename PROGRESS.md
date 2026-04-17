@@ -3,112 +3,72 @@
 Last updated: 2026-04-17
 
 ## Active Goal
-- Make the paper reader converge toward SwiftScholar-like quality on a diverse 5-paper benchmark set.
-- Keep prompt design generic to paper structure and domain archetypes; do not special-case any single paper.
-- Drive quality by an implementation/evaluation loop, not by one-off prompt edits.
+- 收口当前 paper queue，先修正确性与可维护性，再继续做内容质量迭代。
+- 所有完成态论文必须满足 metadata 强约束：`title / authors / institution / venue / framework_version`。
+- 队列主界面改为版本驱动：主列表展示 `Paper / Version / Status / Topic / Actions`，不再展示提交日期。
 
-## Benchmark Set
-- `Autopoiesis: A Self-Evolving System Paradigm for LLM Serving Under Runtime Dynamics`
-- `STELLAR: Storage Tuning Engine Leveraging LLM Autonomous Reasoning for High Performance Parallel File Systems`
-- `OpenAgentSafety: A Comprehensive Framework for Evaluating Real-World AI Agent Safety`
-- `MegaScale-Infer: Serving Mixture-of-Experts at Scale with Disaggregated Expert Parallelism`
-- `Agents of Chaos`
+## Current Facts
+- `job 37` 仍在运行，当前阶段是 `research`；在它结束前不做会影响运行样本判断的 destructive cleanup。
+- 旧 `PROGRESS.md` 已经过期，至少有三处不再准确：
+  - `STELLAR` 已完成
+  - 新坏样本出现：`Untitled Paper`、`(Available in the text)`、以及串题样本 `MegaScale-Infer-v2`
+  - 前端仍然是同步提交并会跳详情页
+- Prompt 设计主入口：
+  - metadata prompt: `paper_queue/workflow.py::_query_metadata`
+  - note prompt: `paper_queue/workflow.py::_query_notes`
 
 ## Interleaved Todo
-- [x] Implement 1: move Obsidian storage to taxonomy folders instead of NotebookLM notebook names.
-- [x] Implement 2: shorten generated filenames to compact paper identifiers.
-- [x] Implement 3: extract figures into repo-managed `_assets` folders.
-- [ ] Evaluate 1: re-run failed jobs `23` and `24` after restoring the short-title helper.
-- [x] Implement 4: replace the old emoji-heavy note template with a cleaner `TL;DR + simplified bibliographic block + deep reading` structure.
-- [x] Implement 5: redesign the note prompt around generic paper archetypes (`systems`, `evaluation`, `safety`, `tuning`, `retrieval`, `general`) instead of single-paper specifics.
-- [x] Implement 6: parse LaTeX `section/subsection + figure + caption + includegraphics` so figure placement follows source-paper structure.
-- [ ] Evaluate 2: validate figure placement on `Autopoiesis`; the motivation figure must land in background/motivation and the overview/workflow figure must land in method/system design.
-- [x] Implement 7: add a benchmark evaluator that scores average coverage, structure/style similarity, figure match, and bibliographic simplification across the 5-paper set.
-- [ ] Evaluate 3: run the evaluator on the full 5-paper set and record per-paper scores plus averages.
-- [ ] Implement 8: iterate the generic prompt only when average scores stall or regress.
-- [ ] Evaluate 4: use an independent evaluator pass to confirm release-gate thresholds.
+- [x] Implement 0: 补一份设计文档，明确 paper queue 的 lifecycle、prompt 边界、关键词规则与目标 prompt 拆分方案。
+- [x] Implement 1: 为 job 模型增加 `framework_version / canonical_paper_key / source_fingerprint / metadata_complete` 的持久化字段。
+- [x] Implement 2: 主列表改为 `Paper / Version / Status / Topic / Actions`，不再显示提交日期。
+- [x] Implement 3: Actions 改为 icon-only 按钮，使用内联 SVG 表达 `info / retry / delete`。
+- [x] Implement 4: 首页提交改为异步，点击后立即出现本地 `submitting` 项，不跳详情页。
+- [x] Implement 5: completed-retry 语义扩展为“非最新版 completed 允许重试并生成新 job”。
+- [x] Implement 6: 生成链 frontmatter 写入 `framework_version` 与 `canonical_paper_key`。
+- [x] Implement 7: 新输出路径切换到 `paper/_assets/<topic>/<note-stem>/...`。
+- [x] Implement 8: metadata query 增强，并加 HTML citation fallback。
+- [x] Implement 9: metadata gate 启用；缺 `title / authors / institution / venue` 不再允许完成落盘。
+- [ ] Evaluate 1: 回归现有坏样本，确认不再生成 `Untitled Paper`、`(Available in the text)`、串题结果。
+- [ ] Evaluate 2: 回归异步提交，确认页面立即出现 `submitting` 且不跳详情页。
+- [ ] Evaluate 3: 回归 completed-retry，确认仅非最新版 completed 显示 retry。
+- [ ] Implement 10: 清理旧版本 note，只保留最新版，并同步清掉旧 assets。
+- [ ] Implement 11: 清理仓库内 `xiaoba-skills/`，不再保留外部参考 skill 副本。
+- [ ] Implement 12: 迁移旧 assets 到 `paper/_assets/...` 并修复旧文档相对路径。
+- [ ] Implement 13: 增加独立 configuration file，把 agent 接口与运行参数配置化，而不是把 `claude-glm` 和相关调用参数硬编码在 runtime/workflow 中。
+- [ ] Evaluate 4: 跑一次 repo cleanup 后的 Git 状态与前端展示，确认没有悬空文件和错链。
 
 ## Queued Review Fixes
-- [ ] Image presentation review:
-  - remove the explicit `来源:` line from figure blocks
-  - either move caption text into the `> [!FIGURE] ...` title line or, preferably, render a centered translated caption under the image
-- [ ] Readability review:
-  - add a final workflow pass that checks rendered readability from a markdown-exported PDF
-  - use `claude-glm` as a temporary reviewer of the rendered PDF, not just raw markdown
-  - specifically catch cases where multiple figures are stacked together without enough explanatory text between them
-- [ ] Figure/text interleaving:
-  - revise placement so figures and explanatory text alternate more naturally
-  - preserve the source paper's narrative order rather than dumping several figures back-to-back at the start of a section
-- [ ] Section-length flexibility:
-  - keep the 6 top-level sections, but let section length vary with the source paper's actual emphasis
-  - benchmark-heavy papers may allocate more space to experiments/results
-  - study-style papers may allocate more space to findings/results than methods
-- [ ] Add a new paper-structure analysis step before note generation:
-  - first infer the paper's structural emphasis from the source
-  - then condition each generated section on whether it should be short / medium / long
-  - update the NotebookLM prompt to reflect this dynamic allocation
-- [ ] Separate author intent from reader reflection:
-  - restore explicit handling of limitations, risks, and future work in the author's own framing
-  - do not merge author-stated limitations/future work with personal engineering takeaways
-- [ ] Venue naming and filename normalization:
-  - prefer the actual accepted venue when known instead of defaulting to `arXiv`
-  - e.g. `2026-ICLR-OpenAgentSafety`, not `2026-arXiv-(Accepted-at-ICLR-2026-and-IASEAI-2026)-OpenAgentSafety`
-  - review metadata extraction and filename-generation rules together
-- [ ] Author/institution metadata refinement:
-  - add institution information back into the simplified bibliographic block
-  - when institutions are numerous, select and display the first institution by default
-  - if there are clearly co-leading or equal-contribution institutions, list them together instead of collapsing to one
-  - explicitly preserve important collaborating companies when they are materially part of the paper's authorship or partnership context
+- [ ] 图片样式：
+  - 不再写 `来源:`
+  - 优先使用居中 caption 放图下
+- [ ] 可读性 review：
+  - workflow 最后增加 markdown -> PDF 可读性检查
+  - 用 `claude-glm` 临时审读渲染后的 PDF
+- [ ] 图文交错：
+  - 避免同一段开头连续堆多张图
+  - 优先按原文叙事顺序交错插入
+- [ ] 章节长度动态分配：
+  - 保持 6 个主标题
+  - 先分析 paper structure，再决定各段 short / medium / long
+- [ ] 作者原文与个人启发分离：
+  - limitations / risks / future work 保留作者口径
+  - personal takeaways 单独呈现
+- [ ] venue / filename 规则：
+  - 正式 venue 优先于 arXiv
+  - 例如 `2026-ICLR-OpenAgentSafety`
+- [ ] institution 展示：
+  - 默认第一机构
+  - 并列主机构或关键企业合作时保留多项
 
-## Prompt Iteration Log
+## Version Log
 
-| Version | Change Summary | Avg Coverage | Avg Similarity | Avg Figure Match | Decision |
-| --- | --- | --- | --- | --- | --- |
-| v0 | Legacy markdown structure with heuristic figure placement | pending | pending | pending | superseded |
-| v1 | Generic `TL;DR + simplified bibliographic block + deep reading` structure, archetype-aware prompt, source-section-driven figure placement | 0.175 | 0.60 | 0.387 | active; `Autopoiesis-v2`, `MegaScale-Infer`, and `Agents of Chaos` are generated |
-
-## Current Status
-- Active output target is Git only under `/workspace/obsidian_sync/paper/<canonical-taxonomy-topic>/`.
-- The short-title regression is fixed in code:
-  - jobs `23` and `24` no longer fail with `name '_short_title_slug' is not defined`
-  - their new failure mode is an earlier `research start` abort
-- The benchmark gate is average-based, not single-paper based:
-  - `avg_coverage_score >= 0.80`
-  - `avg_similarity_score >= 0.80`
-  - `avg_figure_match_score >= 0.90`
-  - no single paper may drop below `0.75` coverage
-- Figure placement is being moved away from heading heuristics and toward source-paper section mapping.
-- Current measured local benchmark score:
-  - `avg_coverage_score = 0.175`
-  - `avg_structure_score = 0.60`
-  - `avg_style_similarity_score = 0.60`
-  - `avg_bibliography_score = 0.60`
-  - `avg_figure_match_score = 0.387`
-  - generated notes so far: `Autopoiesis-v2`, `MegaScale-Infer`, `Agents of Chaos`
-  - `OpenAgentSafety` is in-flight after a successful retry
-  - `STELLAR` is still failing at `nlm source add`
-- Independent async review findings are now available for:
-  - `Autopoiesis-v2`
-  - `MegaScale-Infer`
-  - `Agents of Chaos`
-  Main repeated gaps:
-  - image block styling still exposes `来源:` and raw caption text
-  - figures are still stacked too densely instead of being interleaved with explanation
-  - section lengths are still too rigid for different paper archetypes
-  - author-stated limitations/future work are mixed with personal engineering takeaways
-  - institution metadata is missing
-  - venue/filename normalization is still incomplete
-- The items in `Queued Review Fixes` were explicitly deferred by the user:
-  - record now
-  - implement only after the current benchmark run is complete and reviewed
+| Framework Version | Change Summary | Status |
+| --- | --- | --- |
+| 0.1.0 | 初始 Git-only queue、taxonomy routing、figure extraction、benchmark evaluator | historical |
+| 0.1.1 | job versioning fields、async submit、icon actions、completed-retry、metadata gate、new assets root | active |
 
 ## Open Blockers
-- The broader local `xiaoba-skills` merge still needs selective integration rather than a blind copy.
-- The target SwiftScholar page for `Autopoiesis` currently returns `403` to unauthenticated programmatic fetches, so benchmark comparisons must rely on stored expectations plus manual review until a stable page snapshot is available.
-
-## Files Most Relevant For Handoff
-- `/workspace/paper_reading/PROGRESS.md`
-- `/workspace/paper_reading/paper_queue/workflow.py`
-- `/workspace/paper_reading/paper_queue/runtime.py`
-- `/workspace/paper_reading/scripts/evaluate_swiftscholar_benchmark.py`
-- `/workspace/paper_reading/benchmarks/swiftscholar_benchmark.json`
+- `job 37` 结束前，不做旧版本 note / assets 的 destructive 清理。
+- 旧坏样本已经存在于队列和 Obsidian repo 中，仍需在 cleanup 阶段统一处理。
+- 当前 prompt 仍然直接嵌在 `paper_queue/workflow.py`；本轮先补 design doc，后续再按文档把 prompt 全量拆出到独立文件。
+- 当前 agent 调用仍以 `claude-glm` 为默认硬编码路径；后续需要通过 configuration file 控制 agent command、prompt set、timeouts、feature flags 等参数。

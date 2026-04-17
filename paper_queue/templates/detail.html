@@ -7,7 +7,8 @@
   </div>
   <div class="detail-grid">
     <div><span>Paper</span><strong>{{ job.display_title }}</strong></div>
-    <div><span>Notebook</span><strong>{{ job.display_notebook }}</strong></div>
+    <div><span>Topic</span><strong>{{ job.display_topic }}</strong></div>
+    <div><span>Framework</span><strong>{{ job.display_version }}</strong></div>
     <div><span>Status</span><strong class="badge badge-{{ job.status }}">{{ job.status }}</strong></div>
     <div><span>Stage</span><strong>{{ job.stage }}</strong></div>
     <div><span>Worker PID</span><strong>{{ job.worker_pid or '-' }}</strong></div>
@@ -20,7 +21,7 @@
     <div class="full-row"><span>Error</span><strong>{{ job.error_message }}</strong></div>
     {% endif %}
   </div>
-  {% if job.status == 'failed' %}
+  {% if job.status == 'failed' or (job.status == 'completed' and not job.is_latest_version) %}
   <form method="post" action="/api/jobs/{{ job.id }}/retry" data-retry-form>
     <button type="submit">Retry Job</button>
   </form>

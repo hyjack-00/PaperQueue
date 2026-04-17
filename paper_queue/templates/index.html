@@ -3,7 +3,7 @@
 <section class="grid-two">
   <div class="card submit-card">
     <h2>Submit Paper</h2>
-    <form method="post" action="/submit">
+    <form method="post" action="/submit" data-submit-form>
       <label for="paper-input">Paper title or URL</label>
       <textarea id="paper-input" name="input" rows="4" placeholder="Paper title, arXiv URL, or PDF link" required></textarea>
 
@@ -22,7 +22,8 @@
           <p class="warning" id="notebook_error" hidden></p>
         </div>
       </details>
-      <button type="submit">Add To Queue</button>
+      <button type="submit" data-submit-button>Add To Queue</button>
+      <p class="muted submit-hint" data-submit-feedback hidden></p>
     </form>
   </div>
 
@@ -48,9 +49,9 @@
     <thead>
       <tr>
         <th>Paper</th>
-        <th>Date</th>
+        <th>Version</th>
         <th>Status</th>
-        <th>Notebook</th>
+        <th>Topic</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -60,7 +61,7 @@
         <td class="paper-col">
           <a class="paper-link" href="/jobs/{{ job.id }}">{{ job.display_title }}</a>
         </td>
-        <td class="date-col">{{ job.short_created_at }}</td>
+        <td class="version-col">{{ job.display_version }}</td>
         <td>
           {% if job.recent_logs %}
           <button type="button" class="badge-button badge badge-{{ job.status }}" data-toggle-job="{{ job.id }}" aria-expanded="false">{{ job.status }}</button>
@@ -68,13 +69,19 @@
           <span class="badge badge-{{ job.status }}">{{ job.status }}</span>
           {% endif %}
         </td>
-        <td>{{ job.display_notebook }}</td>
+        <td>{{ job.display_topic }}</td>
         <td class="actions">
-          <a class="button-link" href="/jobs/{{ job.id }}">Details</a>
-          {% if job.status == 'failed' %}
-          <button type="button" class="ghost-button" data-retry-job="{{ job.id }}">Retry</button>
+          <a class="icon-button" href="/jobs/{{ job.id }}" aria-label="View details" title="View details">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c5.5 0 9.5 5.5 9.5 7s-4 7-9.5 7S2.5 13.5 2.5 12 6.5 5 12 5Zm0 2C8.1 7 5 10.8 4.2 12 5 13.2 8.1 17 12 17s7-3.8 7.8-5C19 10.8 15.9 7 12 7Zm0 2.5A2.5 2.5 0 1 1 9.5 12 2.5 2.5 0 0 1 12 9.5Z"/></svg>
+          </a>
+          {% if job.status == 'failed' or (job.status == 'completed' and not job.is_latest_version) %}
+          <button type="button" class="icon-button" data-retry-job="{{ job.id }}" aria-label="Retry" title="Retry">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5a7 7 0 1 1-6.7 9h2.1A5 5 0 1 0 9 8.8V12H4V7h2.2l1.5 1.5A6.9 6.9 0 0 1 12 5Z"/></svg>
+          </button>
           {% endif %}
-          <button type="button" class="ghost-button danger-button" data-delete-job="{{ job.id }}">Delete</button>
+          <button type="button" class="icon-button danger-button" data-delete-job="{{ job.id }}" aria-label="Delete" title="Delete">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2Zm1 6h2v8h-2V9Zm4 0h2v8h-2V9ZM7 9h2v8H7V9Zm-1 11h12a2 2 0 0 0 2-2V8H4v10a2 2 0 0 0 2 2Z"/></svg>
+          </button>
         </td>
       </tr>
       {% if job.recent_logs %}

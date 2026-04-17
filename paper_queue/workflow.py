@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from html import unescape
 import io
@@ -83,10 +84,8 @@ TERM_PREFERENCES: list[tuple[str, str]] = [
     (r"(?<![A-Za-z])测试控制流/脚手架(?![A-Za-z])", "harness"),
     (r"(?<![A-Za-z])测试脚手架(?![A-Za-z])", "harness"),
     (r"(?<![A-Za-z])基准测试(?![A-Za-z])", "benchmark"),
-    (r"(?<![A-Za-z])单一代码库(?![A-Za-z])", "monorepo"),
     (r"(?<![A-Za-z])离线评估(?![A-Za-z])", "offline evaluation"),
     (r"(?<![A-Za-z])在线 A/B 测试(?![A-Za-z])", "online A/B test"),
-    (r"(?<![A-Za-z])解决率(?![A-Za-z])", "solve rate"),
 ]
 
 
@@ -185,6 +184,15 @@ def _short_title_slug(title: str) -> str:
         return _slug(primary)
     compact = "-".join(tokens[:4])
     return _slug(compact)
+
+
+def _canonical_paper_key(title: str) -> str:
+    return _short_title_slug(title).lower()
+
+
+def _source_fingerprint(input_text: str, paper_url: str, source_id: str, paper_title: str) -> str:
+    payload = "||".join([input_text.strip(), paper_url.strip(), source_id.strip(), _canonical_paper_key(paper_title)])
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
 KNOWN_VENUES = [
@@ -306,6 +314,28 @@ def _fetch_arxiv_title(url: str) -> str:
     return _clean_source_title(title)
 
 
+def _fetch_html(url: str) -> str:
+    request = Request(url, headers={"User-Agent": "paper-queue/1.0"})
+    try:
+        with urlopen(request, timeout=15) as response:
+            return response.read().decode("utf-8", errors="ignore")
+    except (TimeoutError, URLError, OSError):
+        return ""
+
+
+def _extract_meta_content(html: str, names: list[str]) -> str:
+    for name in names:
+        patterns = [
+            rf'<meta\s+name="{re.escape(name)}"\s+content="([^"]+)"',
+            rf'<meta\s+property="{re.escape(name)}"\s+content="([^"]+)"',
+        ]
+        for pattern in patterns:
+            match = re.search(pattern, html, flags=re.I)
+            if match:
+                return unescape(match.group(1)).strip()
+    return ""
+
+
 def _suggest_topic_notebook(subject_text: str) -> tuple[str, list[str]]:
     tokens = _route_tokens(subject_text)
     best_title = "Agent Harness Evaluation"
@@ -356,6 +386,9 @@ def _infer_paper_archetype(subject_text: str) -> str:
 class PaperResult:
     status: str
     paper_title: str
+    canonical_paper_key: str
+    source_fingerprint: str
+    framework_version: str
     output_path: str
     summary: str
     error: str
@@ -385,8 +418,16 @@ class PaperWorkflow:
         self._resolve_notebook(job, log, set_notebook=set_notebook, set_paper_title=set_paper_title)
         source_info = self._ensure_source(job, log)
         metadata = self._query_metadata(job["notebook_id"], source_info["source_id"], log)
+        metadata = self._fallback_metadata(job, source_info, metadata, log)
+        metadata = self._validate_metadata(metadata)
         if set_paper_title:
             set_paper_title(metadata["paper_title"])
+        fingerprint = _source_fingerprint(
+            str(job.get("input_text") or ""),
+            source_info.get("paper_url") or metadata.get("paper_url") or "",
+            source_info.get("source_id") or "",
+            metadata["paper_title"],
+        )
         archetype = _infer_paper_archetype(
             " ".join(
                 part
@@ -414,6 +455,9 @@ class PaperWorkflow:
                 return PaperResult(
                     status="completed",
                     paper_title=metadata["paper_title"],
+                    canonical_paper_key=_canonical_paper_key(metadata["paper_title"]),
+                    source_fingerprint=fingerprint,
+                    framework_version=self.runtime.config.framework_version,
                     output_path=relative_output.as_posix(),
                     summary=notes.splitlines()[0][:240] if notes else metadata["paper_title"],
                     error="",
@@ -434,6 +478,9 @@ class PaperWorkflow:
                 return PaperResult(
                     status="completed",
                     paper_title=metadata["paper_title"],
+                    canonical_paper_key=_canonical_paper_key(metadata["paper_title"]),
+                    source_fingerprint=fingerprint,
+                    framework_version=self.runtime.config.framework_version,
                     output_path=relative_output.as_posix(),
                     summary=notes.splitlines()[0][:240] if notes else metadata["paper_title"],
                     error="",
@@ -613,9 +660,9 @@ class PaperWorkflow:
     def _query_metadata(self, notebook_id: str, source_id: str, log: LogFn) -> dict[str, str]:
         log("metadata", f"Querying metadata for source {source_id}", "INFO")
         question = (
-            "Extract the following metadata from this paper: full paper title, conference or journal name "
-            "(use arXiv if it is an arXiv preprint), publication year, GitHub repository link if available, "
-            "author affiliations if available, author list if available, original paper URL if available. Return concise structured text."
+            "Extract the following metadata from this paper with high precision: full paper title, conference or journal name "
+            "(prefer accepted venue if stated, otherwise use arXiv), publication year, author list, author affiliations, "
+            "original paper URL, and GitHub repository link if available. Return concise structured text with one field per line."
         )
         result = self.runtime.run(
             [
@@ -637,7 +684,7 @@ class PaperWorkflow:
         payload = _parse_nlm_query_output(result.stdout)
         answer = str(payload.get("answer") or "")
         paper_title = _clean_metadata_text(
-            _extract_field([r"Full paper title:\**\s*(.+)"], answer, ""),
+            _extract_field([r"Full paper title:\**\s*(.+)", r"Title:\**\s*(.+)"], answer, ""),
             default="",
         )
         conference = _clean_metadata_text(
@@ -663,15 +710,75 @@ class PaperWorkflow:
         )
         paper_url = _first_url(answer) or ""
         return {
-            "paper_title": paper_title or "Untitled Paper",
+            "paper_title": paper_title,
             "conference": _normalize_venue_name(conference or "arXiv"),
             "year": year or "2026",
             "repo": repo,
-            "university": university or "未知",
-            "authors": authors or "论文未明确说明",
+            "university": university or "",
+            "authors": authors or "",
             "paper_url": paper_url,
             "metadata_answer": answer,
         }
+
+    def _fallback_metadata(self, job: dict, source_info: dict[str, str], metadata: dict[str, str], log: LogFn) -> dict[str, str]:
+        paper_url = source_info.get("paper_url") or metadata.get("paper_url") or ""
+        title = metadata.get("paper_title") or source_info.get("source_title") or ""
+        html = _fetch_html(paper_url) if paper_url else ""
+        if html:
+            title = title or _extract_meta_content(html, ["citation_title", "og:title"])
+            authors = metadata.get("authors") or _extract_meta_content(html, ["citation_author"])
+            institution = metadata.get("university") or _extract_meta_content(html, ["citation_author_institution"])
+            venue = metadata.get("conference") or _extract_meta_content(
+                html,
+                ["citation_conference_title", "citation_journal_title"],
+            )
+            year = metadata.get("year") or _extract_meta_content(html, ["citation_publication_date", "citation_date"])
+            repo = metadata.get("repo") or _first_url(html) or "未开源"
+            metadata.update(
+                {
+                    "paper_title": _clean_metadata_text(title, ""),
+                    "authors": _clean_metadata_text(authors, ""),
+                    "university": _clean_metadata_text(institution, ""),
+                    "conference": _normalize_venue_name(venue or metadata.get("conference") or "arXiv"),
+                    "year": re.search(r"(20\d{2})", year or "") and re.search(r"(20\d{2})", year or "").group(1) or metadata.get("year") or "2026",
+                    "repo": repo,
+                    "paper_url": paper_url,
+                }
+            )
+        input_text = str(job.get("input_text") or "")
+        if not metadata.get("paper_title"):
+            match = re.match(r"([A-Z][^(\n]+)", input_text)
+            if match:
+                metadata["paper_title"] = _clean_source_title(match.group(1))
+        if not metadata.get("paper_url") and _is_url(input_text):
+            metadata["paper_url"] = input_text.strip()
+        if metadata.get("conference"):
+            metadata["conference"] = _normalize_venue_name(metadata["conference"])
+        log("metadata", f"Resolved metadata title='{metadata.get('paper_title') or '-'}' venue='{metadata.get('conference') or '-'}'", "INFO")
+        return metadata
+
+    def _validate_metadata(self, metadata: dict[str, str]) -> dict[str, str]:
+        title = _clean_metadata_text(metadata.get("paper_title") or "", "")
+        authors = _clean_metadata_text(metadata.get("authors") or "", "")
+        institution = _clean_metadata_text(metadata.get("university") or "", "")
+        venue = _normalize_venue_name(metadata.get("conference") or "arXiv")
+        if title.lower() in {"untitled paper", "available in the text"}:
+            title = ""
+        if any(token in title.lower() for token in {"available in the text", "untitled"}):
+            title = ""
+        if not title:
+            raise RuntimeError("metadata incomplete: missing paper title")
+        if not authors or authors in {"论文未明确说明", "未知"}:
+            raise RuntimeError("metadata incomplete: missing authors")
+        if not institution or institution in {"论文未明确说明", "未知"}:
+            raise RuntimeError("metadata incomplete: missing institution")
+        if not venue:
+            raise RuntimeError("metadata incomplete: missing venue")
+        metadata["paper_title"] = title
+        metadata["authors"] = authors
+        metadata["university"] = institution
+        metadata["conference"] = venue
+        return metadata
 
     def _query_notes(self, notebook_id: str, source_id: str, log: LogFn, *, archetype: str) -> str:
         log("notes", f"Generating Chinese notes for source {source_id}", "INFO")
@@ -744,6 +851,8 @@ class PaperWorkflow:
             f'title: "{metadata["paper_title"]}"\n'
             f'conference: "{metadata["conference"]}"\n'
             f"year: {metadata['year']}\n"
+            f'framework_version: "{self.runtime.config.framework_version}"\n'
+            f'canonical_paper_key: "{_canonical_paper_key(metadata["paper_title"])}"\n'
             f'repo: "{metadata["repo"]}"\n'
             f'institution: "{_summarize_institutions(metadata["university"])}"\n'
             f'paper_url: "{source_info["paper_url"] or metadata["paper_url"]}"\n'
@@ -784,6 +893,7 @@ class PaperWorkflow:
             f"- Authors: {metadata.get('authors') or '论文未明确说明'}\n"
             f"- Institution: {_summarize_institutions(metadata.get('university') or '')}\n"
             f"- Paper URL: {source_info['paper_url'] or metadata['paper_url'] or '论文未明确说明'}\n"
+            f"- Framework Version: {self.runtime.config.framework_version}\n"
         )
         if "## 论文基本信息" not in cleaned:
             cleaned = info_block + "\n\n" + cleaned
@@ -813,12 +923,13 @@ class PaperWorkflow:
         for idx, asset in enumerate(assets, start=1):
             section_key = asset.get('placement_target') or asset.get('section_key') or fallback_order[min(idx - 1, len(fallback_order) - 1)]
             heading_prefix = heading_map.get(section_key, '## 🔬')
+            caption = asset.get("caption") or f"Figure {idx}"
             block = [
                 '',
-                f"> [!FIGURE] Figure {idx}",
-                f"> 来源: {asset['page']}",
-                *( [f"> Caption: {asset['caption']}"] if asset.get('caption') else [] ),
-                f"> ![]({asset['markdown_path']})",
+                "<figure class=\"paper-figure\">",
+                f'  <img src="{asset["markdown_path"]}" alt="{caption}">',
+                f'  <figcaption>{caption}</figcaption>',
+                "</figure>",
             ]
             insert_at = None
             for line_index, line in enumerate(lines):
@@ -876,7 +987,7 @@ class PaperWorkflow:
             target = notes_root / f"{base_name}-v{version}.md"
             version += 1
         relative_output = target.relative_to(repo)
-        assets_dir = notes_root / "_assets" / target.stem
+        assets_dir = repo / self.runtime.config.obsidian_sync_subdir / "_assets" / archive_topic / target.stem
         relative_assets_dir = assets_dir.relative_to(repo)
         return OutputPlan(
             target=target,
@@ -1078,7 +1189,7 @@ class PaperWorkflow:
         else:
             asset_path = output_plan.assets_dir / f"figure-{index:02d}{suffix}"
             asset_path.write_bytes(source_path.read_bytes())
-        markdown_path = Path('_assets') / output_plan.target.stem / asset_path.name
+        markdown_path = Path("..") / "_assets" / output_plan.taxonomy_topic / output_plan.target.stem / asset_path.name
         figure_record = figure_record or {}
         caption = str(figure_record.get("caption") or "").strip()
         paper_section = str(figure_record.get("section") or "").strip()
@@ -1146,7 +1257,7 @@ class PaperWorkflow:
             seen_sizes.add(signature)
             asset_path = output_plan.assets_dir / f"figure-{len(selected)+1:02d}.png"
             asset_path.write_bytes(image_bytes)
-            markdown_path = Path('_assets') / output_plan.target.stem / asset_path.name
+            markdown_path = Path("..") / "_assets" / output_plan.taxonomy_topic / output_plan.target.stem / asset_path.name
             selected.append({
                 'page': str(page_no),
                 'markdown_path': markdown_path.as_posix(),
@@ -1214,7 +1325,7 @@ class PaperWorkflow:
     def _commit_note(self, relative_output: Path, commit_message: str, log: LogFn) -> str:
         repo = self.runtime.config.obsidian_sync_repo
         add_targets = [relative_output.as_posix()]
-        asset_dir = (repo / relative_output.parent / "_assets" / relative_output.stem)
+        asset_dir = repo / self.runtime.config.obsidian_sync_subdir / "_assets" / relative_output.parent.name / relative_output.stem
         if asset_dir.exists():
             add_targets.append(asset_dir.relative_to(repo).as_posix())
         add_result = self.runtime.run(

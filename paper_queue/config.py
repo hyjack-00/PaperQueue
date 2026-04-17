@@ -2,10 +2,20 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from importlib import metadata
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def _default_framework_version() -> str:
+    override = os.environ.get("PAPER_QUEUE_FRAMEWORK_VERSION")
+    if override:
+        return override
+    try:
+        return metadata.version("paper-reading-queue")
+    except metadata.PackageNotFoundError:
+        return "0.1.1"
 
 
 @dataclass(slots=True)
@@ -36,6 +46,7 @@ class Settings:
     )
     obsidian_sync_branch: str = os.environ.get("OBSIDIAN_SYNC_BRANCH", "main")
     obsidian_sync_subdir: str = os.environ.get("OBSIDIAN_SYNC_SUBDIR", "paper")
+    framework_version: str = _default_framework_version()
     worker_poll_seconds: float = float(os.environ.get("PAPER_QUEUE_WORKER_POLL", "2.0"))
     recent_log_lines: int = int(os.environ.get("PAPER_QUEUE_RECENT_LOG_LINES", "8"))
     auth_cache_ttl_seconds: float = float(os.environ.get("PAPER_QUEUE_AUTH_CACHE_TTL", "60"))

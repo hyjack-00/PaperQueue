@@ -18,6 +18,10 @@ CREATE TABLE IF NOT EXISTS jobs (
     stage TEXT NOT NULL,
     attempt_count INTEGER NOT NULL DEFAULT 0,
     paper_title TEXT,
+    canonical_paper_key TEXT,
+    framework_version TEXT,
+    source_fingerprint TEXT,
+    metadata_complete INTEGER NOT NULL DEFAULT 0,
     output_path TEXT,
     result_summary TEXT,
     error_message TEXT,
@@ -62,20 +66,36 @@ class JobStore:
                 conn.execute("ALTER TABLE jobs ADD COLUMN worker_pid INTEGER")
             if "artifact_dir" not in columns:
                 conn.execute("ALTER TABLE jobs ADD COLUMN artifact_dir TEXT")
+            if "canonical_paper_key" not in columns:
+                conn.execute("ALTER TABLE jobs ADD COLUMN canonical_paper_key TEXT")
+            if "framework_version" not in columns:
+                conn.execute("ALTER TABLE jobs ADD COLUMN framework_version TEXT")
+            if "source_fingerprint" not in columns:
+                conn.execute("ALTER TABLE jobs ADD COLUMN source_fingerprint TEXT")
+            if "metadata_complete" not in columns:
+                conn.execute("ALTER TABLE jobs ADD COLUMN metadata_complete INTEGER NOT NULL DEFAULT 0")
 
     def _conn(self) -> sqlite3.Connection:
         return connect(self.db_path)
 
-    def create_job(self, *, input_text: str, notebook_id: str, notebook_title: str, created_at: str) -> int:
+    def create_job(
+        self,
+        *,
+        input_text: str,
+        notebook_id: str,
+        notebook_title: str,
+        created_at: str,
+        framework_version: str | None = None,
+    ) -> int:
         with self._conn() as conn:
             cur = conn.execute(
                 """
                 INSERT INTO jobs (
                     input_text, notebook_id, notebook_title, status, stage,
-                    created_at, updated_at
-                ) VALUES (?, ?, ?, 'queued', 'queued', ?, ?)
+                    created_at, updated_at, framework_version
+                ) VALUES (?, ?, ?, 'queued', 'queued', ?, ?, ?)
                 """,
-                (input_text, notebook_id, notebook_title, created_at, created_at),
+                (input_text, notebook_id, notebook_title, created_at, created_at, framework_version),
             )
             return int(cur.lastrowid)
 
@@ -209,6 +229,10 @@ class JobStore:
         finished_at: str | None = None,
         worker_pid: int | None = None,
         artifact_dir: str | None = None,
+        canonical_paper_key: str | None = None,
+        framework_version: str | None = None,
+        source_fingerprint: str | None = None,
+        metadata_complete: int | None = None,
     ) -> None:
         with self._conn() as conn:
             conn.execute(
@@ -223,7 +247,11 @@ class JobStore:
                     result_summary = COALESCE(?, result_summary),
                     worker_pid = COALESCE(?, worker_pid),
                     artifact_dir = COALESCE(?, artifact_dir),
-                    finished_at = COALESCE(?, finished_at)
+                    finished_at = COALESCE(?, finished_at),
+                    canonical_paper_key = COALESCE(?, canonical_paper_key),
+                    framework_version = COALESCE(?, framework_version),
+                    source_fingerprint = COALESCE(?, source_fingerprint),
+                    metadata_complete = COALESCE(?, metadata_complete)
                 WHERE id = ?
                 """,
                 (
@@ -237,6 +265,10 @@ class JobStore:
                     worker_pid,
                     artifact_dir,
                     finished_at,
+                    canonical_paper_key,
+                    framework_version,
+                    source_fingerprint,
+                    metadata_complete,
                     job_id,
                 ),
             )
@@ -276,6 +308,18 @@ class JobStore:
                 WHERE id = ?
                 """,
                 (notebook_id, notebook_title, updated_at, job_id),
+            )
+
+    def set_source_fingerprint(self, job_id: int, source_fingerprint: str, updated_at: str) -> None:
+        with self._conn() as conn:
+            conn.execute(
+                """
+                UPDATE jobs
+                SET source_fingerprint = ?,
+                    updated_at = ?
+                WHERE id = ?
+                """,
+                (source_fingerprint, updated_at, job_id),
             )
 
     def requeue_job(self, job_id: int, now: str, *, error_message: str | None = None) -> None:
@@ -320,27 +364,50 @@ class JobStore:
             )
             return int(cur.rowcount)
 
-    def retry_job(self, job_id: int, now: str) -> bool:
+    def retry_job(self, job_id: int, now: str) -> int | None:
         with self._conn() as conn:
-            row = conn.execute("SELECT status FROM jobs WHERE id = ?", (job_id,)).fetchone()
-            if not row or row["status"] != "failed":
-                return False
-            conn.execute(
+            row = conn.execute("SELECT * FROM jobs WHERE id = ?", (job_id,)).fetchone()
+            if not row:
+                return None
+            if row["status"] == "failed":
+                conn.execute(
+                    """
+                    UPDATE jobs
+                    SET status = 'queued',
+                        stage = 'queued',
+                        updated_at = ?,
+                        error_message = NULL,
+                        finished_at = NULL,
+                        result_summary = NULL,
+                        output_path = NULL,
+                        artifact_dir = NULL,
+                        metadata_complete = 0
+                    WHERE id = ?
+                    """,
+                    (now, job_id),
+                )
+                return job_id
+            if row["status"] != "completed":
+                return None
+            cur = conn.execute(
                 """
-                UPDATE jobs
-                SET status = 'queued',
-                    stage = 'queued',
-                    updated_at = ?,
-                    error_message = NULL,
-                    finished_at = NULL,
-                    result_summary = NULL,
-                    output_path = NULL,
-                    artifact_dir = NULL
-                WHERE id = ?
+                INSERT INTO jobs (
+                    input_text, notebook_id, notebook_title, status, stage,
+                    created_at, updated_at, framework_version, paper_title, canonical_paper_key
+                ) VALUES (?, ?, ?, 'queued', 'queued', ?, ?, ?, ?, ?)
                 """,
-                (now, job_id),
+                (
+                    row["input_text"],
+                    row["notebook_id"],
+                    row["notebook_title"],
+                    now,
+                    now,
+                    row["framework_version"],
+                    row["paper_title"],
+                    row["canonical_paper_key"],
+                ),
             )
-            return True
+            return int(cur.lastrowid)
 
     def delete_job(self, job_id: int) -> dict[str, Any] | None:
         with self._conn() as conn:

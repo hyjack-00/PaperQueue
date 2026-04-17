@@ -658,8 +658,15 @@ class JobExecutor:
             )
             job["paper_title"] = paper_title
 
+        def set_source_fingerprint(source_fingerprint: str) -> None:
+            if not source_fingerprint:
+                return
+            self.store.set_source_fingerprint(job_id, source_fingerprint, now_iso())
+            job["source_fingerprint"] = source_fingerprint
+
         try:
             result = self.workflow.execute(job, workflow_log, set_notebook=set_notebook, set_paper_title=set_paper_title)
+            set_source_fingerprint(result.source_fingerprint)
         except Exception as exc:
             error_message = str(exc) or "paper workflow failed"
             self.runtime.write_artifact(job_id, "failure.txt", error_message)
@@ -696,6 +703,10 @@ class JobExecutor:
             status="completed",
             stage="completed",
             paper_title=result.paper_title or None,
+            canonical_paper_key=result.canonical_paper_key or None,
+            framework_version=result.framework_version or self.config.framework_version,
+            source_fingerprint=result.source_fingerprint or None,
+            metadata_complete=1,
             output_path=result.output_path or None,
             result_summary=result.summary or None,
             finished_at=now_iso(),

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import shutil
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -7,7 +8,7 @@ from pathlib import Path
 from starlette.applications import Starlette
 from starlette.datastructures import FormData
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
+from starlette.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from starlette.routing import Route
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
@@ -36,18 +37,53 @@ def _display_title(job: dict) -> str:
     return str(job.get("paper_title") or job.get("input_text") or "-")
 
 
-def _display_notebook(job: dict) -> str:
+def _display_topic(job: dict) -> str:
+    output_path = str(job.get("output_path") or "")
+    parts = Path(output_path).parts
+    if len(parts) >= 3 and parts[0] == settings.obsidian_sync_subdir:
+        return str(parts[1])
     return str(job.get("notebook_title") or "Auto route")
 
 
+def _canonical_job_key(job: dict) -> str:
+    if job.get("canonical_paper_key"):
+        return str(job["canonical_paper_key"])
+    output_path = str(job.get("output_path") or "")
+    if output_path:
+        stem = re.sub(r"-v\d+$", "", Path(output_path).stem)
+        if stem:
+            return stem.lower()
+    title = str(job.get("paper_title") or job.get("input_text") or "").strip().lower()
+    return re.sub(r"\s+", " ", title)
+
+
+def _annotate_latest(jobs: list[dict]) -> list[dict]:
+    newest: dict[str, int] = {}
+    for job in jobs:
+        key = _canonical_job_key(job)
+        if not key or job.get("status") != "completed":
+            continue
+        newest[key] = max(newest.get(key, 0), int(job["id"]))
+    for job in jobs:
+        key = _canonical_job_key(job)
+        job["canonical_paper_key"] = key
+        job["is_latest_version"] = bool(job.get("status") == "completed" and newest.get(key) == int(job["id"]))
+    return jobs
+
+
 def _serialize_jobs() -> list[dict]:
-    jobs = store.system_snapshot(settings.recent_log_lines)
+    jobs = _annotate_latest(store.system_snapshot(settings.recent_log_lines))
     for job in jobs:
         job["display_title"] = _display_title(job)
-        job["display_notebook"] = _display_notebook(job)
-        job["short_created_at"] = _short_date(job.get("created_at"))
+        job["display_topic"] = _display_topic(job)
+        job["display_version"] = str(job.get("framework_version") or settings.framework_version)
         job["short_updated_at"] = _short_date(job.get("updated_at"))
     return jobs
+
+
+def _serialize_job(job_id: int) -> dict | None:
+    jobs = _serialize_jobs()
+    return next((job for job in jobs if int(job["id"]) == int(job_id)), None)
 
 
 async def homepage(request: Request) -> HTMLResponse:
@@ -65,11 +101,9 @@ async def homepage(request: Request) -> HTMLResponse:
 
 async def job_detail(request: Request) -> HTMLResponse:
     job_id = int(request.path_params["job_id"])
-    job = store.get_job(job_id)
+    job = _serialize_job(job_id)
     if not job:
         return HTMLResponse("Job not found", status_code=404)
-    job["display_title"] = _display_title(job)
-    job["display_notebook"] = _display_notebook(job)
     job["short_created_at"] = _short_date(job.get("created_at"))
     job["short_updated_at"] = _short_date(job.get("updated_at"))
     logs = store.get_log_text(job_id)
@@ -83,6 +117,7 @@ async def job_detail(request: Request) -> HTMLResponse:
             "logs": logs,
             "recent_logs": recent_logs,
             "asset_version": _asset_version(),
+            "framework_version": settings.framework_version,
         },
     )
 
@@ -107,9 +142,8 @@ async def submit_job(request: Request):
         notebook_id=notebook_id,
         notebook_title=notebook_title,
         created_at=now_iso(),
+        framework_version=settings.framework_version,
     )
-    if "text/html" in request.headers.get("accept", ""):
-        return RedirectResponse(url=f"/jobs/{job_id}", status_code=303)
     return JSONResponse({"job_id": job_id})
 
 
@@ -119,12 +153,9 @@ async def api_jobs(_: Request) -> JSONResponse:
 
 async def api_job_detail(request: Request) -> JSONResponse:
     job_id = int(request.path_params["job_id"])
-    job = store.get_job(job_id)
+    job = _serialize_job(job_id)
     if not job:
         return JSONResponse({"error": "not found"}, status_code=404)
-    job["display_title"] = _display_title(job)
-    job["display_notebook"] = _display_notebook(job)
-    job["short_created_at"] = _short_date(job.get("created_at"))
     job["short_updated_at"] = _short_date(job.get("updated_at"))
     job["recent_logs"] = store.get_recent_logs(job_id, 40)
     return JSONResponse(job)
@@ -137,17 +168,17 @@ async def api_job_log(request: Request) -> PlainTextResponse:
 
 async def api_retry_job(request: Request) -> JSONResponse:
     job_id = int(request.path_params["job_id"])
-    ok = store.retry_job(job_id, now_iso())
-    if not ok:
+    retried_job_id = store.retry_job(job_id, now_iso())
+    if not retried_job_id:
         return JSONResponse({"error": "job is not retryable"}, status_code=400)
     store.append_log(
-        job_id=job_id,
+        job_id=retried_job_id,
         created_at=now_iso(),
         level="INFO",
         stage="queued",
         message="Job requeued by user",
     )
-    return JSONResponse({"ok": True})
+    return JSONResponse({"ok": True, "job_id": retried_job_id})
 
 
 async def api_delete_job(request: Request) -> JSONResponse:
