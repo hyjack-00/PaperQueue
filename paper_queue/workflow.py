@@ -93,6 +93,29 @@ def _is_url(value: str) -> bool:
     return value.startswith("http://") or value.startswith("https://")
 
 
+def _embedded_source_url(value: str) -> str:
+    text = value.strip()
+    direct = _first_url(text)
+    if direct:
+        return direct
+    arxiv_match = re.search(r"\barxiv:(\d{4}\.\d{4,5})(?:v\d+)?\b", text, flags=re.I)
+    if arxiv_match:
+        return f"https://arxiv.org/abs/{arxiv_match.group(1)}"
+    openreview_match = re.search(r"\bopenreview\.net/forum\?id=([A-Za-z0-9_-]+)\b", text)
+    if openreview_match:
+        return f"https://openreview.net/forum?id={openreview_match.group(1)}"
+    return ""
+
+
+def _title_like_input(value: str) -> str:
+    text = value.strip()
+    text = re.sub(r"https?://\S+", "", text).strip()
+    text = re.sub(r"\((?:arXiv|ICLR|NeurIPS|ICML|ISCA|OSDI|SOSP|ASPLOS)[^)]*\)", "", text, flags=re.I).strip()
+    text = re.sub(r"\[[^\]]+\]", "", text).strip()
+    text = re.sub(r"\s+", " ", text).strip(" -:")
+    return text
+
+
 def _clean_source_title(title: str) -> str:
     title = re.sub(r"^\[[^\]]+\]\s*", "", title).strip()
     title = re.sub(r"\s*\[\d+(?:\s*,\s*\d+)*\]", "", title).strip()
@@ -336,6 +359,27 @@ def _extract_meta_content(html: str, names: list[str]) -> str:
     return ""
 
 
+def _strip_tex_commands(value: str) -> str:
+    cleaned = re.sub(r"\\(?:textbf|textit|mathrm|mathbf|underline|emph)\{([^}]*)\}", r"\1", value)
+    cleaned = re.sub(r"\\(?:thanks|footnote|email|href)\{[^}]*\}", "", cleaned)
+    cleaned = re.sub(r"\\[A-Za-z]+\*?(?:\[[^\]]*\])?", " ", cleaned)
+    cleaned = cleaned.replace("{", " ").replace("}", " ")
+    cleaned = cleaned.replace("\\\\", " ")
+    cleaned = re.sub(r"\s+", " ", cleaned)
+    return cleaned.strip(" ,;")
+
+
+def _looks_like_institution(value: str) -> bool:
+    lowered = value.lower()
+    tokens = (
+        "university", "institute", "lab", "laboratory", "school", "college", "academy",
+        "research", "department", "center", "centre", "meta", "google", "microsoft",
+        "nvidia", "openai", "anthropic", "amazon", "apple", "bytedance", "alibaba",
+        "tencent", "mit", "cmu", "stanford", "berkeley", "tsinghua", "pku",
+    )
+    return any(token in lowered for token in tokens)
+
+
 def _suggest_topic_notebook(subject_text: str) -> tuple[str, list[str]]:
     tokens = _route_tokens(subject_text)
     best_title = "Agent Harness Evaluation"
@@ -380,6 +424,13 @@ def _infer_paper_archetype(subject_text: str) -> str:
     if {"memory", "context", "retrieval", "rag"} & tokens:
         return "retrieval"
     return "general"
+
+
+def _normalize_length_label(value: str) -> str:
+    lowered = value.strip().lower()
+    if lowered in {"short", "medium", "long"}:
+        return lowered
+    return "medium"
 
 
 @dataclass(slots=True)
@@ -440,7 +491,14 @@ class PaperWorkflow:
                 if part
             )
         )
-        notes = self._query_notes(job["notebook_id"], source_info["source_id"], log, archetype=archetype)
+        structure = self._query_structure_analysis(job["notebook_id"], source_info["source_id"], log, archetype=archetype)
+        notes = self._query_notes(
+            job["notebook_id"],
+            source_info["source_id"],
+            log,
+            archetype=structure.get("archetype") or archetype,
+            section_guidance=self._section_guidance_text(structure),
+        )
         last_error = "git push failed"
         for attempt in range(1, 4):
             self._sync_repo(log, attempt=attempt)
@@ -506,13 +564,18 @@ class PaperWorkflow:
             return
 
         subject_text = str(job["input_text"]).strip()
-        if _is_url(subject_text):
-            extracted_title = _fetch_arxiv_title(subject_text)
+        source_url = _embedded_source_url(subject_text)
+        if source_url:
+            extracted_title = _fetch_arxiv_title(source_url) or _title_like_input(subject_text)
             if extracted_title:
                 subject_text = extracted_title
                 if set_paper_title:
                     set_paper_title(extracted_title)
                 log("routing", f"Resolved routing title: {extracted_title}", "INFO")
+        elif not _is_url(subject_text):
+            normalized_title = _title_like_input(subject_text)
+            if normalized_title:
+                subject_text = normalized_title
 
         notebooks, error = self.runtime.notebook_list()
         if error:
@@ -568,10 +631,11 @@ class PaperWorkflow:
 
     def _ensure_source(self, job: dict, log: LogFn) -> dict[str, str]:
         input_text = str(job["input_text"]).strip()
+        source_url_hint = _embedded_source_url(input_text)
         before = self._source_list(job["notebook_id"])
         before_ids = {item["id"] for item in before}
-        if _is_url(input_text):
-            url = input_text
+        if source_url_hint:
+            url = source_url_hint
             log("source_add", f"Adding source URL {url}", "INFO")
             result = self.runtime.run(
                 [
@@ -625,13 +689,14 @@ class PaperWorkflow:
                     }
             raise RuntimeError("source add succeeded but new source could not be identified")
 
-        log("research", f"Starting research import for query: {input_text}", "INFO")
+        query_text = _title_like_input(input_text) or input_text
+        log("research", f"Starting research import for query: {query_text}", "INFO")
         result = self.runtime.run(
             [
                 "nlm",
                 "research",
                 "start",
-                input_text,
+                query_text,
                 "--notebook-id",
                 str(job["notebook_id"]),
                 "--auto-import",
@@ -659,11 +724,7 @@ class PaperWorkflow:
 
     def _query_metadata(self, notebook_id: str, source_id: str, log: LogFn) -> dict[str, str]:
         log("metadata", f"Querying metadata for source {source_id}", "INFO")
-        question = (
-            "Extract the following metadata from this paper with high precision: full paper title, conference or journal name "
-            "(prefer accepted venue if stated, otherwise use arXiv), publication year, author list, author affiliations, "
-            "original paper URL, and GitHub repository link if available. Return concise structured text with one field per line."
-        )
+        question = self.runtime.prompt_loader.load(self.runtime.config.metadata_prompt_file)
         result = self.runtime.run(
             [
                 "nlm",
@@ -752,10 +813,164 @@ class PaperWorkflow:
                 metadata["paper_title"] = _clean_source_title(match.group(1))
         if not metadata.get("paper_url") and _is_url(input_text):
             metadata["paper_url"] = input_text.strip()
+        if (
+            paper_url
+            and "arxiv.org" in paper_url
+            and (
+                not metadata.get("authors")
+                or not metadata.get("university")
+                or not metadata.get("paper_title")
+            )
+        ):
+            archive_meta = self._source_archive_metadata(job, paper_url, log)
+            if archive_meta:
+                metadata["paper_title"] = metadata.get("paper_title") or archive_meta.get("paper_title", "")
+                metadata["authors"] = metadata.get("authors") or archive_meta.get("authors", "")
+                metadata["university"] = metadata.get("university") or archive_meta.get("university", "")
+        if not metadata.get("university"):
+            pdf_meta = self._pdf_frontmatter_metadata(job, paper_url, log)
+            if pdf_meta:
+                metadata["paper_title"] = metadata.get("paper_title") or pdf_meta.get("paper_title", "")
+                metadata["authors"] = metadata.get("authors") or pdf_meta.get("authors", "")
+                metadata["university"] = metadata.get("university") or pdf_meta.get("university", "")
         if metadata.get("conference"):
             metadata["conference"] = _normalize_venue_name(metadata["conference"])
         log("metadata", f"Resolved metadata title='{metadata.get('paper_title') or '-'}' venue='{metadata.get('conference') or '-'}'", "INFO")
         return metadata
+
+    def _source_archive_metadata(self, job: dict, paper_url: str, log: LogFn) -> dict[str, str]:
+        source_url = self._source_archive_url(paper_url)
+        if not source_url:
+            return {}
+        artifact_dir = Path(str(job.get("artifact_dir") or self.runtime.config.artifacts_dir / str(job.get("id") or "unknown")))
+        archive_path = artifact_dir / "metadata-source.tar"
+        extract_root = artifact_dir / "metadata-source"
+        try:
+            self._download_binary(source_url, archive_path)
+            if extract_root.exists():
+                import shutil
+                shutil.rmtree(extract_root, ignore_errors=True)
+            extract_root.mkdir(parents=True, exist_ok=True)
+            with tarfile.open(archive_path, mode="r:*") as tar:
+                tar.extractall(extract_root)
+            parsed = self._parse_tex_metadata(extract_root)
+            if parsed:
+                log(
+                    "metadata",
+                    f"Recovered metadata from source archive: title='{parsed.get('paper_title') or '-'}', institution='{parsed.get('university') or '-'}'",
+                    "INFO",
+                )
+            return parsed
+        except Exception as exc:
+            log("metadata", f"Source archive metadata fallback failed: {exc}", "WARN")
+            return {}
+
+    def _parse_tex_metadata(self, root: Path) -> dict[str, str]:
+        tex_files = sorted(root.rglob("*.tex"), key=lambda path: path.stat().st_size, reverse=True)
+        best: dict[str, str] = {}
+        best_score = -1
+        for tex_path in tex_files[:20]:
+            try:
+                content = tex_path.read_text(encoding="utf-8", errors="ignore")
+            except Exception:
+                continue
+            title = ""
+            authors = ""
+            institutions: list[str] = []
+
+            title_match = re.search(r"\\title\*?\{(.+?)\}", content, flags=re.S)
+            if title_match:
+                title = _clean_source_title(_strip_tex_commands(title_match.group(1)))
+
+            for pattern in [
+                r"\\affiliation\*?\{(.+?)\}",
+                r"\\institute\*?\{(.+?)\}",
+                r"\\affil\*?\{(.+?)\}",
+                r"\\address\*?\{(.+?)\}",
+            ]:
+                for match in re.finditer(pattern, content, flags=re.S):
+                    candidate = _strip_tex_commands(match.group(1))
+                    if candidate and _looks_like_institution(candidate):
+                        institutions.append(candidate)
+
+            author_match = re.search(r"\\author\*?\{(.+?)\}", content, flags=re.S)
+            if author_match:
+                raw_author = author_match.group(1)
+                author_clean = _strip_tex_commands(raw_author)
+                author_lines = [part.strip(" ,;") for part in re.split(r"\band\b|\\\\|,", author_clean) if part.strip(" ,;")]
+                author_names = []
+                for part in author_lines:
+                    if _looks_like_institution(part):
+                        institutions.append(part)
+                        continue
+                    if len(part.split()) <= 8:
+                        author_names.append(part)
+                authors = ", ".join(dict.fromkeys(author_names))
+
+            score = int(bool(title)) + int(bool(authors)) + min(2, len(institutions))
+            if score > best_score:
+                best_score = score
+                dedup_institutions = []
+                for item in institutions:
+                    if item and item not in dedup_institutions:
+                        dedup_institutions.append(item)
+                best = {
+                    "paper_title": title,
+                    "authors": authors,
+                    "university": " / ".join(dedup_institutions[:3]),
+                }
+        return best
+
+    def _pdf_frontmatter_metadata(self, job: dict, paper_url: str, log: LogFn) -> dict[str, str]:
+        pdf_url = self._pdf_candidate_url(paper_url)
+        if not pdf_url:
+            return {}
+        artifact_dir = Path(str(job.get("artifact_dir") or self.runtime.config.artifacts_dir / str(job.get("id") or "unknown")))
+        pdf_path = artifact_dir / "metadata-frontmatter.pdf"
+        try:
+            self._download_binary(pdf_url, pdf_path)
+            doc = fitz.open(pdf_path)
+            try:
+                text = "\n".join(doc.load_page(idx).get_text("text") for idx in range(min(2, len(doc))))
+            finally:
+                doc.close()
+        except Exception as exc:
+            log("metadata", f"PDF frontmatter metadata fallback failed: {exc}", "WARN")
+            return {}
+
+        lines = [re.sub(r"\s+", " ", line).strip() for line in text.splitlines()]
+        lines = [line for line in lines if line]
+        institutions = []
+        authors = ""
+        title = ""
+        for line in lines[:40]:
+            if not title and len(line.split()) >= 4 and not _looks_like_institution(line) and len(line) < 220:
+                if not re.search(r"^\d+$", line) and not line.lower().startswith("abstract"):
+                    title = line
+            if _looks_like_institution(line):
+                institutions.append(line)
+        for idx, line in enumerate(lines[:20]):
+            if "@" in line or _looks_like_institution(line):
+                continue
+            if "," in line and len(line.split(",")) >= 2 and len(line) < 220:
+                authors = line
+                break
+            if idx > 0 and lines[idx - 1] == title:
+                authors = line
+                break
+        dedup_institutions = []
+        for item in institutions:
+            item = item.strip(" ,;")
+            if item and item not in dedup_institutions:
+                dedup_institutions.append(item)
+        parsed = {
+            "paper_title": _clean_source_title(title),
+            "authors": authors.strip(),
+            "university": " / ".join(dedup_institutions[:3]),
+        }
+        if parsed["university"]:
+            log("metadata", f"Recovered institution from PDF frontmatter: {parsed['university']}", "INFO")
+        return parsed
 
     def _validate_metadata(self, metadata: dict[str, str]) -> dict[str, str]:
         title = _clean_metadata_text(metadata.get("paper_title") or "", "")
@@ -780,7 +995,64 @@ class PaperWorkflow:
         metadata["conference"] = venue
         return metadata
 
-    def _query_notes(self, notebook_id: str, source_id: str, log: LogFn, *, archetype: str) -> str:
+    def _query_structure_analysis(self, notebook_id: str, source_id: str, log: LogFn, *, archetype: str) -> dict[str, str]:
+        log("structure", f"Analyzing paper structure for source {source_id}", "INFO")
+        question = self.runtime.prompt_loader.load(self.runtime.config.structure_prompt_file)
+        result = self.runtime.run(
+            [
+                "nlm",
+                "notebook",
+                "query",
+                str(notebook_id),
+                "--source-ids",
+                source_id,
+                "--timeout",
+                "180",
+                "--json",
+                question,
+            ],
+            timeout=210.0,
+        )
+        structure = {
+            "archetype": archetype,
+            "background": "medium",
+            "method": "medium",
+            "experiment": "medium",
+            "results": "medium",
+            "conclusion": "medium",
+        }
+        if not result.ok:
+            log("structure", "Structure analysis failed; falling back to heuristic defaults", "WARN")
+            return structure
+        payload = _parse_nlm_query_output(result.stdout)
+        answer = str(payload.get("answer") or "")
+        parsed_archetype = _extract_field([r"Archetype:\s*(.+)"], answer, archetype).strip().lower()
+        if parsed_archetype in {"systems", "evaluation", "safety", "tuning", "retrieval", "general"}:
+            structure["archetype"] = parsed_archetype
+        structure["background"] = _normalize_length_label(_extract_field([r"Background Length:\s*(.+)"], answer, "medium"))
+        structure["method"] = _normalize_length_label(_extract_field([r"Method Length:\s*(.+)"], answer, "medium"))
+        structure["experiment"] = _normalize_length_label(_extract_field([r"Experiment Length:\s*(.+)"], answer, "medium"))
+        structure["results"] = _normalize_length_label(_extract_field([r"Results Length:\s*(.+)"], answer, "medium"))
+        structure["conclusion"] = _normalize_length_label(_extract_field([r"Conclusion Length:\s*(.+)"], answer, "medium"))
+        log(
+            "structure",
+            f"Structure emphasis: bg={structure['background']}, method={structure['method']}, exp={structure['experiment']}, results={structure['results']}, conclusion={structure['conclusion']}",
+            "INFO",
+        )
+        return structure
+
+    def _section_guidance_text(self, structure: dict[str, str]) -> str:
+        return "\n".join(
+            [
+                f"- 背景与动机: {structure.get('background', 'medium')}",
+                f"- 方法与系统设计: {structure.get('method', 'medium')}",
+                f"- 实验设置: {structure.get('experiment', 'medium')}",
+                f"- 结果与分析: {structure.get('results', 'medium')}",
+                f"- 总结与思考: {structure.get('conclusion', 'medium')}",
+            ]
+        )
+
+    def _query_notes(self, notebook_id: str, source_id: str, log: LogFn, *, archetype: str, section_guidance: str) -> str:
         log("notes", f"Generating Chinese notes for source {source_id}", "INFO")
         archetype_requirements = {
             "systems": "重点说明系统边界、data/control plane、核心工作流、部署机制、hot-swap 或运行时反馈闭环。",
@@ -790,30 +1062,11 @@ class PaperWorkflow:
             "retrieval": "重点说明记忆/检索架构、索引或缓存机制、上下文管理、评测协议与系统权衡。",
             "general": "重点说明问题定义、核心方法、实验设计、结果、局限性与工程含义。",
         }
-        question = (
-            "请基于论文内容生成一份精炼但完整的中文阅读稿，直接输出 markdown 正文，不要输出 YAML frontmatter，不要输出前言。"
-            "请使用统一结构，但不要把格式写得过碎。"
-            "严格采用下面的顶层结构："
-            "## TL;DR"
-            "3 到 5 条短 bullet，每条突出一个 paper-specific 结论。"
-            "## 论文基本信息"
-            "只保留 Title、Venue、Year、Authors、Paper URL 这 5 个字段；不要写 repo、university、notebook 等噪音字段。"
-            "## 1. 整体概括"
-            "## 2. 背景与动机"
-            "## 3. 方法与系统设计"
-            "## 4. 实验设置"
-            "## 5. 结果与分析"
-            "## 6. 总结与思考"
-            "各章节可以用短段落加 bullet 混排，但不要再继续拆太多子标题。"
-            "要求："
-            "第一，内容要覆盖完整，不能因为格式精炼而遗漏关键方法、实验或结论；"
-            "第二，不要编造论文中没有出现的信息，不确定就明确写‘论文未明确说明’;"
-            "第三，保留关键英文术语，采用‘中文（English）’或直接使用英文术语的方式；"
-            "第四，不要输出类似 [1]、[2] 的引用标号；"
-            "第五，结果与分析必须写出具体数字、对比对象和工程意义；"
-            "第六，总结与思考必须写局限性、部署风险或开放问题，不能只是重复摘要；"
-            "第七，按论文原文结构理解内容，尤其要区分 background/motivation、method/system design、experimental setup、results；"
-            f"第八，这篇论文的通用类型偏向 {archetype}，请遵循这个类型的常见分析重点：{archetype_requirements.get(archetype, archetype_requirements['general'])}"
+        question = self.runtime.prompt_loader.load(
+            self.runtime.config.notes_prompt_file,
+            archetype=archetype,
+            archetype_requirement=archetype_requirements.get(archetype, archetype_requirements["general"]),
+            section_guidance=section_guidance,
         )
         result = self.runtime.run(
             [

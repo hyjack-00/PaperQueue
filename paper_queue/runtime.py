@@ -18,6 +18,7 @@ from typing import Any
 
 from .config import Settings, settings
 from .db import JobStore
+from .prompt_loader import PromptLoader
 from .workflow import PaperWorkflow
 
 
@@ -44,6 +45,7 @@ class CommandResult:
 class Runtime:
     def __init__(self, config: Settings) -> None:
         self.config = config
+        self.prompt_loader = PromptLoader(config.prompt_dir)
         self._cache_lock = threading.Lock()
         self._auth_cache: tuple[float, bool, str] | None = None
         self._notebook_cache: tuple[float, list[dict[str, str]], str | None] | None = None

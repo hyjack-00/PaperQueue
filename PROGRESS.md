@@ -28,13 +28,14 @@ Last updated: 2026-04-17
 - [x] Implement 7: 新输出路径切换到 `paper/_assets/<topic>/<note-stem>/...`。
 - [x] Implement 8: metadata query 增强，并加 HTML citation fallback。
 - [x] Implement 9: metadata gate 启用；缺 `title / authors / institution / venue` 不再允许完成落盘。
-- [ ] Evaluate 1: 回归现有坏样本，确认不再生成 `Untitled Paper`、`(Available in the text)`、串题结果。
-- [ ] Evaluate 2: 回归异步提交，确认页面立即出现 `submitting` 且不跳详情页。
-- [ ] Evaluate 3: 回归 completed-retry，确认仅非最新版 completed 显示 retry。
-- [ ] Implement 10: 清理旧版本 note，只保留最新版，并同步清掉旧 assets。
-- [ ] Implement 11: 清理仓库内 `xiaoba-skills/`，不再保留外部参考 skill 副本。
-- [ ] Implement 12: 迁移旧 assets 到 `paper/_assets/...` 并修复旧文档相对路径。
-- [ ] Implement 13: 增加独立 configuration file，把 agent 接口与运行参数配置化，而不是把 `claude-glm` 和相关调用参数硬编码在 runtime/workflow 中。
+- [x] Evaluate 1: 回归现有坏样本，确认不再生成 `Untitled Paper`、`(Available in the text)`、串题结果。
+- [x] Evaluate 2: 回归异步提交，确认页面立即出现 `submitting` 且不跳详情页。
+- [x] Evaluate 3: 回归 completed-retry，确认仅非最新版 completed 显示 retry。
+- [x] Implement 10: 清理旧版本 note，只保留最新版，并同步清掉旧 assets。
+- [x] Implement 11: 清理仓库内 `xiaoba-skills/`，不再保留外部参考 skill 副本。
+- [x] Implement 12: 迁移旧 assets 到 `paper/_assets/...` 并修复旧文档相对路径。
+- [x] Implement 13: 增加独立 configuration file，把 agent 接口与运行参数配置化，而不是把 `claude-glm` 和相关调用参数硬编码在 runtime/workflow 中。
+- [x] Implement 14: 在 note generation 之前增加 structure analysis 步骤，用独立 prompt 判断各章节 short / medium / long。
 - [ ] Evaluate 4: 跑一次 repo cleanup 后的 Git 状态与前端展示，确认没有悬空文件和错链。
 
 ## Queued Review Fixes
@@ -47,7 +48,7 @@ Last updated: 2026-04-17
 - [ ] 图文交错：
   - 避免同一段开头连续堆多张图
   - 优先按原文叙事顺序交错插入
-- [ ] 章节长度动态分配：
+- [x] 章节长度动态分配：
   - 保持 6 个主标题
   - 先分析 paper structure，再决定各段 short / medium / long
 - [ ] 作者原文与个人启发分离：
@@ -66,9 +67,24 @@ Last updated: 2026-04-17
 | --- | --- | --- |
 | 0.1.0 | 初始 Git-only queue、taxonomy routing、figure extraction、benchmark evaluator | historical |
 | 0.1.1 | job versioning fields、async submit、icon actions、completed-retry、metadata gate、new assets root | active |
+| 0.1.1 | prompt registry (`paper_queue/prompts/`) + config file (`paper_queue/config/defaults.json`) + agent backend config 化 | active |
+| 0.1.1 | `structure_analysis_v1` 接入运行链，用结构分析结果控制 notes prompt 的章节篇幅提示 | active |
 
 ## Open Blockers
-- `job 37` 结束前，不做旧版本 note / assets 的 destructive 清理。
-- 旧坏样本已经存在于队列和 Obsidian repo 中，仍需在 cleanup 阶段统一处理。
-- 当前 prompt 仍然直接嵌在 `paper_queue/workflow.py`；本轮先补 design doc，后续再按文档把 prompt 全量拆出到独立文件。
-- 当前 agent 调用仍以 `claude-glm` 为默认硬编码路径；后续需要通过 configuration file 控制 agent command、prompt set、timeouts、feature flags 等参数。
+- `job 37` 已失败，不再阻塞 destructive cleanup。
+- metadata prompt 和 note prompt 已拆到 `paper_queue/prompts/`；readability-review 仍未接入运行链。
+- structure-analysis 已接入运行链；readability-review 仍未接入运行链。
+- agent backend 已通过 `paper_queue/config/defaults.json` 配置化，当前默认 backend 仍是 `claude-glm`。
+- 已验证前端主列表不再显示 `Date`，改为 `Version`；`info / retry / delete` 已切成 icon-only。
+- 已验证 completed-retry 只对旧版本完成项出现，最新版完成项不显示 retry。
+- 已验证 assets 目录已经统一收口到 `paper/_assets/`，旧的 `paper/<topic>/_assets` 不再存在。
+- 已回归坏样本：
+  - `job 40` 不再落出 `Untitled Paper` 文档，失败于 metadata gate
+  - `job 41` 不再把 `CUDA Agent` 串成新的 `MegaScale-Infer` 产物，失败于 metadata gate
+  - `job 42` 没有再写出 `(Available in the text)` 文档
+- 已完成 Obsidian 仓库 cleanup：
+  - 删除 `2026-arXiv-Untitled-Paper.md`
+  - 删除 `2026-arXiv-Available-in-the-text.md`
+  - 删除 `2025-arXiv-MegaScale-Infer-v2.md`
+  - 删除旧版 `2026-arXiv-Autopoiesis.md`
+  - 对应旧 assets 已同步删除

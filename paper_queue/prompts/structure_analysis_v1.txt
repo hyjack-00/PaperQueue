@@ -1,0 +1,16 @@
+请先分析这篇论文的结构重点，不要写成长文总结，只返回简洁结构判断。
+
+输出格式：
+- Archetype: systems / evaluation / safety / tuning / retrieval / general
+- Background Length: short / medium / long
+- Method Length: short / medium / long
+- Experiment Length: short / medium / long
+- Results Length: short / medium / long
+- Conclusion Length: short / medium / long
+- Figure Priority: motivation / overview / workflow / implementation / results / ablation
+
+要求：
+1. 基于论文真实结构，而不是平均分配篇幅。
+2. benchmark-heavy 论文允许 experiments/results 更长。
+3. study-style 论文允许 results/findings 更长。
+4. 只输出结构判断，不要写正文笔记。

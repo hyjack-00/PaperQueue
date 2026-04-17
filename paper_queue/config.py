@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from dataclasses import dataclass
 from importlib import metadata
@@ -18,10 +19,30 @@ def _default_framework_version() -> str:
         return "0.1.1"
 
 
+def _load_file_config() -> dict:
+    config_path = Path(os.environ.get("PAPER_QUEUE_CONFIG_FILE", BASE_DIR / "paper_queue" / "config" / "defaults.json"))
+    if not config_path.exists():
+        return {}
+    return json.loads(config_path.read_text(encoding="utf-8"))
+
+
+FILE_CONFIG = _load_file_config()
+
+
+def _config_get(path: str, default):
+    node = FILE_CONFIG
+    for part in path.split("."):
+        if not isinstance(node, dict) or part not in node:
+            return default
+        node = node[part]
+    return node
+
+
 @dataclass(slots=True)
 class Settings:
     base_dir: Path = BASE_DIR
     app_title: str = "Paper Reading Queue"
+    config_file: Path = Path(os.environ.get("PAPER_QUEUE_CONFIG_FILE", BASE_DIR / "paper_queue" / "config" / "defaults.json"))
     host: str = os.environ.get("PAPER_QUEUE_HOST", "0.0.0.0")
     port: int = int(os.environ.get("PAPER_QUEUE_PORT", "8000"))
     db_path: Path = Path(os.environ.get("PAPER_QUEUE_DB", BASE_DIR / "var" / "queue.db"))
@@ -32,20 +53,21 @@ class Settings:
     claude_config_dir: Path = Path(
         os.environ.get("CLAUDE_GLM_CONFIG_DIR", "/home/agent-user/.claude-glm")
     )
+    agent_backend: str = os.environ.get("PAPER_QUEUE_AGENT_BACKEND", _config_get("agent.backend", "claude-glm"))
     claude_glm_command: str = os.environ.get(
         "CLAUDE_GLM_COMMAND",
-        "CLAUDE_CONFIG_DIR=/home/agent-user/.claude-glm claude --dangerously-skip-permissions",
+        str(_config_get("agent.command", "CLAUDE_CONFIG_DIR=/home/agent-user/.claude-glm claude --dangerously-skip-permissions")),
     )
-    claude_model: str = os.environ.get("CLAUDE_GLM_MODEL", "glm-5.1")
-    skill_name: str = os.environ.get("PAPER_QUEUE_SKILL_NAME", "notebooklm-paper-reader")
+    claude_model: str = os.environ.get("CLAUDE_GLM_MODEL", str(_config_get("agent.model", "glm-5.1")))
+    skill_name: str = os.environ.get("PAPER_QUEUE_SKILL_NAME", str(_config_get("skill.name", "notebooklm-paper-reader")))
     skill_source_dir: Path = Path(
-        os.environ.get("PAPER_QUEUE_SKILL_DIR", BASE_DIR / "notebooklm-paper-reader")
+        os.environ.get("PAPER_QUEUE_SKILL_DIR", str(_config_get("skill.source_dir", BASE_DIR / "notebooklm-paper-reader")))
     )
     obsidian_sync_repo: Path = Path(
         os.environ.get("OBSIDIAN_SYNC_REPO", "/workspace/obsidian_sync")
     )
     obsidian_sync_branch: str = os.environ.get("OBSIDIAN_SYNC_BRANCH", "main")
-    obsidian_sync_subdir: str = os.environ.get("OBSIDIAN_SYNC_SUBDIR", "paper")
+    obsidian_sync_subdir: str = os.environ.get("OBSIDIAN_SYNC_SUBDIR", str(_config_get("storage.subdir", "paper")))
     framework_version: str = _default_framework_version()
     worker_poll_seconds: float = float(os.environ.get("PAPER_QUEUE_WORKER_POLL", "2.0"))
     recent_log_lines: int = int(os.environ.get("PAPER_QUEUE_RECENT_LOG_LINES", "8"))
@@ -62,10 +84,15 @@ class Settings:
     git_remote_check_timeout_seconds: float = float(
         os.environ.get("PAPER_QUEUE_GIT_REMOTE_CHECK_TIMEOUT", "30")
     )
-    agent_timeout_seconds: float = float(os.environ.get("PAPER_QUEUE_AGENT_TIMEOUT_SECONDS", "1800"))
+    agent_timeout_seconds: float = float(os.environ.get("PAPER_QUEUE_AGENT_TIMEOUT_SECONDS", str(_config_get("agent.timeout_seconds", "1800"))))
     waiting_auth_recheck_seconds: float = float(
         os.environ.get("PAPER_QUEUE_WAITING_AUTH_RECHECK", "60")
     )
+    prompt_dir: Path = Path(os.environ.get("PAPER_QUEUE_PROMPT_DIR", str(BASE_DIR / "paper_queue" / "prompts")))
+    metadata_prompt_file: str = str(_config_get("prompts.metadata", "metadata_v1.txt"))
+    notes_prompt_file: str = str(_config_get("prompts.notes", "notes_v1.txt"))
+    structure_prompt_file: str = str(_config_get("prompts.structure_analysis", "structure_analysis_v1.txt"))
+    readability_prompt_file: str = str(_config_get("prompts.readability_review", "readability_review_v1.txt"))
 
     @property
     def skill_install_dir(self) -> Path:

@@ -1,0 +1,14 @@
+请审读这份论文阅读稿的渲染效果，重点检查可读性问题，不要重写全文。
+
+请按下面维度输出简洁 review：
+- Figure stacking: 是否出现多张图连续堆叠
+- Figure/text interleaving: 图和解释文字是否自然交错
+- Section balance: 各章节长度是否明显失衡
+- Caption clarity: 图注是否足够清晰且不冗余
+- Metadata clarity: 标题、作者、机构、venue 是否清楚
+- Top fixes: 最值得优先修的 3 个问题
+
+要求：
+1. 优先关注阅读体验，不关注代码实现。
+2. 如果图片位置不合理，要明确指出应该靠近哪一类段落。
+3. 只输出 review，不要直接生成新文章。

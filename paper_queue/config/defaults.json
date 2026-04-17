@@ -1,0 +1,21 @@
+{
+  "agent": {
+    "backend": "claude-glm",
+    "command": "CLAUDE_CONFIG_DIR=/home/agent-user/.claude-glm claude --dangerously-skip-permissions",
+    "model": "glm-5.1",
+    "timeout_seconds": 1800
+  },
+  "skill": {
+    "name": "notebooklm-paper-reader",
+    "source_dir": "/workspace/paper_reading/notebooklm-paper-reader"
+  },
+  "storage": {
+    "subdir": "paper"
+  },
+  "prompts": {
+    "metadata": "metadata_v1.txt",
+    "notes": "notes_v1.txt",
+    "structure_analysis": "structure_analysis_v1.txt",
+    "readability_review": "readability_review_v1.txt"
+  }
+}

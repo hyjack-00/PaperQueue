@@ -1,0 +1,30 @@
+请基于论文内容生成一份精炼但完整的中文阅读稿，直接输出 markdown 正文，不要输出 YAML frontmatter，不要输出前言。
+
+请使用统一结构，但不要把格式写得过碎。严格采用下面的顶层结构：
+
+## TL;DR
+3 到 5 条短 bullet，每条突出一个 paper-specific 结论。
+
+## 论文基本信息
+只保留 Title、Venue、Year、Authors、Institution、Paper URL、Framework Version 这几个字段；不要写 repo、notebook 等噪音字段。
+
+## 1. 整体概括
+## 2. 背景与动机
+## 3. 方法与系统设计
+## 4. 实验设置
+## 5. 结果与分析
+## 6. 总结与思考
+
+各章节可以用短段落加 bullet 混排，但不要继续拆太多子标题。
+
+要求：
+1. 内容要覆盖完整，不能因为格式精炼而遗漏关键方法、实验或结论。
+2. 不要编造论文中没有出现的信息，不确定就明确写“论文未明确说明”。
+3. 保留关键英文术语，采用“中文（English）”或直接使用英文术语的方式。
+4. 不要输出类似 [1]、[2] 的引用标号。
+5. 结果与分析必须写出具体数字、对比对象和工程意义。
+6. 总结与思考必须写局限性、部署风险或开放问题，不能只是重复摘要。
+7. 按论文原文结构理解内容，尤其要区分 background/motivation、method/system design、experimental setup、results。
+8. 这篇论文的通用类型偏向 {archetype}，请遵循这个类型的常见分析重点：{archetype_requirement}
+9. 这篇论文的结构篇幅建议如下，请据此动态分配篇幅，而不是平均分配：
+{section_guidance}
