@@ -3,11 +3,11 @@
 <section class="card detail-card">
   <div class="card-head">
     <h2>{{ job.display_title }}</h2>
-    <a class="button-link subtle-link" href="/">Back To Queue</a>
+    <a class="button-link subtle-link" href="/">Back</a>
   </div>
   <div class="detail-grid">
     <div><span>Paper</span><strong>{{ job.display_title }}</strong></div>
-    <div><span>Notebook</span><strong>{{ job.notebook_title }}</strong></div>
+    <div><span>Notebook</span><strong>{{ job.display_notebook }}</strong></div>
     <div><span>Status</span><strong class="badge badge-{{ job.status }}">{{ job.status }}</strong></div>
     <div><span>Stage</span><strong>{{ job.stage }}</strong></div>
     <div><span>Worker PID</span><strong>{{ job.worker_pid or '-' }}</strong></div>
@@ -25,6 +25,9 @@
     <button type="submit">Retry Job</button>
   </form>
   {% endif %}
+  <div class="detail-actions">
+    <button type="button" class="ghost-button danger-button" data-delete-job="{{ job.id }}">Delete Job</button>
+  </div>
 </section>
 
 <section class="card log-card">

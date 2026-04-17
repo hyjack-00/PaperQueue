@@ -265,6 +265,19 @@ class JobStore:
                 (worker_pid, updated_at, job_id),
             )
 
+    def set_notebook(self, job_id: int, notebook_id: str, notebook_title: str, updated_at: str) -> None:
+        with self._conn() as conn:
+            conn.execute(
+                """
+                UPDATE jobs
+                SET notebook_id = ?,
+                    notebook_title = ?,
+                    updated_at = ?
+                WHERE id = ?
+                """,
+                (notebook_id, notebook_title, updated_at, job_id),
+            )
+
     def requeue_job(self, job_id: int, now: str, *, error_message: str | None = None) -> None:
         with self._conn() as conn:
             conn.execute(
@@ -280,7 +293,7 @@ class JobStore:
                 (now, error_message, job_id),
             )
 
-    def requeue_blocked_nextcloud(self, now: str) -> int:
+    def requeue_blocked_git(self, now: str) -> int:
         with self._conn() as conn:
             cur = conn.execute(
                 """
@@ -289,7 +302,7 @@ class JobStore:
                     stage = 'queued',
                     updated_at = ?,
                     error_message = NULL
-                WHERE status = 'blocked_nextcloud'
+                WHERE status = 'blocked_git'
                 """,
                 (now,),
             )
@@ -328,6 +341,15 @@ class JobStore:
                 (now, job_id),
             )
             return True
+
+    def delete_job(self, job_id: int) -> dict[str, Any] | None:
+        with self._conn() as conn:
+            row = conn.execute("SELECT * FROM jobs WHERE id = ?", (job_id,)).fetchone()
+            if not row:
+                return None
+            payload = dict(row)
+            conn.execute("DELETE FROM jobs WHERE id = ?", (job_id,))
+            return payload
 
     def system_snapshot(self, recent_log_lines: int) -> list[dict[str, Any]]:
         jobs = self.list_jobs()

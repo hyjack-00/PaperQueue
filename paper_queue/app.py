@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import shutil
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from starlette.applications import Starlette
 from starlette.datastructures import FormData
@@ -34,17 +36,21 @@ def _display_title(job: dict) -> str:
     return str(job.get("paper_title") or job.get("input_text") or "-")
 
 
+def _display_notebook(job: dict) -> str:
+    return str(job.get("notebook_title") or "Auto route")
+
+
 def _serialize_jobs() -> list[dict]:
     jobs = store.system_snapshot(settings.recent_log_lines)
     for job in jobs:
         job["display_title"] = _display_title(job)
+        job["display_notebook"] = _display_notebook(job)
         job["short_created_at"] = _short_date(job.get("created_at"))
         job["short_updated_at"] = _short_date(job.get("updated_at"))
     return jobs
 
 
 async def homepage(request: Request) -> HTMLResponse:
-    system_status = runtime.system_status()
     jobs = _serialize_jobs()
     return templates.TemplateResponse(
         request,
@@ -52,7 +58,6 @@ async def homepage(request: Request) -> HTMLResponse:
         {
             "title": settings.app_title,
             "jobs": jobs,
-            "system_status": system_status,
             "asset_version": _asset_version(),
         },
     )
@@ -64,6 +69,7 @@ async def job_detail(request: Request) -> HTMLResponse:
     if not job:
         return HTMLResponse("Job not found", status_code=404)
     job["display_title"] = _display_title(job)
+    job["display_notebook"] = _display_notebook(job)
     job["short_created_at"] = _short_date(job.get("created_at"))
     job["short_updated_at"] = _short_date(job.get("updated_at"))
     logs = store.get_log_text(job_id)
@@ -94,8 +100,8 @@ async def submit_job(request: Request):
     form = await request.form()
     input_text = str(form.get("input") or "").strip()
     notebook_id, notebook_title = _extract_notebook(form)
-    if not input_text or not notebook_id or not notebook_title:
-        return JSONResponse({"error": "input and notebook are required"}, status_code=400)
+    if not input_text:
+        return JSONResponse({"error": "input is required"}, status_code=400)
     job_id = store.create_job(
         input_text=input_text,
         notebook_id=notebook_id,
@@ -117,6 +123,7 @@ async def api_job_detail(request: Request) -> JSONResponse:
     if not job:
         return JSONResponse({"error": "not found"}, status_code=404)
     job["display_title"] = _display_title(job)
+    job["display_notebook"] = _display_notebook(job)
     job["short_created_at"] = _short_date(job.get("created_at"))
     job["short_updated_at"] = _short_date(job.get("updated_at"))
     job["recent_logs"] = store.get_recent_logs(job_id, 40)
@@ -143,6 +150,19 @@ async def api_retry_job(request: Request) -> JSONResponse:
     return JSONResponse({"ok": True})
 
 
+async def api_delete_job(request: Request) -> JSONResponse:
+    job_id = int(request.path_params["job_id"])
+    deleted = store.delete_job(job_id)
+    if not deleted:
+        return JSONResponse({"error": "not found"}, status_code=404)
+    artifact_dir = deleted.get("artifact_dir")
+    if artifact_dir:
+        shutil.rmtree(artifact_dir, ignore_errors=True)
+    log_path = settings.logs_dir / f"{job_id}.log"
+    log_path.unlink(missing_ok=True)
+    return JSONResponse({"ok": True})
+
+
 async def api_notebooks(_: Request) -> JSONResponse:
     notebooks, error = runtime.notebook_list()
     if error:
@@ -165,6 +185,7 @@ routes = [
     Route("/api/jobs/{job_id:int}", api_job_detail),
     Route("/api/jobs/{job_id:int}/log", api_job_log),
     Route("/api/jobs/{job_id:int}/retry", api_retry_job, methods=["POST"]),
+    Route("/api/jobs/{job_id:int}/delete", api_delete_job, methods=["POST"]),
     Route("/api/notebooks", api_notebooks),
     Route("/api/system-status", api_system_status),
 ]

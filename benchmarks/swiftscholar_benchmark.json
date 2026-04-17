@@ -1,0 +1,80 @@
+[
+  {
+    "id": "autopoiesis",
+    "title": "Autopoiesis: A Self-Evolving System Paradigm for LLM Serving Under Runtime Dynamics",
+    "paper_url": "https://arxiv.org/abs/2604.07144",
+    "swiftscholar_url": "https://www.swiftscholar.net/zh/paper/69df40435127ff45a9deea5f",
+    "short_id": "2026-arXiv-Autopoiesis",
+    "expected_archive_topic": "System Performance",
+    "expected_headings": ["## TL;DR", "## 论文基本信息", "## 1. 整体概括", "## 2. 背景与动机", "## 3. 方法与系统设计", "## 4. 实验设置", "## 5. 结果与分析", "## 6. 总结与思考"],
+    "coverage_checks": ["runtime dynamics", "static policy limitation", "self-evolving system", "two-plane architecture", "program synthesis workflow", "runtime trade-off", "online serving or hot-swap", "evaluation setup", "53% or 34%", "convergence or warm-start"],
+    "figure_expectations": [
+      {"keyword": "motivation", "section": "## 2. 背景与动机"},
+      {"keyword": "overview", "section": "## 3. 方法与系统设计"},
+      {"keyword": "workflow", "section": "## 3. 方法与系统设计"},
+      {"keyword": "execution", "section": "## 3. 方法与系统设计"},
+      {"keyword": "evaluation", "section": "## 5. 结果与分析"},
+      {"keyword": "convergence", "section": "## 5. 结果与分析"}
+    ]
+  },
+  {
+    "id": "stellar",
+    "title": "STELLAR: Storage Tuning Engine Leveraging LLM Autonomous Reasoning for High Performance Parallel File Systems",
+    "paper_url": "https://arxiv.org/abs/2602.23220",
+    "swiftscholar_url": "https://www.swiftscholar.net/zh/paper/69bcff265f5672497d09eff7",
+    "short_id": "2026-arXiv-STELLAR",
+    "expected_archive_topic": "Automated Tuning",
+    "expected_headings": ["## TL;DR", "## 论文基本信息", "## 1. 整体概括", "## 2. 背景与动机", "## 3. 方法与系统设计", "## 4. 实验设置", "## 5. 结果与分析", "## 6. 总结与思考"],
+    "coverage_checks": ["parallel file systems", "autonomous tuning", "LLM reasoning", "I/O trace", "feedback loop", "search strategy", "system performance", "evaluation result"],
+    "figure_expectations": [
+      {"keyword": "overview", "section": "## 3. 方法与系统设计"},
+      {"keyword": "workflow", "section": "## 3. 方法与系统设计"},
+      {"keyword": "evaluation", "section": "## 5. 结果与分析"}
+    ]
+  },
+  {
+    "id": "openagentsafety",
+    "title": "OpenAgentSafety: A Comprehensive Framework for Evaluating Real-World AI Agent Safety",
+    "paper_url": "https://arxiv.org/abs/2507.06134",
+    "swiftscholar_url": "https://www.swiftscholar.net/zh/paper/69b3b663848afdbf2c9114c2",
+    "short_id": "2025-arXiv-OpenAgentSafety",
+    "expected_archive_topic": "Agent Harness Evaluation",
+    "expected_headings": ["## TL;DR", "## 论文基本信息", "## 1. 整体概括", "## 2. 背景与动机", "## 3. 方法与系统设计", "## 4. 实验设置", "## 5. 结果与分析", "## 6. 总结与思考"],
+    "coverage_checks": ["agent safety", "evaluation framework", "risk categories", "real-world agents", "modular", "benchmark or evaluation", "threats or limitations", "deployment implication"],
+    "figure_expectations": [
+      {"keyword": "framework", "section": "## 3. 方法与系统设计"},
+      {"keyword": "risk", "section": "## 2. 背景与动机"},
+      {"keyword": "evaluation", "section": "## 5. 结果与分析"}
+    ]
+  },
+  {
+    "id": "megascale_infer",
+    "title": "MegaScale-Infer: Serving Mixture-of-Experts at Scale with Disaggregated Expert Parallelism",
+    "paper_url": "https://arxiv.org/abs/2504.02263",
+    "swiftscholar_url": "https://www.swiftscholar.net/zh/paper/69d503fee63e77db717c9e2f",
+    "short_id": "2025-arXiv-MegaScale-Infer",
+    "expected_archive_topic": "System Performance",
+    "expected_headings": ["## TL;DR", "## 论文基本信息", "## 1. 整体概括", "## 2. 背景与动机", "## 3. 方法与系统设计", "## 4. 实验设置", "## 5. 结果与分析", "## 6. 总结与思考"],
+    "coverage_checks": ["mixture-of-experts", "disaggregated expert parallelism", "serving at scale", "throughput or latency", "parallelism strategy", "communication overhead", "evaluation result", "deployment or serving implication"],
+    "figure_expectations": [
+      {"keyword": "architecture", "section": "## 3. 方法与系统设计"},
+      {"keyword": "parallelism", "section": "## 3. 方法与系统设计"},
+      {"keyword": "performance", "section": "## 5. 结果与分析"}
+    ]
+  },
+  {
+    "id": "agents_of_chaos",
+    "title": "Agents of Chaos",
+    "paper_url": "https://arxiv.org/abs/2602.20021",
+    "swiftscholar_url": "https://www.swiftscholar.net/zh/paper/69b38293848afdbf2c9114ab",
+    "short_id": "2026-arXiv-Agents-of-Chaos",
+    "expected_archive_topic": "Agent Harness Evaluation",
+    "expected_headings": ["## TL;DR", "## 论文基本信息", "## 1. 整体概括", "## 2. 背景与动机", "## 3. 方法与系统设计", "## 4. 实验设置", "## 5. 结果与分析", "## 6. 总结与思考"],
+    "coverage_checks": ["autonomous agents", "real-world or realistic environment", "safety or misuse", "destructive actions or vulnerabilities", "evaluation setup", "findings", "deployment risk", "open problem"],
+    "figure_expectations": [
+      {"keyword": "environment", "section": "## 2. 背景与动机"},
+      {"keyword": "framework", "section": "## 3. 方法与系统设计"},
+      {"keyword": "result", "section": "## 5. 结果与分析"}
+    ]
+  }
+]

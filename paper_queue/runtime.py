@@ -10,6 +10,7 @@ import subprocess
 import sys
 import threading
 import time
+from dataclasses import asdict
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -17,6 +18,7 @@ from typing import Any
 
 from .config import Settings, settings
 from .db import JobStore
+from .workflow import PaperWorkflow
 
 
 def now_iso() -> str:
@@ -45,6 +47,7 @@ class Runtime:
         self._cache_lock = threading.Lock()
         self._auth_cache: tuple[float, bool, str] | None = None
         self._notebook_cache: tuple[float, list[dict[str, str]], str | None] | None = None
+        self._notebook_summary_cache: dict[str, tuple[float, str]] = {}
 
     def run(
         self,
@@ -231,12 +234,70 @@ class Runtime:
             self._notebook_cache = (time.monotonic(), notebooks, None)
         return notebooks, None
 
+    def notebook_summary(self, notebook_id: str, *, force: bool = False) -> tuple[str | None, str | None]:
+        now = time.monotonic()
+        with self._cache_lock:
+            if not force and notebook_id in self._notebook_summary_cache:
+                cached_at, summary = self._notebook_summary_cache[notebook_id]
+                if now - cached_at < self.config.notebook_summary_cache_ttl_seconds:
+                    return summary, None
+        result = self.run(
+            ["nlm", "notebook", "describe", notebook_id, "--json"],
+            timeout=self.config.notebook_describe_timeout_seconds,
+        )
+        if not result.ok:
+            message = (result.stderr or result.stdout).strip() or "failed to describe notebook"
+            return None, message
+        try:
+            payload = json.loads(result.stdout)
+        except json.JSONDecodeError:
+            return None, "invalid notebook summary JSON from nlm"
+        value = payload.get("value") if isinstance(payload, dict) else payload
+        summary_lines = value.get("summary") if isinstance(value, dict) else None
+        summary = " ".join(str(line).strip() for line in summary_lines or [] if str(line).strip())
+        with self._cache_lock:
+            self._notebook_summary_cache[notebook_id] = (time.monotonic(), summary)
+        return summary, None
+
+    def invalidate_notebook_cache(self) -> None:
+        with self._cache_lock:
+            self._notebook_cache = None
+            self._notebook_summary_cache = {}
+
+    def create_notebook(self, title: str) -> tuple[dict[str, str] | None, str | None]:
+        before, error = self.notebook_list(force=True)
+        if error:
+            return None, error
+        before_ids = {item["id"] for item in before}
+        result = self.run(["nlm", "notebook", "create", title], timeout=60.0)
+        if not result.ok:
+            message = (result.stderr or result.stdout).strip() or "failed to create notebook"
+            return None, message
+        self.invalidate_notebook_cache()
+        after, error = self.notebook_list(force=True)
+        if error:
+            return None, error
+        for item in after:
+            if item["title"] == title and item["id"] not in before_ids:
+                return item, None
+        for item in after:
+            if item["title"] == title:
+                return item, None
+        return None, "created notebook but could not identify it"
+
+    def delete_notebook(self, notebook_id: str) -> tuple[bool, str]:
+        result = self.run(["nlm", "notebook", "delete", notebook_id, "--confirm"], timeout=60.0)
+        if not result.ok:
+            message = (result.stderr or result.stdout).strip() or "failed to delete notebook"
+            return False, message
+        self.invalidate_notebook_cache()
+        return True, "deleted"
+
     def system_status(self) -> dict[str, Any]:
         auth_ok, auth_message = self.auth_check()
-        nextcloud_ok, nextcloud_message = self.nextcloud_check()
+        git_ok, git_message = self.git_remote_check()
         skill_ok = (self.config.skill_install_path / "SKILL.md").exists()
-        paper_root_exists = self._path_exists(self.config.paper_root)
-        paper_root_writable = self._path_writable(self.config.paper_root)
+        git_repo_exists = (self.config.obsidian_sync_repo / ".git").exists()
         return {
             "auth_ok": auth_ok,
             "auth_message": auth_message,
@@ -244,106 +305,31 @@ class Runtime:
             "nlm_ok": shutil.which("nlm") is not None,
             "skill_ok": skill_ok,
             "skill_path": str(self.config.skill_install_path),
-            "nextcloud_ok": nextcloud_ok,
-            "nextcloud_message": nextcloud_message,
-            "paper_root": str(self.config.paper_root),
-            "paper_root_exists": paper_root_exists,
-            "paper_root_writable": paper_root_writable,
+            "git_repo_ok": git_repo_exists,
+            "git_repo_path": str(self.config.obsidian_sync_repo),
+            "git_remote_ok": git_ok,
+            "git_remote_message": git_message,
+            "git_branch": self.config.obsidian_sync_branch,
         }
 
-    def nextcloud_check(self) -> tuple[bool, str]:
-        compose_cmd = [
-            "docker-compose",
-            "-f",
-            str(self.config.nextcloud_compose_file),
-            "ps",
-            "-q",
-            "nextcloud",
-        ]
-        result = self.run(compose_cmd, timeout=15.0)
-        if not result.ok:
-            message = (result.stderr or result.stdout).strip() or "nextcloud check failed"
-            return False, message
-        if not result.stdout.strip():
-            return False, "nextcloud not running"
-        return True, "nextcloud running"
-
-    def _path_exists(self, path: Path) -> bool:
-        try:
-            return path.exists()
-        except PermissionError:
-            result = self.run(["sudo", "-n", "test", "-d", str(path)])
-            return result.ok
-
-    def _path_writable(self, path: Path) -> bool:
-        if os.access(path, os.W_OK):
-            return True
-        result = self.run(["sudo", "-n", "test", "-w", str(path)])
-        return result.ok
-
-    def normalize_output_permissions(self, output_path: str) -> CommandResult:
-        path = Path(output_path)
-        parent = path.parent
-        command = (
-            f"sudo -n chown -R www-data:www-data {shlex.quote(str(parent))} && "
-            f"sudo -n find {shlex.quote(str(parent))} -type d -exec chmod 2775 {{}} + && "
-            f"sudo -n find {shlex.quote(str(parent))} -type f -exec chmod 664 {{}} +"
-        )
-        return self.run_shell(command)
-
-    def build_agent_prompt(self, *, job: dict[str, Any]) -> str:
-        skill_path = self.config.skill_install_path / "SKILL.md"
-        source_skill_path = self.config.skill_source_dir / "SKILL.md"
-        output_dir = self.config.paper_root / job["notebook_title"]
-        return f"""
-You are handling a queued paper-reading job on the host machine.
-
-Use the installed Claude skill named /{self.config.skill_name}. If it is unavailable in runtime,
-immediately read this fallback skill file and follow it exactly:
-{source_skill_path}
-
-Job input:
-- raw_input: {job["input_text"]}
-- notebook_id: {job["notebook_id"]}
-- notebook_title: {job["notebook_title"]}
-
-Execution rules:
-1. This is non-interactive queue mode. Do not ask follow-up questions.
-2. If NotebookLM auth is invalid, stop and return JSON with status AUTH_REQUIRED.
-3. Save the final markdown note directly to:
-   {output_dir}
-4. The Obsidian vault root is:
-   {self.config.paper_root.parent}
-5. The target vault name is:
-   {self.config.vault_root_name}
-6. Use direct file writes, not Obsidian CLI.
-7. If the target filename already exists, create -v2, -v3, etc.
-8. After writing the file, run:
-   docker-compose -f {self.config.nextcloud_compose_file} exec -T nextcloud php occ files:scan --path="/admin/files/{self.config.vault_root_name}/{self.config.paper_subdir}/{job["notebook_title"]}"
-9. Reply with JSON only, no markdown fences, with this schema:
-   {{
-     "status": "completed" | "AUTH_REQUIRED" | "failed",
-     "paper_title": string,
-     "output_path": string,
-     "summary": string,
-     "error": string
-   }}
-"""
-
-    def run_claude_job(self, job: dict[str, Any]) -> CommandResult:
-        prompt = self.build_agent_prompt(job=job)
-        command = (
-            f"{self.config.claude_glm_command} "
-            f"-p --output-format json --model {shlex.quote(self.config.claude_model)} "
-            f"{shlex.quote(prompt)}"
-        )
-        artifact_dir = self.artifact_dir(int(job["id"]))
-        return self.run_shell_streaming(
-            command,
-            cwd=self.config.skill_source_dir.parent,
-            timeout=self.config.agent_timeout_seconds,
-            artifact_dir=artifact_dir,
-        )
+    def git_remote_check(self) -> tuple[bool, str]:
+        repo = self.config.obsidian_sync_repo
+        if not (repo / ".git").exists():
+            return False, f"git repo missing: {repo}"
+        last_message = "git remote check failed"
+        for attempt in range(2):
+            result = self.run(
+                ["git", "-C", str(repo), "ls-remote", "origin", "HEAD", f"refs/heads/{self.config.obsidian_sync_branch}"],
+                timeout=self.config.git_remote_check_timeout_seconds,
+            )
+            if result.ok:
+                if f"refs/heads/{self.config.obsidian_sync_branch}" not in result.stdout:
+                    return False, f"remote branch missing: {self.config.obsidian_sync_branch}"
+                return True, "git remote reachable"
+            last_message = (result.stderr or result.stdout).strip() or "git remote check failed"
+            if attempt == 0:
+                time.sleep(2)
+        return False, last_message
 
     def artifact_dir(self, job_id: int) -> Path:
         return self.config.artifacts_dir / str(job_id)
@@ -380,7 +366,7 @@ class JobRunner:
         self._thread: threading.Thread | None = None
         self._stop_event = threading.Event()
         self._last_waiting_auth_check = 0.0
-        self._last_nextcloud_check = 0.0
+        self._last_git_check = 0.0
 
     def start(self) -> None:
         if self._thread and self._thread.is_alive():
@@ -430,7 +416,7 @@ class JobRunner:
         while not self._stop_event.is_set():
             self._reconcile_running_jobs()
             self._maybe_requeue_waiting_auth()
-            self._maybe_requeue_blocked_nextcloud()
+            self._maybe_requeue_blocked_git()
             if self.active_job_id is not None:
                 time.sleep(self.config.worker_poll_seconds)
                 continue
@@ -466,17 +452,17 @@ class JobRunner:
         if auth_ok:
             self.store.requeue_waiting_auth(now_iso())
 
-    def _maybe_requeue_blocked_nextcloud(self) -> None:
+    def _maybe_requeue_blocked_git(self) -> None:
         now = time.monotonic()
-        if now - self._last_nextcloud_check < self.config.nextcloud_recheck_seconds:
+        if now - self._last_git_check < self.config.waiting_auth_recheck_seconds:
             return
-        self._last_nextcloud_check = now
+        self._last_git_check = now
         jobs = self.store.list_jobs()
-        if not any(job["status"] == "blocked_nextcloud" for job in jobs):
+        if not any(job["status"] == "blocked_git" for job in jobs):
             return
-        nextcloud_ok, _ = self.runtime.nextcloud_check()
-        if nextcloud_ok:
-            self.store.requeue_blocked_nextcloud(now_iso())
+        git_ok, _ = self.runtime.git_remote_check()
+        if git_ok:
+            self.store.requeue_blocked_git(now_iso())
 
     def _reconcile_running_jobs(self) -> None:
         for job in self.store.running_jobs():
@@ -560,6 +546,7 @@ class JobExecutor:
         self.store = store
         self.runtime = runtime
         self.config = config
+        self.workflow = PaperWorkflow(runtime)
 
     def _log(self, job_id: int, stage: str, message: str, *, level: str = "INFO") -> None:
         timestamp = now_iso()
@@ -579,6 +566,22 @@ class JobExecutor:
 
     def _artifact_dir(self, job_id: int) -> Path:
         return self.runtime.artifact_dir(job_id)
+
+    @staticmethod
+    def _is_git_blocker(message: str) -> bool:
+        lowered = message.lower()
+        blockers = (
+            "could not resolve hostname",
+            "could not read from remote repository",
+            "connection timed out",
+            "operation timed out",
+            "network is unreachable",
+            "connection reset",
+            "failed to connect",
+            "command timed out",
+            "couldn't connect to server",
+        )
+        return any(token in lowered for token in blockers)
 
     def _stdout_logger(self, job_id: int):
         def callback(line: str) -> None:
@@ -614,52 +617,63 @@ class JobExecutor:
             )
             return 0
 
-        nextcloud_ok, nextcloud_message = self.runtime.nextcloud_check()
-        if not nextcloud_ok:
-            self._log(job_id, "blocked_nextcloud", nextcloud_message, level="WARN")
+        if not (self.config.obsidian_sync_repo / ".git").exists():
+            message = f"git repo missing: {self.config.obsidian_sync_repo}"
+            self._log(job_id, "blocked_git", message, level="WARN")
             self._update(
                 job_id,
-                status="blocked_nextcloud",
-                stage="blocked_nextcloud",
-                error_message=nextcloud_message,
-                worker_pid=os.getpid(),
-                artifact_dir=str(artifact_dir),
-            )
-            return 0
-
-        if not self.runtime._path_exists(self.config.paper_root):
-            message = f"paper root missing: {self.config.paper_root}"
-            self._log(job_id, "blocked_nextcloud", message, level="WARN")
-            self._update(
-                job_id,
-                status="blocked_nextcloud",
-                stage="blocked_nextcloud",
+                status="blocked_git",
+                stage="blocked_git",
                 error_message=message,
                 worker_pid=os.getpid(),
                 artifact_dir=str(artifact_dir),
             )
             return 0
 
-        self._log(job_id, "agent", "Invoking claude-glm workflow")
-        prompt = self.runtime.build_agent_prompt(job=job)
-        self.runtime.write_artifact(job_id, "prompt.txt", prompt)
-        command = (
-            f"{self.config.claude_glm_command} "
-            f"-p --output-format json --model {shlex.quote(self.config.claude_model)} "
-            f"{shlex.quote(prompt)}"
-        )
-        result = self.runtime.run_shell_streaming(
-            command,
-            cwd=self.config.skill_source_dir.parent,
-            timeout=self.config.agent_timeout_seconds,
-            log_stdout=self._stdout_logger(job_id),
-            log_stderr=self._stderr_logger(job_id),
-            artifact_dir=artifact_dir,
-        )
-        self._log(job_id, "agent", f"Command exit code: {result.returncode}")
+        def workflow_log(stage: str, message: str, level: str = "INFO") -> None:
+            self._log(job_id, stage, message, level=level)
+            self._update(
+                job_id,
+                status="running",
+                stage=stage,
+                worker_pid=os.getpid(),
+                artifact_dir=str(artifact_dir),
+            )
 
-        if not result.ok:
-            error_message = (result.stderr or result.stdout).strip() or "claude-glm failed"
+        def set_notebook(notebook_id: str, notebook_title: str) -> None:
+            self.store.set_notebook(job_id, notebook_id, notebook_title, now_iso())
+            job["notebook_id"] = notebook_id
+            job["notebook_title"] = notebook_title
+
+        def set_paper_title(paper_title: str) -> None:
+            if not paper_title:
+                return
+            self._update(
+                job_id,
+                status="running",
+                stage=job.get("stage") or "routing",
+                paper_title=paper_title,
+                worker_pid=os.getpid(),
+                artifact_dir=str(artifact_dir),
+            )
+            job["paper_title"] = paper_title
+
+        try:
+            result = self.workflow.execute(job, workflow_log, set_notebook=set_notebook, set_paper_title=set_paper_title)
+        except Exception as exc:
+            error_message = str(exc) or "paper workflow failed"
+            self.runtime.write_artifact(job_id, "failure.txt", error_message)
+            if self._is_git_blocker(error_message):
+                self._update(
+                    job_id,
+                    status="blocked_git",
+                    stage="blocked_git",
+                    error_message=error_message,
+                    worker_pid=os.getpid(),
+                    artifact_dir=str(artifact_dir),
+                )
+                self._log(job_id, "blocked_git", error_message, level="WARN")
+                return 0
             self._update(
                 job_id,
                 status="failed",
@@ -669,75 +683,26 @@ class JobExecutor:
                 worker_pid=os.getpid(),
                 artifact_dir=str(artifact_dir),
             )
+            self._log(job_id, "failed", error_message, level="WARN")
             return 1
 
-        parsed = JobRunner._parse_claude_output(result.stdout)
-        if parsed is None:
-            self.runtime.write_artifact(job_id, "parse_error.txt", result.stdout)
-            self._update(
-                job_id,
-                status="failed",
-                stage="failed",
-                error_message="Could not parse claude-glm result JSON",
-                finished_at=now_iso(),
-                worker_pid=os.getpid(),
-                artifact_dir=str(artifact_dir),
-            )
-            return 1
-        self.runtime.write_artifact(job_id, "parsed_result.json", json.dumps(parsed, ensure_ascii=False, indent=2))
-
-        status = parsed.get("status")
-        if status == "AUTH_REQUIRED":
-            message = str(parsed.get("error") or "NotebookLM auth required")
-            self._log(job_id, "waiting_auth", message, level="WARN")
-            self._update(
-                job_id,
-                status="waiting_auth",
-                stage="waiting_auth",
-                error_message=message,
-                paper_title=str(parsed.get("paper_title") or "") or None,
-                worker_pid=os.getpid(),
-                artifact_dir=str(artifact_dir),
-            )
-            return 0
-        if status != "completed":
-            message = str(parsed.get("error") or "Paper workflow failed")
-            self._update(
-                job_id,
-                status="failed",
-                stage="failed",
-                error_message=message,
-                paper_title=str(parsed.get("paper_title") or "") or None,
-                finished_at=now_iso(),
-                worker_pid=os.getpid(),
-                artifact_dir=str(artifact_dir),
-            )
-            return 1
-
+        self.runtime.write_artifact(
+            job_id,
+            "parsed_result.json",
+            json.dumps(asdict(result), ensure_ascii=False, indent=2),
+        )
         self._update(
             job_id,
             status="completed",
             stage="completed",
-            paper_title=str(parsed.get("paper_title") or "") or None,
-            output_path=str(parsed.get("output_path") or "") or None,
-            result_summary=str(parsed.get("summary") or "") or None,
+            paper_title=result.paper_title or None,
+            output_path=result.output_path or None,
+            result_summary=result.summary or None,
             finished_at=now_iso(),
             worker_pid=os.getpid(),
             artifact_dir=str(artifact_dir),
         )
-        output_path = str(parsed.get("output_path") or "")
-        if output_path:
-            perm_result = self.runtime.normalize_output_permissions(output_path)
-            if perm_result.ok:
-                self._log(job_id, "permissions", "Normalized ownership to www-data")
-            else:
-                self._log(
-                    job_id,
-                    "permissions",
-                    (perm_result.stderr or perm_result.stdout).strip() or "permission normalization failed",
-                    level="WARN",
-                )
-        self._log(job_id, "completed", str(parsed.get("output_path") or "completed"))
+        self._log(job_id, "completed", result.output_path or "completed")
         return 0
 
 

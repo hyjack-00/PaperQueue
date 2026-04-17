@@ -47,7 +47,7 @@ def cmd_logs(args: argparse.Namespace) -> int:
         if not args.follow:
             return 0
         job = store.get_job(args.job_id)
-        if not job or job["status"] in {"completed", "failed"}:
+        if not job or job["status"] in {"completed", "failed", "blocked_git"}:
             return 0
         time.sleep(2)
 
@@ -68,7 +68,7 @@ def cmd_wait(args: argparse.Namespace) -> int:
                 ensure_ascii=False,
             )
         )
-        if job["status"] in {"completed", "failed", "waiting_auth", "blocked_nextcloud"}:
+        if job["status"] in {"completed", "failed", "waiting_auth", "blocked_git"}:
             return 0 if job["status"] == "completed" else 1
         time.sleep(3)
 
@@ -90,8 +90,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     submit = sub.add_parser("submit")
     submit.add_argument("--input", required=True)
-    submit.add_argument("--notebook-id", required=True)
-    submit.add_argument("--notebook-title", required=True)
+    submit.add_argument("--notebook-id", default="")
+    submit.add_argument("--notebook-title", default="")
     submit.set_defaults(func=cmd_submit)
 
     status = sub.add_parser("status")
@@ -109,8 +109,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     run = sub.add_parser("run")
     run.add_argument("--input", required=True)
-    run.add_argument("--notebook-id", required=True)
-    run.add_argument("--notebook-title", required=True)
+    run.add_argument("--notebook-id", default="")
+    run.add_argument("--notebook-title", default="")
     run.set_defaults(func=cmd_run)
 
     return parser
