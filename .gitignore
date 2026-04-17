@@ -4,6 +4,8 @@ __pycache__
 .claude
 .codex
 
+notebooklm-paper-reader/cookies.json
+
 *.log
 var
 
