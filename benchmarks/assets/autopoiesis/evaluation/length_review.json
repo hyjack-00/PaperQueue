@@ -1,0 +1,51 @@
+{
+  "section_scores": [
+    {
+      "section": "abstract",
+      "distribution_ok": 0,
+      "reason": "fallback no note coverage for abstract"
+    },
+    {
+      "section": "overview",
+      "distribution_ok": 0,
+      "reason": "fallback canonical ratio note/source=0.04"
+    },
+    {
+      "section": "background",
+      "distribution_ok": 1,
+      "reason": "fallback canonical ratio note/source=0.2"
+    },
+    {
+      "section": "motivation",
+      "distribution_ok": 0,
+      "reason": "fallback no note coverage for motivation"
+    },
+    {
+      "section": "method",
+      "distribution_ok": 0,
+      "reason": "fallback canonical ratio note/source=0.15"
+    },
+    {
+      "section": "results",
+      "distribution_ok": 0,
+      "reason": "fallback canonical ratio note/source=0.07"
+    },
+    {
+      "section": "conclusion",
+      "distribution_ok": 0,
+      "reason": "fallback canonical ratio note/source=0.07"
+    }
+  ],
+  "summary": {
+    "distribution_ratio": 0.143,
+    "top_distribution_issues": [
+      "abstract",
+      "overview",
+      "motivation",
+      "method",
+      "results",
+      "conclusion"
+    ],
+    "overall_comment": "fallback heuristic comparison"
+  }
+}

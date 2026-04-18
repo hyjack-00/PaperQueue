@@ -1,0 +1,218 @@
+[
+  {
+    "paragraph_id": "p19-0169",
+    "translation": "[11]Xupeng Miao, Chunan Shi, Jiangfei Duan, Xiaoli Xi, Dahua Lin, Bin Cui, and Zhihao Jia. Spotserve:Serving generative largelanguagemodelsonpreemptibleinstances.InProceedingsofthe29thACMInternationalConferenceon Archite",
+    "info_points": [
+      "[11]Xupeng Miao, Chunan Shi, Jiangfei Duan, Xiaoli Xi, Dahua Lin, Bin Cui, and Zhihao Jia."
+    ],
+    "keywords": [
+      "Xupeng",
+      "Miao",
+      "Chunan",
+      "Jiangfei",
+      "Duan",
+      "Xiaoli",
+      "Dahua",
+      "Zhihao"
+    ],
+    "source_text": "[11]Xupeng Miao, Chunan Shi, Jiangfei Duan, Xiaoli Xi, Dahua Lin, Bin Cui, and Zhihao Jia. Spotserve:Serving generative largelanguagemodelsonpreemptibleinstances.InProceedingsofthe29thACMInternationalConferenceon Architectural Support for Programming Languages and Operating Systems, Volume 2, pages 1112–1127, 2024."
+  },
+  {
+    "paragraph_id": "p19-0170",
+    "translation": "[12]YouheJiang,FangchengFu,XiaozheYao,TaiyiWang,BinCui,AnaKlimovic,andEikoYoneki.Thunderserve: High-performanceandcost-efficientllmservingincloudenvironments.ProceedingsofMachineLearningand Systems, 7, 2025.",
+    "info_points": [
+      "[12]YouheJiang,FangchengFu,XiaozheYao,TaiyiWang,BinCui,AnaKlimovic,andEikoYoneki.Thunderserve: High-performanceandcost-efficientllmservingincloudenvironments.ProceedingsofMachineLearningand Systems, 7, 2025."
+    ],
+    "keywords": [
+      "YouheJiang",
+      "FangchengFu",
+      "XiaozheYao",
+      "TaiyiWang",
+      "BinCui",
+      "AnaKlimovic",
+      "andEikoYoneki",
+      "Thunderserve"
+    ],
+    "source_text": "[12]YouheJiang,FangchengFu,XiaozheYao,TaiyiWang,BinCui,AnaKlimovic,andEikoYoneki.Thunderserve: High-performanceandcost-efficientllmservingincloudenvironments.ProceedingsofMachineLearningand Systems, 7, 2025."
+  },
+  {
+    "paragraph_id": "p19-0171",
+    "translation": "[13]Ziming Mao, Tian Xia, Zhanghao Wu, Wei-Lin Chiang, Tyler Griggs, Romil Bhardwaj, Zongheng Yang, Scott Shenker, and Ion Stoica.Skyserve:Serving ai models across regions and clouds with spot instances.In Proceedings of",
+    "info_points": [
+      "[13]Ziming Mao, Tian Xia, Zhanghao Wu, Wei-Lin Chiang, Tyler Griggs, Romil Bhardwaj, Zongheng Yang, Scott Shenker, and Ion Stoica.Skyserve:Serving ai models across regions and clouds with spot instances.In Proceedings of the Twentieth European Conference on Computer Systems, pages 159–175, 2025."
+    ],
+    "keywords": [
+      "Ziming",
+      "Tian",
+      "Zhanghao",
+      "Wei-Lin",
+      "Chiang",
+      "Tyler",
+      "Griggs",
+      "Romil"
+    ],
+    "source_text": "[13]Ziming Mao, Tian Xia, Zhanghao Wu, Wei-Lin Chiang, Tyler Griggs, Romil Bhardwaj, Zongheng Yang, Scott Shenker, and Ion Stoica.Skyserve:Serving ai models across regions and clouds with spot instances.In Proceedings of the Twentieth European Conference on Computer Systems, pages 159–175, 2025."
+  },
+  {
+    "paragraph_id": "p19-0172",
+    "translation": "[14]Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph Gonzalez, Hao Zhang, and Ion Stoica.Efficient memory management for large language model serving with pagedattention.In Proceedin",
+    "info_points": [
+      "[14]Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph Gonzalez, Hao Zhang, and Ion Stoica.Efficient memory management for large language model serving with pagedattention.In Proceedings of the 29th symposium on operating systems principles, pages 611–626, 2023."
+    ],
+    "keywords": [
+      "Woosuk",
+      "Kwon",
+      "Zhuohan",
+      "Siyuan",
+      "Zhuang",
+      "Ying",
+      "Sheng",
+      "Lianmin"
+    ],
+    "source_text": "[14]Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph Gonzalez, Hao Zhang, and Ion Stoica.Efficient memory management for large language model serving with pagedattention.In Proceedings of the 29th symposium on operating systems principles, pages 611–626, 2023."
+  },
+  {
+    "paragraph_id": "p19-0173",
+    "translation": "[15]Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soojeong Kim, and Byung-Gon Chun.Orca:A distributed serving system for {Transformer-Based} generative models.In 16th USENIX symposium on operating systems design and imple",
+    "info_points": [
+      "[15]Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soojeong Kim, and Byung-Gon Chun.Orca:A distributed serving system for {Transformer-Based} generative models.In 16th USENIX symposium on operating systems design and implementation (OSDI 22), pages 521–538, 2022."
+    ],
+    "keywords": [
+      "Gyeong-In",
+      "Seong",
+      "Jeong",
+      "Geon-Woo",
+      "Soojeong",
+      "Byung-Gon",
+      "Chun",
+      "Orca"
+    ],
+    "source_text": "[15]Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soojeong Kim, and Byung-Gon Chun.Orca:A distributed serving system for {Transformer-Based} generative models.In 16th USENIX symposium on operating systems design and implementation (OSDI 22), pages 521–538, 2022."
+  },
+  {
+    "paragraph_id": "p19-0174",
+    "translation": "[16]Haoran Qiu, Weichao Mao, Archit Patke, Shengkun Cui, Saurabh Jha, Chen Wang, Hubertus Franke, Zbigniew T Kalbarczyk, Tamer Ba¸sar, and Ravishankar K Iyer.Efficient interactive llm serving with proxy model-based seque",
+    "info_points": [
+      "[16]Haoran Qiu, Weichao Mao, Archit Patke, Shengkun Cui, Saurabh Jha, Chen Wang, Hubertus Franke, Zbigniew T Kalbarczyk, Tamer Ba¸sar, and Ravishankar K Iyer.Efficient interactive llm serving with proxy model-based sequence length prediction.arXiv preprint arXiv:2404.08509, 2024."
+    ],
+    "keywords": [
+      "Haoran",
+      "Weichao",
+      "Archit",
+      "Patke",
+      "Shengkun",
+      "Saurabh",
+      "Chen",
+      "Wang"
+    ],
+    "source_text": "[16]Haoran Qiu, Weichao Mao, Archit Patke, Shengkun Cui, Saurabh Jha, Chen Wang, Hubertus Franke, Zbigniew T Kalbarczyk, Tamer Ba¸sar, and Ravishankar K Iyer.Efficient interactive llm serving with proxy model-based sequence length prediction.arXiv preprint arXiv:2404.08509, 2024."
+  },
+  {
+    "paragraph_id": "p19-0175",
+    "translation": "[17]RongxinCheng,YuxinLai,XingdaWei,RongChen,andHaiboChen. Kunserve:Parameter-centricmemory management for efficient memory overloading handling in llm serving.arXiv preprint arXiv:2412.18169, 2024.",
+    "info_points": [
+      "[17]RongxinCheng,YuxinLai,XingdaWei,RongChen,andHaiboChen."
+    ],
+    "keywords": [
+      "RongxinCheng",
+      "YuxinLai",
+      "XingdaWei",
+      "RongChen",
+      "andHaiboChen",
+      "Kunserve",
+      "Parameter-centricmemory",
+      "management"
+    ],
+    "source_text": "[17]RongxinCheng,YuxinLai,XingdaWei,RongChen,andHaiboChen. Kunserve:Parameter-centricmemory management for efficient memory overloading handling in llm serving.arXiv preprint arXiv:2412.18169, 2024."
+  },
+  {
+    "paragraph_id": "p19-0176",
+    "translation": "[18]RuoyuQin,ZhemingLi,WeiranHe,JialeiCui,HeyiTang,FengRen,TengMa,ShangmingCai,YinengZhang, Mingxing Zhang, et al.Mooncake:A kvcache-centric disaggregated architecture for llm serving.ACM Transactions on Storage, 2024.",
+    "info_points": [
+      "[18]RuoyuQin,ZhemingLi,WeiranHe,JialeiCui,HeyiTang,FengRen,TengMa,ShangmingCai,YinengZhang, Mingxing Zhang, et al.Mooncake:A kvcache-centric disaggregated architecture for llm serving.ACM Transactions on Storage, 2024."
+    ],
+    "keywords": [
+      "RuoyuQin",
+      "ZhemingLi",
+      "WeiranHe",
+      "JialeiCui",
+      "HeyiTang",
+      "FengRen",
+      "TengMa",
+      "ShangmingCai"
+    ],
+    "source_text": "[18]RuoyuQin,ZhemingLi,WeiranHe,JialeiCui,HeyiTang,FengRen,TengMa,ShangmingCai,YinengZhang, Mingxing Zhang, et al.Mooncake:A kvcache-centric disaggregated architecture for llm serving.ACM Transactions on Storage, 2024."
+  },
+  {
+    "paragraph_id": "p19-0177",
+    "translation": "[19]Youhe Jiang, Ran Yan, and Binhang Yuan.Hexgen-2:Disaggregated generative inference of llms in heterogeneous environment.arXiv preprint arXiv:2502.07903, 2025.",
+    "info_points": [
+      "[19]Youhe Jiang, Ran Yan, and Binhang Yuan.Hexgen-2:Disaggregated generative inference of llms in heterogeneous environment.arXiv preprint arXiv:2502.07903, 2025."
+    ],
+    "keywords": [
+      "Youhe",
+      "Jiang",
+      "Binhang",
+      "Yuan",
+      "Hexgen-2",
+      "Disaggregated",
+      "generative",
+      "inference"
+    ],
+    "source_text": "[19]Youhe Jiang, Ran Yan, and Binhang Yuan.Hexgen-2:Disaggregated generative inference of llms in heterogeneous environment.arXiv preprint arXiv:2502.07903, 2025."
+  },
+  {
+    "paragraph_id": "p19-0178",
+    "translation": "[20]Bernardino Romera-Paredes, Mohammadamin Barekatain, Alexander Novikov, Matej Balog, M Pawan Kumar, Emilien Dupont, Francisco JR Ruiz, Jordan S Ellenberg, Pengming Wang, Omar Fawzi, et al.Mathematical discoveries from",
+    "info_points": [
+      "[20]Bernardino Romera-Paredes, Mohammadamin Barekatain, Alexander Novikov, Matej Balog, M Pawan Kumar, Emilien Dupont, Francisco JR Ruiz, Jordan S Ellenberg, Pengming Wang, Omar Fawzi, et al.Mathematical discoveries from program search with large language models.Nature, 625(7995):468–475, 2024."
+    ],
+    "keywords": [
+      "Bernardino",
+      "Romera-Paredes",
+      "Mohammadamin",
+      "Barekatain",
+      "Alexander",
+      "Novikov",
+      "Matej",
+      "Balog"
+    ],
+    "source_text": "[20]Bernardino Romera-Paredes, Mohammadamin Barekatain, Alexander Novikov, Matej Balog, M Pawan Kumar, Emilien Dupont, Francisco JR Ruiz, Jordan S Ellenberg, Pengming Wang, Omar Fawzi, et al.Mathematical discoveries from program search with large language models.Nature, 625(7995):468–475, 2024."
+  },
+  {
+    "paragraph_id": "p20-0179",
+    "translation": "[21]AlexanderNovikov,NgânV˜u,MarvinEisenberger,EmilienDupont,Po-SenHuang,AdamZsoltWagner,Sergey Shirobokov, Borislav Kozlovskii, Francisco JR Ruiz, Abbas Mehrabian, et al.Alphaevolve:A coding agent for scientific and alg",
+    "info_points": [
+      "[21]AlexanderNovikov,NgânV˜u,MarvinEisenberger,EmilienDupont,Po-SenHuang,AdamZsoltWagner,Sergey Shirobokov, Borislav Kozlovskii, Francisco JR Ruiz, Abbas Mehrabian, et al.Alphaevolve:A coding agent for scientific and algorithmic discovery.arXiv preprint arXiv:2506.13131, 2025."
+    ],
+    "keywords": [
+      "AlexanderNovikov",
+      "MarvinEisenberger",
+      "EmilienDupont",
+      "Po-SenHuang",
+      "AdamZsoltWagner",
+      "Sergey",
+      "Shirobokov",
+      "Borislav"
+    ],
+    "source_text": "[21]AlexanderNovikov,NgânV˜u,MarvinEisenberger,EmilienDupont,Po-SenHuang,AdamZsoltWagner,Sergey Shirobokov, Borislav Kozlovskii, Francisco JR Ruiz, Abbas Mehrabian, et al.Alphaevolve:A coding agent for scientific and algorithmic discovery.arXiv preprint arXiv:2506.13131, 2025."
+  },
+  {
+    "paragraph_id": "p20-0180",
+    "translation": "[22]ShuLiu,ShubhamAgarwal,MonishwaranMaheswaran,MertCemri,ZhifeiLi,QiuyangMang,AshwinNaren, Ethan Boneh, Audrey Cheng, Melissa Z Pan, et al.Evox:Meta-evolution for automated discovery.arXiv preprint arXiv:2602.23413, 202",
+    "info_points": [
+      "[22]ShuLiu,ShubhamAgarwal,MonishwaranMaheswaran,MertCemri,ZhifeiLi,QiuyangMang,AshwinNaren, Ethan Boneh, Audrey Cheng, Melissa Z Pan, et al.Evox:Meta-evolution for automated discovery.arXiv preprint arXiv:2602.23413, 2026."
+    ],
+    "keywords": [
+      "ShuLiu",
+      "ShubhamAgarwal",
+      "MonishwaranMaheswaran",
+      "MertCemri",
+      "ZhifeiLi",
+      "QiuyangMang",
+      "AshwinNaren",
+      "Ethan"
+    ],
+    "source_text": "[22]ShuLiu,ShubhamAgarwal,MonishwaranMaheswaran,MertCemri,ZhifeiLi,QiuyangMang,AshwinNaren, Ethan Boneh, Audrey Cheng, Melissa Z Pan, et al.Evox:Meta-evolution for automated discovery.arXiv preprint arXiv:2602.23413, 2026."
+  }
+]

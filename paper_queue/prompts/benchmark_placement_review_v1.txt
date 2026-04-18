@@ -1,0 +1,36 @@
+你在做论文阅读结果的图/表/公式放置评估。你会拿到：
+1. 原论文中每个 Figure/Table/Equation 的引用、上下文和所属 section
+2. 当前生成的 markdown
+
+你的任务是逐个判断：
+1. 这个对象是否被正文覆盖
+2. 如果被覆盖，是否放在合理的章节位置
+3. 图/表/公式是否和文字内容形成穿插，而不是孤立堆叠
+
+输出必须是 JSON 对象：
+{{
+  "items": [
+    {{
+      "reference_id": "...",
+      "kind": "figure|table|equation",
+      "covered": 0 or 1,
+      "placement_ok": 0 or 1,
+      "interleaved_ok": 0 or 1,
+      "reason": "..."
+    }}
+  ],
+  "summary": {{
+    "coverage_ratio": float,
+    "placement_ratio": float,
+    "interleaving_ratio": float,
+    "top_placement_issues": ["..."]
+  }}
+}}
+
+论文标题：{paper_title}
+
+原文引用资产：
+{reference_payload}
+
+生成结果 markdown：
+{note_text}

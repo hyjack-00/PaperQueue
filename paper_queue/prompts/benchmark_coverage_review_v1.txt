@@ -1,0 +1,37 @@
+你在做论文阅读结果的覆盖率评估。你会拿到：
+1. 原论文逐段提取出的可检查信息点
+2. 当前生成的论文阅读 markdown
+
+你的任务是逐条判断每个信息点是否被覆盖。
+
+判断标准：
+1. covered=1：信息点被明确表达，允许中文转述，但事实不能缺失。
+2. covered=0：没有提到，或者提到了但严重失真。
+3. 不要因为“主题相近”就判为覆盖；必须有直接事实对应。
+4. 对每条都给出一句简短 reason。
+
+输出必须是 JSON 对象：
+{{
+  "items": [
+    {{
+      "paragraph_id": "...",
+      "info_point": "...",
+      "covered": 0 or 1,
+      "reason": "..."
+    }}
+  ],
+  "summary": {{
+    "covered_count": int,
+    "total_count": int,
+    "coverage_ratio": float,
+    "top_missing_points": ["..."]
+  }}
+}}
+
+论文标题：{paper_title}
+
+信息点：
+{info_points_payload}
+
+生成结果 markdown：
+{note_text}

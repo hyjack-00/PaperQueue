@@ -1,0 +1,2089 @@
+{
+  "items": [
+    {
+      "paragraph_id": "p01-0001",
+      "info_point": "AUTOPOIESIS:A Self-Evolving System Paradigm for LLM Serving Under Runtime Dynamics Youhe Jiang1∗, Ran Yan1∗, You Peng1, Wenshuang Li1, Taiyi Wang2, Fangcheng Fu3†, Binhang Yuan1† 1HKUST,2PowersenseTechnologyLimited,3ShanghaiJiaoTongUniversity ∗Equal contribution,†Corresponding author",
+      "covered": 1,
+      "reason": "fallback token match 8/12"
+    },
+    {
+      "paragraph_id": "p01-0002",
+      "info_point": "Abstract Modern Large Language Model (LLM) serving operates in highly volatile environments characterized by severe runtime dynamics, such as workload fluctuations and elastic cluster autoscaling.Traditional serving systems rely on static, human-engineered serving policies (e.g., scheduling algorith",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p01-0003",
+      "info_point": "1 Introduction",
+      "covered": 0,
+      "reason": "fallback no tokens"
+    },
+    {
+      "paragraph_id": "p01-0004",
+      "info_point": "The rapid proliferation of Large Language Model (LLM) serving has exposed an essential operational challenge: production serving paradigm is inherently dynamic.User request patterns fluctuate unpredictably across time, withburstyarrivals,varyingpromptlengths,anddiverseoutputgenerationdemands[1–6].Cl",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p01-0005",
+      "info_point": "Toaccommodatesuchdynamics,servingsystemsemployservingpolicies(e.g.,schedulingalgorithmsand rescheduling strategies) that produce different serving plans (including workload assignment, resource alloca- tion, and parallelism strategy), in response to dynamic status.However, implementing an effective ",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p02-0006",
+      "info_point": "Figure1Impact of workload dynamics on serving policy performance across five phases:Steady (Phases 1, 3, 5) and bursty(Phases2,4).PolicyAusesthoroughschedulingwithaggressivereconfiguration,excellingunderstabilitybut collapsing under bursts.Policy B uses reactive scheduling with lightweight reconfigu",
+      "covered": 1,
+      "reason": "fallback token match 9/12"
+    },
+    {
+      "paragraph_id": "p02-0007",
+      "info_point": "policy requires navigating deeply intertwinedtrade-offs—when runtime status shifts, the serving policy must decide whether to reschedule, how thoroughly to replan, and how aggressively to reconfigure:(i) Rescheduling morefrequentlykeepsplansfreshbutaccumulatesoverheadthatmayoutweighthebenefit[2,3,8]",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p02-0008",
+      "info_point": "Existing LLM serving systems [2, 6, 9, 18] employ static, human-engineered serving policies1.While these systems generate different serving plans in response to runtime dynamics, the policies that produce those plans remain fixed, failing to account for the runtime trade-offs outlined above.As we de",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p02-0009",
+      "info_point": "To navigate runtime dynamics, we identify two key requirements for an effective LLM serving paradigm:",
+      "covered": 1,
+      "reason": "fallback token match 2/6"
+    },
+    {
+      "paragraph_id": "p02-0010",
+      "info_point": "Requirement 1:Automated trade-off exploration.The system must be capable of exploring the multi-dimensional trade-off space and discovering policies precisely tailored to the current workload and cluster conditions, rather than relying on human intuition to manually balance the intertwined trade-off",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p02-0011",
+      "info_point": "Requirement 2:Continuous online evolution.The system must continuously observe real-world system behavior and rewrite the policy code as runtime trade-offs shift.Rather than treating policy optimization as a one-time offlineeffort,thesystemshouldintegratethepolicyexplorationprocessasanalways-oncompo",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p02-0012",
+      "info_point": "Recent advances have demonstrated that combining the code-generation capabilities of LLMs with the iterative refinement of evolutionary algorithms enables automatic discovery of optimal solutions in design spaces far 1For example, DistServe [6] replicates a pre-computed optimal parallelism configura",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p03-0013",
+      "info_point": "more vast than human engineers can navigate [20, 21].This mechanism has successfully synthesized novel, highly-tailored algorithms across diverse domains, from mathematical and scientific optimization [22, 23] to hardware-specific GPU kernel tuning [24, 25].In this work, we bring this synthesis capa",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p03-0014",
+      "info_point": "Toexplorethis,weproposeAUTOPOIESIS,anovel,self-evolvingparadigmthatshiftsLLMservingfrom static, human-engineered policy design to continuous, LLM-driven policy evolution.Our contributions are summarized as:",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p03-0015",
+      "info_point": "Contribution 1:WeproposeanLLM-drivenprogramsynthesisworkflowforservingpolicyoptimization.The workflow combines an evolutionary algorithm that iteratively generates, mutates, and selects policy candidates; a highly calibrated, lightweight evaluator that faithfully reproduces real-world runtime dynami",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p03-0016",
+      "info_point": "Contribution 2: We design and implementAUTOPOIESIS, a self-evolving serving paradigm built upon a decou- pled two-plane architecture (i.e., data- and control-plane).The data plane executes the current serving policy to produce serving plans for live deployment, while the asynchronous control plane c",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p03-0017",
+      "info_point": "Contribution 3:WeconductacomprehensiveevaluationofAUTOPOIESISunderdiverseruntimedynamics, includingworkloadfluctuationsandspotinstancevariations.ExperimentalresultsdemonstratethatAU- TOPOIESISachieves up to 53% and on average 34% improvement in system performance over state-of-the-art LLM serving sy",
+      "covered": 1,
+      "reason": "fallback token match 2/9"
+    },
+    {
+      "paragraph_id": "p03-0018",
+      "info_point": "Contribution 4: We provide a detailed system analysis showing how evolved policies navigate runtime trade-offs across diverse serving scenarios and how optimal trade-off balances shift with workload and cluster conditions, offering insights into the effectiveness and generalizability of our synthesi",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p03-0019",
+      "info_point": "2 Background and Related Work",
+      "covered": 1,
+      "reason": "fallback token match 1/3"
+    },
+    {
+      "paragraph_id": "p03-0020",
+      "info_point": "2.1 LLM Serving Preliminaries",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p03-0021",
+      "info_point": "Serving production-scale LLM requests requires allocating substantial memory and computationally intensive workloads across large scale GPU clusters.Efficient management of this execution necessitates the continuous orchestration of several deeply intertwined components:",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p03-0022",
+      "info_point": "Formally, it is composed of three primary dimensions:(i) Workload assignment, which determines the mapping of heterogeneous user requests to specific models; systems such as Llumnix [2] and DistServe [6] optimize request assignment to mitigate load imbalance and enhance overall serving throughput.(i",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p03-0023",
+      "info_point": "Servingpolicies.Whileaservingplanrepresentsastaticsnapshotofclusterexecution,aservingpolicy constitutestheactivealgorithmiclogicthatcontinuallyevaluatesandupdatesthisplan.Aservingpolicy comprises two primary components:(i) Scheduling algorithm, which serves as the core optimization engine of the sys",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p04-0024",
+      "info_point": "DistServe [6], Aegaeon [8], and SkyServe [13] deploy sophisticated scheduling algorithms to determine the optimal workload assignment and model deployment across complex hardware topologies.(ii) Rescheduling strategy, which serves as the temporal control mechanism that governs the dynamic nature of ",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p04-0025",
+      "info_point": "Limitations.Despite the sophistication of existing frameworks, current approaches for policy design exhibit three key limitations:First, they rely on human-engineered heuristics and case-specific constraints; a policy tunedforaparticularworkloaddistributionorhardwaretopologyrarelygeneralizestoothers",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p04-0026",
+      "info_point": "2.2 LLM-Driven Program Synthesis",
+      "covered": 1,
+      "reason": "fallback token match 3/3"
+    },
+    {
+      "paragraph_id": "p04-0027",
+      "info_point": "LLM-driven program synthesis isan emerging paradigm that combines the code-generationcapabilities of LLMswiththeiterativerefinementofevolutionaryalgorithmstoautomaticallydiscoverhigh-performing programs.",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p04-0028",
+      "info_point": "LLM-drivenprogramsynthesis.TheLLM-drivenprogramsynthesisincludesfourprimarystages:(i)Seed initialization and program representation determines the starting population and the level of abstraction at whichevolutionoperates;e.g.,AlphaEvolve[21]andCodeEvolve[30]supportcodebase-scaleevolution spanning m",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p04-0029",
+      "info_point": "Accommodating dynamics in LLM serving.While existing LLM-driven evolutionary frameworks have achieved remarkablesuccess,applyingthemtotheruntimedynamicsofLLMservingrequiresovercomingtwokey challenges.First, capturing runtime trade-offs:Candidate evaluation in standard evolutionary processes fails to",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p05-0030",
+      "info_point": "Figure2Left:Runtimetrade-offnavigation:PoliciesA(maximumschedulingandreconfigurationintensity)andB (minimumintensity)comparedtoanoptimaloracle.Right:Shiftingtrade-offadaptation:PoliciesC(optimizedfor steady-state) and D (optimized for burst periods) compared to a dynamically adaptive baseline.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p05-0031",
+      "info_point": "3 Motivation",
+      "covered": 1,
+      "reason": "fallback token match 1/1"
+    },
+    {
+      "paragraph_id": "p05-0032",
+      "info_point": "We conduct two empirical studies on real-world subsampled workload traces [34] to motivate the design of AUTOPOIESIS(trace information detailed in Appendix H).The first motivation demonstrates that finding the optimal runtime trade-off balance is critical to serving performance.The second motivation",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p05-0033",
+      "info_point": "Characterization 1:Navigating runtime trade-offs is critical to serving performance.We evaluate LLM serving acrossaworkloadtracespanningthreereschedulingintervals,examininghowschedulingthoroughness (i.e.,thecomputationalbudgetallocatedtogeneratingservingplans)andreconfigurationaggressiveness (i.e.,t",
+      "covered": 1,
+      "reason": "fallback token match 4/11"
+    },
+    {
+      "paragraph_id": "p05-0034",
+      "info_point": "Analysis.Theruntimetrade-offspaceistoocomplexforhumanengineeringtonavigate.Whiletheabove characterization establishes that finding the right trade-off balance is critical, identifying this balance through humanengineeringfacescompoundingdifficulty.First,therelationshipamongschedulingthoroughness, re",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p05-0035",
+      "info_point": "Motivation1:LLM-drivenpolicysynthesis(§1,Requirement1).Thecomplexityanddeployment-specificityof theruntimetrade-offspacedemandanapproachthatcansystematicallyexplorethemulti-dimensionalspaceand discover policies precisely tailored to the current conditions—capabilities that exceed the reach of manual",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p05-0036",
+      "info_point": "Characterization 2:Continuous adaptation to shifting runtime trade-offs is necessary.We further evaluate LLM servingunderadynamicworkloadtracethatalternatesbetweensteady-staterequestarrivals(i.e.,low workload variation) and sudden traffic bursts (i.e., high workload variation).As shown in Figure 2 (",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p06-0037",
+      "info_point": "s% s& s' s( s) … Deploy optimized policy (§6.2) Figure3OverviewofAUTOPOIESIS’stwo-planesystemarchitecture.Thedataplaneexecutestheservingpolicyand transmitssnapshottedruntimetracetothecontrolplane,whilethecontrolplanecontinuouslyevolvesthepolicyand deploys it to the data plane when a superior policy ",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p06-0038",
+      "info_point": "traffic bursts, degrading end-to-end throughput by 40% due to severe queuing delays.Conversely, Policy D, tuned for the optimal trade-off during burst periods, seamlessly absorbs spikes but yields suboptimal plans duringsteadyperiods,leavinghardwareunderutilizedandreducingthroughputby35%.Nosinglesta",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p06-0039",
+      "info_point": "Analysis.Static policy optimization is insufficient under runtime dynamics.Even if Motivation 1 is addressed, where the system can discover an optimal policy for the given conditions, the above characterization shows thatsuchapolicybecomessuboptimalthemomentruntimetrade-offsshift.Therootcauseisthats",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p06-0040",
+      "info_point": "Motivation 2:Continuous online evolution (§1, Requirement 2).Since the optimal trade-off balance shifts continuously with runtime dynamics, the policy synthesis process itself must operate continuously during serving rather than as a one-time offline effort.This motivates the design of a self-evolvi",
+      "covered": 1,
+      "reason": "fallback token match 7/12"
+    },
+    {
+      "paragraph_id": "p06-0041",
+      "info_point": "4 AUTOPOIESISOverview",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p06-0042",
+      "info_point": "To navigate the deeply intertwined and continuously shifting runtime trade-offs of modern serving environ- ments,AUTOPOIESISemploysatwo-planesystemarchitecturethatdecouplespolicyexecutionfrompolicy evolution.By separating these two concerns, the architecture ensures that runtime trade-offs are thoro",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p06-0043",
+      "info_point": "Two-plane system architecture.The architecture comprises two decoupled planes for a closed loop of adaptation:",
+      "covered": 1,
+      "reason": "fallback token match 4/9"
+    },
+    {
+      "paragraph_id": "p06-0044",
+      "info_point": "•The data plane (policy execution):This plane handles live request traffic by executing the active serving policy.Basedonreal-timeworkloadandclusterconditions,itcontinuouslygeneratesandupdates serving plans, including workload assignment, resource allocation, and parallelism strategies.To capture th",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p06-0045",
+      "info_point": "•The control plane (policy evolution):This plane operates asynchronously to optimize the serving policy without interrupting live serving.Upon receiving each snapshot, it launches the LLM-driven program synthesis workflow to evolve the serving policy (i.e., rewrite the policy code).The workflow expl",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p07-0046",
+      "info_point": "Theself-evolvingloop.AsshowninFigure3,thesetwoplanestransformLLMservingintoaself-evolving process.This architecture ensures that the system does not merely react to dynamics by altering its plan, but proactively adapts its policy to maintain optimal serving performance as the runtime trade-offs shif",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p07-0047",
+      "info_point": "5 LLM-Driven Program Synthesis",
+      "covered": 1,
+      "reason": "fallback token match 3/3"
+    },
+    {
+      "paragraph_id": "p07-0048",
+      "info_point": "This section presents the LLM-driven program synthesis workflow that powersAUTOPOIESIS’s control plane.",
+      "covered": 1,
+      "reason": "fallback token match 6/9"
+    },
+    {
+      "paragraph_id": "p07-0049",
+      "info_point": "5.1 Problem Formulation",
+      "covered": 0,
+      "reason": "fallback token match 0/2"
+    },
+    {
+      "paragraph_id": "p07-0050",
+      "info_point": "Objective.Given a runtime trace that captures evolving workload and cluster conditions (i.e., the snapshotted runtime trace mentioned in §4),AUTOPOIESISseeks to evolve a serving policy that minimizes the end-to-end trace completion time Ttotal.",
+      "covered": 1,
+      "reason": "fallback token match 7/12"
+    },
+    {
+      "paragraph_id": "p07-0051",
+      "info_point": "Continuousexecutionconstraint.AsisstandardinonlineLLMserving[2,11,12],thesystemoperates continuously:It does not pause during scheduling or reconfiguration.When a rescheduling event is triggered, the scheduler computes a new serving plan while the cluster continues serving under the previous (now st",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p07-0052",
+      "info_point": "Serving policy formulation.Under the continuous execution constraint, navigating the runtime trade-off space reduces to two decisions:When to reschedule and how to reschedule.We formalize these as a pair of co-evolved functions that together constitute the serving policy:",
+      "covered": 1,
+      "reason": "fallback token match 8/12"
+    },
+    {
+      "paragraph_id": "p07-0053",
+      "info_point": "•should_reschedule(ctx) →{0, 1}, the rescheduling strategy that determines whether current condi- tions have shifted sufficiently to justify rescheduling.This controls the rescheduling frequency N within the given trace (Trade-off (i)).",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p07-0054",
+      "info_point": "•schedule(ctx) →plan, the scheduling algorithm that produces a new serving plan, which controls both the scheduling overhead (Trade-off (ii)) and the reconfiguration magnitude of each new plan relative to the old plan.(Trade-off (iii)).",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p07-0055",
+      "info_point": "Both functions receive a shared context ctx, a state observation captured at each monitoring point during thetrace.Eachobservationcontainstheworkloadandclusterconditionsatthatmoment,alongwiththe currently deployed plan (or ∅at cold start).For instance, when request arrival rates surge at a particula",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p07-0056",
+      "info_point": "Execution model.We now formalize the cost structure that arises when these two functions execute under the continuous execution constraint.We illustrate the intervals and phases of the execution model in Figure 4.",
+      "covered": 1,
+      "reason": "fallback token match 8/12"
+    },
+    {
+      "paragraph_id": "p08-0057",
+      "info_point": "Sch.",
+      "covered": 0,
+      "reason": "fallback no tokens"
+    },
+    {
+      "paragraph_id": "p08-0058",
+      "info_point": "Serving under plan,-.Transitioning to plan, Serving under plan,",
+      "covered": 1,
+      "reason": "fallback token match 3/4"
+    },
+    {
+      "paragraph_id": "p08-0059",
+      "info_point": "3 Scheduling Reconfig.",
+      "covered": 1,
+      "reason": "fallback token match 2/2"
+    },
+    {
+      "paragraph_id": "p08-0060",
+      "info_point": "Figure 4Execution model illustration.1 ⃝Rescheduling intervals composing Ttotal:The first interval is a cold start, while subsequent intervals are triggered by should_reschedule and each contains three phases.2 ⃝Detailed view of an interval (i ≥2) with three phases:Scheduling, reconfiguration, and s",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p08-0061",
+      "info_point": "•Phase1:Scheduling.schedule(ctxi) generates the new plan plani;meanwhile, the system continues serving under previous plan plani−1at degraded efficiency due to the workload-plan mismatch.The stale serving cost tstale(i) corresponds to this scheduling period on the timeline.",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p08-0062",
+      "info_point": "•Phase2:Reconfiguration.Thesystemtransitionsfromplani−1toplani;meanwhile,theoverlapping portionoftheservingplancontinuesservingatreducedefficiencyasthenon-overlappingportionis being reconfigured (e.g., migrating KV caches, redistributing model weights, or adjusting parallelism configurations).The re",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p08-0063",
+      "info_point": "•Phase 3:Serving.The system serves under the new plan planiat full efficiency until the next rescheduling trigger; all resources are now aligned with the current workload.The serving cost tserve(i) corresponds to this stable serving period on the timeline.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p08-0064",
+      "info_point": "The total trace completion time is therefore:",
+      "covered": 1,
+      "reason": "fallback token match 3/5"
+    },
+    {
+      "paragraph_id": "p08-0065",
+      "info_point": "h tstale(i) + treconfig(i) + tserve(i) i (1) whereNisnotafixedconstantbutdeterminedbyhowoftenshould_rescheduletriggersrescheduling during the trace,and each cost component within the summation reflects the behavior ofschedule at the corresponding interval.The objective of our program synthesis workf",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p08-0066",
+      "info_point": "Trade-off space.However, minimizing Ttotalis not straightforward:The cost components in Equation 13 (i.e., tstale, treconfig, tserving) are interdependent, and improvements along one axis frequently come at the expense of another, creating a multi-dimensional trade-off space that should_reschedule a",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p08-0067",
+      "info_point": "•Trade-off(i):Reschedulingfrequencyvs.per-intervaloverhead.Frequentrescheduling(largeN)keeps plans fresh but accumulates scheduling and reconfiguration overhead; infrequent rescheduling (small N) avoids this overhead but permits serving under suboptimal plans.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p09-0068",
+      "info_point": "Figure 5Overview of LLM-driven program synthesis workflow.The evaluator (§5.3) scores each candidate and produces artifact feedback.The synthesis configuration (§5.4) configures the population initialization and guides mutations using the artifact feedback.",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p09-0069",
+      "info_point": "•Trade-off (ii):Scheduling thoroughness vs.",
+      "covered": 1,
+      "reason": "fallback token match 2/3"
+    },
+    {
+      "paragraph_id": "p09-0070",
+      "info_point": "•Trade-off (iii):Reconfiguration aggressiveness vs.",
+      "covered": 1,
+      "reason": "fallback token match 2/3"
+    },
+    {
+      "paragraph_id": "p09-0071",
+      "info_point": "Toprovideconcreteintuitionforhowthesetrade-offsmanifestinpractice,wepresentadetailedanalysis in §8, illustrating how the optimal runtime decisions differ across diverse serving scenarios such as workload fluctuations [2], spot instance preemptions [11], and agentic workflow serving [35].",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p09-0072",
+      "info_point": "5.2 Workflow Overview",
+      "covered": 1,
+      "reason": "fallback token match 2/2"
+    },
+    {
+      "paragraph_id": "p09-0073",
+      "info_point": "The program synthesis workflow addresses the challenge of navigating this trade-off space by combining the code-generation capabilities of an LLM with population-based exploration to systematically explore the serving policy space.It proceeds as follows:",
+      "covered": 1,
+      "reason": "fallback token match 7/12"
+    },
+    {
+      "paragraph_id": "p09-0074",
+      "info_point": "•Step 1:Initialization.A population of candidate policies is initialized according to the synthesis configura- tion (§5.4).Each candidate consists of a schedule and should_reschedule function pair, representing a complete serving policy.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p09-0075",
+      "info_point": "•Step 2:Mutation.In each iteration, the LLM mutates candidates from the current population to generate new policies, guided by the synthesis configuration (§5.4).",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p09-0076",
+      "info_point": "•Step 3:Evaluation and feedback.The evaluator (§5.3) executes the should_reschedule and schedule functions of each candidate on the snapshotted runtime trace, producing both the fitness score Ttotaland structured artifact feedback to guide subsequent mutations (§5.4).",
+      "covered": 1,
+      "reason": "fallback token match 8/12"
+    },
+    {
+      "paragraph_id": "p09-0077",
+      "info_point": "•Step 4:Selection and iteration.The synthesis workflow employs a MAP-Elites-inspired [23, 33] candidate selection mechanism combined with island-based population management [36] to retain high-performing candidateswhilemaintainingpopulationdiversity.Steps2-4repeatuntiltheevolutionaryprocess converge",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p09-0078",
+      "info_point": "The illustration of this workflow is shown in Figure 5.This workflow operates within the control plane (§4), running asynchronously alongside live serving in the data plane.",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p09-0079",
+      "info_point": "5.3 Evaluator",
+      "covered": 1,
+      "reason": "fallback token match 1/1"
+    },
+    {
+      "paragraph_id": "p09-0080",
+      "info_point": "The evaluator is the critical bridge between the synthesis process and real-world runtime dynamics.Its role is to faithfully assess how a candidate policy would perform under the current serving conditions, capturing the deeply intertwined trade-offs that govern Ttotal.The evaluator achieves this th",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p10-0081",
+      "info_point": "Table 1Example artifact feedback comparing a parent candidate with two child candidates.The cost breakdown helps identify the strengths of high-performing candidates and informs the direction of subsequent code modifications.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p10-0082",
+      "info_point": "Candidate N Σtstale Σtreconfig Σtserve Ttotal Parent 2 7.6s 12.0s 25.2s 44.8s Child A 5 5.5s 4.0s 24.0s 33.5s Child B 1 10.0s 17.0s 23.0s 50.0s Serving simulator.The serving simulator produces the cost estimates used by the evaluator during trace replay.It supports two types of estimation:(i) Servin",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p10-0083",
+      "info_point": "Evaluator process.Rather than evaluating candidates against synthetic benchmarks, the evaluator replays the actual runtime trace snapshotted from the data plane (§4) against each candidate policy.The replay proceeds in three stages:(i) Monitoring and triggering:The evaluator monitors the simulated w",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p10-0084",
+      "info_point": "Artifact feedback.Beyond the scalar fitness score Ttotal, the evaluator produces a structured cost breakdown as artifact feedback to the synthesis configuration,which drives the LLM-based population mutation (Step 2).AsshowninTable1,foreachevaluatedcandidate,thefeedbackreportstheobservedrescheduling",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p10-0085",
+      "info_point": "5.4 Synthesis Configuration",
+      "covered": 1,
+      "reason": "fallback token match 2/2"
+    },
+    {
+      "paragraph_id": "p10-0086",
+      "info_point": "Thesynthesisconfigurationdefinestheoperationalparametersoftheevolutionaryprocess,andemploys trade-off-aware mutation to steer policy generation toward effective navigation of the runtime trade-off space.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p10-0087",
+      "info_point": "Initialization.The synthesis configuration specifies the complete set of parameters governing the evolution- aryprocess,includingtheevolutionaryalgorithmhyperparameters(e.g.,maximumiterations,population size,numberofislands)andLLMmutationsettings(e.g.,modelidentity,samplingweight,andtempera- ture).T",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p11-0088",
+      "info_point": "vocabularyofdesignpatternsfromwhichtomutate.Weprovideadetailedinitializationconfiguration in Appendix D.",
+      "covered": 0,
+      "reason": "fallback token match 0/3"
+    },
+    {
+      "paragraph_id": "p11-0089",
+      "info_point": "Trade-off-awaremutation.The key to effective policy synthesis lies in making each LLM mutation informed by the runtime trade-offs it must navigate.To this end, our trade-off-aware mutation applies diff-based code modifications [21] to high-performing candidates, integrating two complementary sources",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p11-0090",
+      "info_point": "Thistrade-offstructureprovidestheLLMwithapersistent understandingoftheoptimizationlandscape.Thesystempromptencodes(i)theexecutionmodel structure (Equation 13) so the LLM understands how each cost component contributes to the end-to-end trace completion time, along with (ii) concrete trade-off charac",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p11-0091",
+      "info_point": "•Per-iterationdynamicfeedback.Themutationpromptisaugmentedateachiterationwithdynamic information that grounds the LLM in the current evolutionary state.(i) The artifact feedback from the evaluator (§5.3) exposes the cost breakdown of both the parent and its children candidates, allowing theLLMtocomp",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p11-0092",
+      "info_point": "By unifying these sources, each mutation is simultaneously informed by what the trade-off landscape is and where the current policy stands within it, enabling the LLM to produce trade-off-aware modifications instead of random variations.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p11-0093",
+      "info_point": "6 Implementation",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p11-0094",
+      "info_point": "This section details the implementation ofAUTOPOIESIS’s two-plane system architecture (mentioned in §4), focusingontheoptimizationsthatenabletheevolutionaryprocesstooperateefficiently(§6.1)andthe deployment mechanisms that integrate the self-evolving loop into live serving (§6.2).",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p11-0095",
+      "info_point": "6.1 Evolution Optimization",
+      "covered": 1,
+      "reason": "fallback token match 1/2"
+    },
+    {
+      "paragraph_id": "p11-0096",
+      "info_point": "Warm-startre-evolution.Consecutiveruntimetracesnapshotsoftenreflectgraduallyshiftingconditions, meaningthepreviouslyevolvedpolicyisastrongstartingpointforthenextevolutioncycle.Ratherthan restarting from scratch,AUTOPOIESISimplements a warm-start re-evolution mechanism analogous to local- search-base",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p11-0097",
+      "info_point": "Multi-level timeout hierarchy.LLM-generated candidate policies may contain expensive or divergent computation that would otherwise stall the evolutionary process.To maintain robustness,AUTOPOIESISemploys a multi- level timeout hierarchy.An evolution-level timeout bounds the total wall-clock time of ",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p11-0098",
+      "info_point": "6.2 Deployment and Online Serving",
+      "covered": 1,
+      "reason": "fallback token match 1/2"
+    },
+    {
+      "paragraph_id": "p11-0099",
+      "info_point": "Asynchronouspolicyhot-swap.Thedecoupledtwo-planearchitecturerequiresadeploymentmechanism thattransfersanevolvedpolicyfromthecontrolplanetothedataplanewithoutdisruptingliveserving.",
+      "covered": 0,
+      "reason": "fallback token match 1/5"
+    },
+    {
+      "paragraph_id": "p12-0100",
+      "info_point": "Figure 6Illustration of policy hot-swap (left) and trace snapshotting (right).D, C represent data and control planes; A, B represent different policies.si, ei, and tirepresent the i-th snapshot, evolution, and monitoring time point.",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p12-0101",
+      "info_point": "Consequently, AUTOPOIESISimplements an asynchronous policy hot-swap mechanism, as shown in Figure 6 (left).Since the serving policy is a pair of pure functions (schedule and should_reschedule), swapping the policy reduces to a lightweight code replacement with negligible overhead.When the control pl",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p12-0102",
+      "info_point": "Runtimetracesnapshotting.Thedataplanemustefficientlycaptureruntimeconditionsandtransmitthem tothecontrolplanewithoutintroducingoverheadonliverequestprocessing.AUTOPOIESISimplementsa sliding-windowsnapshottingmechanismthatoperatesintwostages.Intherecordingstage,thedataplane continuously logs workload",
+      "covered": 1,
+      "reason": "fallback token match 2/11"
+    },
+    {
+      "paragraph_id": "p12-0103",
+      "info_point": "7 System Evaluation",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p12-0104",
+      "info_point": "This evaluation answers three essential questions:",
+      "covered": 0,
+      "reason": "fallback token match 0/5"
+    },
+    {
+      "paragraph_id": "p12-0105",
+      "info_point": "•Q1:What is the end-to-end performance of Autopoiesis compared to state-of-the-art serving systems under diverse runtime dynamics?(§7.1) •Q2:How does the self-evolving process reshape serving policies throughout deployment?(§7.2) •Q3:How effective is the LLM-driven program synthesis workflow in disc",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p12-0106",
+      "info_point": "Baselines.Three state-of-the-art LLM serving systems are considered, each targeting one category of runtime dynamics:(i) DistServe [6], a disaggregated LLM serving framework that implements resource and parallelism schedulingtohandleworkloadfluctuations,evaluatedonthehomogeneouscluster;(ii)HexGen[38",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p13-0107",
+      "info_point": "Figure 7End-to-end system execution time comparison betweenAUTOPOIESISand DistServe (left), HexGen (middle), SpotServe (right) on homogeneous, heterogeneous, and elastic cloud clusters with different testing traces.",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p13-0108",
+      "info_point": "framework that handles cluster dynamics through adaptive parallelism reconfiguration and stateful inference recovery, was evaluated on the elastic cloud cluster.",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p13-0109",
+      "info_point": "Traces.Forthehomogeneousandheterogeneousclusterevaluations,weuseworkloadtracessubsampled from ShareGPT [39] and LongBench [40].For the elastic cloud cluster evaluation, we use cluster membership traces derived from the Microsoft Azure Functions (MAF) dataset [41], combined with ShareGPT workload tra",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p13-0110",
+      "info_point": "Models and metrics.We deploy Llama3.1-70B as the served model on homogeneous and elastic cloud clusters, and additionally deploy Llama3.1-8B and Llama2-13B on the heterogeneous cluster.For evaluation, we report trace completion time, consisting of scheduling, reconfiguration, and serving time as def",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p13-0111",
+      "info_point": "SynthesisLLM.TheLLM-drivenprogramsynthesisworkflow(§5)ispoweredbyGLM-4.7-Flash[42].Our framework is model-agnostic and can be driven by any capable LLM.",
+      "covered": 1,
+      "reason": "fallback token match 2/10"
+    },
+    {
+      "paragraph_id": "p13-0112",
+      "info_point": "7.1 End-to-end Evaluation",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p13-0113",
+      "info_point": "EvaluationonhomogeneousclusterwithDistServe.Figure7(left)comparesAUTOPOIESISwithDistServeon ahomogeneousclusterundertworepresentativetraces.Overall,AUTOPOIESISachievesupto31%and on average27% reduction intotal execution time.During volatile workload periodsthat require frequent plan adaptation,AUTOP",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p13-0114",
+      "info_point": "Evaluation on heterogeneous cluster with HexGen.As shown inFigure 7 (middle),AUTOPOIESISachieves up to 33% and on average 30% reduction in end-to-end execution time compared to HexGen on a heterogeneous cluster.On heterogeneous clusters, the scheduling search becomes a critical bottleneck—HexGen req",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p14-0115",
+      "info_point": "Figure 8Convergence curve of the evolution process on volatile and stable workload periods in the heterogeneous cluster.",
+      "covered": 1,
+      "reason": "fallback token match 2/10"
+    },
+    {
+      "paragraph_id": "p14-0116",
+      "info_point": "todeviceheterogeneity,reducingpolicysearchtimewhileminimizingtheimpactonservinglatency.We present a detailed analysis of the evolved scheduling policies and their qualitative differences in §7.2.",
+      "covered": 0,
+      "reason": "fallback token match 1/11"
+    },
+    {
+      "paragraph_id": "p14-0117",
+      "info_point": "EvaluationonelasticcloudclusterwithSpotServe.AsshowninFigure7(right),wecompareAUTOPOIESIS with SpotServe on an elastic cloud cluster.AUTOPOIESISachieves up to 53% and on average 44% reduction in total execution time.Unlike previous scenarios, the dominant runtime trade-off in elastic cloud clusters ",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p14-0118",
+      "info_point": "7.2 Serving Policy Deep Dive",
+      "covered": 0,
+      "reason": "fallback token match 0/2"
+    },
+    {
+      "paragraph_id": "p14-0119",
+      "info_point": "Case study:Evolved serving policy in the heterogeneous case.We analyze the qualitative differences between theevolvedschedulingpolicydiscoveredbyAUTOPOIESISandHexGen’soriginalpolicyonheterogeneous clusters.The evolved policy minimizes scheduling time while maintaining near-optimal serving performanc",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p14-0120",
+      "info_point": "7.3 Effectiveness of the Evolution Process",
+      "covered": 0,
+      "reason": "fallback token match 0/3"
+    },
+    {
+      "paragraph_id": "p14-0121",
+      "info_point": "Convergence analysis.As shown in Figure 8, we evaluate the convergence behavior ofAUTOPOIESIS’s evolution process under different workload characteristics in the heterogeneous cluster setup.Under volatile and stable workloadperiods,theevolutionconvergeswithinapproximately80and60iterations(lessthan10",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p15-0122",
+      "info_point": "Figure9Normalized evolution time across four different runtime snapshots,comparing cold-start evolution (Evolve) against warm-start re-evolution (Evolve warm-start).",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p15-0123",
+      "info_point": "Table 2End-to-end comparison under workload fluctuation.",
+      "covered": 1,
+      "reason": "fallback token match 2/4"
+    },
+    {
+      "paragraph_id": "p15-0124",
+      "info_point": "Trace Policy N Σtstale Σtreconfig Σtserve Overall Thpt Greedy 10 65.1s 244.8s 422.1s 95,723 t/s ILP 1 104.7s 0.0s 686.5s 88,558 t/s Ours 9 17.5s 217.6s 416.3s 107,578 t/s Greedy 10 27.2s 38.0s 120.5s 436,353 t/s ILP 1 34.3s 0.0s 113.3s 548,851 t/s Ours 2 4.3s 4.2s 115.8s 651,222 t/s Warm-startimpact",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p15-0125",
+      "info_point": "8 System Analysis and Discussion",
+      "covered": 0,
+      "reason": "fallback token match 0/2"
+    },
+    {
+      "paragraph_id": "p15-0126",
+      "info_point": "Thissectioncomplements§7withcontrolledcasestudies.Eachstudyisolatesaspecificworkloadregime (e.g.,volatileorstable)andcomparestheevolvedpolicyagainststaticbaselinesatoppositeextremesof the trade-off space (e.g., greedy vs.ILP), revealing how our LLM-driven synthesis workflow (§5) navigates runtime tr",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p15-0127",
+      "info_point": "8.1 Workload Fluctuation",
+      "covered": 1,
+      "reason": "fallback token match 2/2"
+    },
+    {
+      "paragraph_id": "p15-0128",
+      "info_point": "Setup.We consider an LLM serving deployment at the Swiss AI Center [34], where a heterogeneous GPU cluster serves multiple LLMs under dynamic workloads.The serving policy must manage scheduling, reconfiguration, and serving trade-offs, and determine the rescheduling frequency to minimize overall sys",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p15-0129",
+      "info_point": "Traces.We subsample two workload traces from Swiss AI Center [34] with distinct fluctuation patterns:A volatile trace with frequently changing characteristics and a stable trace with seldom changing characteristics.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p15-0130",
+      "info_point": "Baselines.We compare our evolved policy against two static baselines that represent opposite extremes of the trade-off space:A greedy-based policy optimized for scheduling speed, and an ILP-based policy optimized for plan quality, both with manually tuned rescheduling frequencies.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p15-0131",
+      "info_point": "Resultsanalysis.Table2summarizestheresults.Averagedacrossbothtraces,thegreedy-basedpolicy reschedules at every transition (N=10), achieving comparable serving latency to the evolved policy (271.3s vs.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p16-0132",
+      "info_point": "reducing combined overhead to 69.5s but serving under a stale plan as workload conditions shift, producing 50%higherservinglatencythantheevolvedpolicy(399.9svs.266.1s)anda1.2×degradationinTtotal (469.4s vs.387.8s).Notably, the greedy-based policy outperforms the ILP-based policy on the volatile trac",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p16-0133",
+      "info_point": "Insight 1:EvolvedpoliciesreshapetheParetofrontier.TheschedulingalgorithmdesignspaceexhibitsaPareto frontierbetweentwocompetingcosts:Schedulingandreconfiguration(Σtstale+ Σtreconfig)vs.servingtime(Σtserve).",
+      "covered": 0,
+      "reason": "fallback token match 1/9"
+    },
+    {
+      "paragraph_id": "p16-0134",
+      "info_point": "Reschedulingstrategyanalysis.Thegreedy-basedpolicy,duetoitsminimizedper-reschedulingoverhead, choosestorescheduleateverytransitionacrossbothtraces(N=10),outperformingtheILP-basedpolicy whentheworkloadisvolatilebutaccumulatingunnecessaryschedulingandreconfigurationoverheadon stable intervals.In contr",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p16-0135",
+      "info_point": "Insight 2:Schedulingalgorithmandreschedulingstrategyrequireco-evolution.",
+      "covered": 0,
+      "reason": "fallback token match 0/3"
+    },
+    {
+      "paragraph_id": "p16-0136",
+      "info_point": "8.2 Elastic Cluster Dynamics",
+      "covered": 1,
+      "reason": "fallback token match 3/3"
+    },
+    {
+      "paragraph_id": "p16-0137",
+      "info_point": "Setup.Weconsiderthesamedeploymentsettingas§8.1,butwheretheclustertopologychangesduring serving, driven by two common sources:Involuntary changes from spot instance preemption [11] (e.g., AWS g4dn instances being reclaimed) and voluntary changes from autoscaling mechanisms [7] (e.g., scaling out unde",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p16-0138",
+      "info_point": "Traces.We subsample two traces from the Microsoft Azure Functions (MAF) dataset [41] with volatile and stable cluster change characteristics (scheduling problem formulation and trace information in Appendix C and Appendix H).",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p16-0139",
+      "info_point": "Baselines.We compare against two static baselines:A full-migration policy optimized for serving performance by always reconfiguring to the globally optimal plan, and a minimal-migration policy optimized for reconfiguration",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p17-0140",
+      "info_point": "Table 3E2E comparison under elastic cluster dynamics.",
+      "covered": 1,
+      "reason": "fallback token match 3/5"
+    },
+    {
+      "paragraph_id": "p17-0141",
+      "info_point": "Trace Policy Σtstale Σtreconfig Overall Thpt Full-migration 9.7 108.8s 8,433 t/s Minimal-migration 1.6s 8.4s 13,304 t/s Ours 0.7s 44.4s 14,843 t/s Full-migration 9.6s 67.9s 11,080 t/s Minimal-migration 2.1s 6.3s 10,187 t/s Ours 0.6s 30.8s 12,731 t/s efficiency by always reconfiguring to the nearest ",
+      "covered": 1,
+      "reason": "fallback token match 7/12"
+    },
+    {
+      "paragraph_id": "p17-0142",
+      "info_point": "Results analysis.Table 3 summarizes the results.The elastic cluster dynamics scenario is primarily governed by the trade-off between reconfiguration aggressiveness and serving performance.The full-migration policy achieves the highest plan quality on both traces at the cost of heavy scheduling and r",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p17-0143",
+      "info_point": "Insight 3:Reconfigurationstrategysimilarlybenefitsfromevolution.Inelasticclusterdynamicsscenarioswhere reconfiguration aggressiveness becomes the primary trade-off, an optimal reconfiguration strategy must (i) navigate the trade-off between reconfiguration aggressiveness and serving performance, and",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p17-0144",
+      "info_point": "8.3 Agentic Request Scheduling",
+      "covered": 1,
+      "reason": "fallback token match 1/3"
+    },
+    {
+      "paragraph_id": "p17-0145",
+      "info_point": "Setup.We consider a request scheduling problem in LLM serving for agentic workflows,where the system must determine request-to-GPU assignment and queuing order within each GPU’s local queue before each round of request processing.Unlike the previous scenarios that operate at cluster-level deployment",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p17-0146",
+      "info_point": "Trace.We use two non-overlapping 64-workflow slices subsampled from ShareGPT [39].Each workflow is a multi-call agentic request trace with online call revelation.Detailed scheduling problem formulation and trace information are provided in Appendix C and Appendix H.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p17-0147",
+      "info_point": "Baselines.We compare against two static baselines:An MILP-based policy that solves the request assignment and queuing problem optimally but incurs high per-round scheduling overhead, and a greedy-based policy that produces assignments quickly but struggles to achieve optimal request completion time.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p17-0148",
+      "info_point": "Executionmodelcalibration.Asthisscenariooperatesattherequestlevelratherthantheclusterlevel,no model migration or parallelism reconfiguration occurs between rounds.The execution model (§5.1) naturally accommodatesthis by eliminatingthe reconfigurationcomponent,reducingTtotaltothe sum ofper-round sche",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p17-0149",
+      "info_point": "Results analysis.The evolved policy outperforms all baselines on both traces.On Trace 1, the greedy-based policies maintain negligible scheduling overhead but produce weaker serving plans, yielding Ttotalof 10.5s.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p18-0150",
+      "info_point": "Table 4End-to-end comparison under asynchronous request scheduling on two ShareGPT traces.",
+      "covered": 1,
+      "reason": "fallback token match 2/7"
+    },
+    {
+      "paragraph_id": "p18-0151",
+      "info_point": "Trace 1 Trace 2 Policy Σtsched Σtserve Ttotal Σtsched Σtserve Ttotal Greedy 0.1s 10.4s 10.5s 0.1s 18.0s 18.1s MILP 6.9s 25.0s 31.9s 2.2s 10.3s 12.5s Ours 1.3s 5.6s 6.8s 0.4s 6.7s 7.1s TheMILP-basedpolicy optimizeseach roundexactly butbecomes scheduling-dominated:Its accumulated scheduling overhead r",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p18-0152",
+      "info_point": "Insight 4: Our LLM-driven program synthesis workflow adapts across serving scenarios.The LLM-driven program synthesisworkflow(§5.3)adaptstodifferenttypesofruntimedynamics(fromcluster-leveldeploymenttorequest- levelscheduling)bytailoringtheexecutionmodel(§5.1)tothesystemcoststructureofeachscenario.In",
+      "covered": 1,
+      "reason": "fallback token match 8/12"
+    },
+    {
+      "paragraph_id": "p18-0153",
+      "info_point": "Additional case studies and insights.We also present one additional case studies in Appendix F.It isolates the scheduling algorithm as the optimization target, revealing that the synthesis workflow discovers deployment- tailored algorithmic optimizations.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p18-0154",
+      "info_point": "Discussion.WhileAUTOPOIESISdemonstrates strong performance across diverse runtime dynamics, several practicalconsiderationsremainregardingdeploymentcost,LLMreliability,configurationsensitivity,and evolutionary efficiency.We provide a detailed discussion in Appendix I.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p18-0155",
+      "info_point": "9 Conclusion",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p18-0156",
+      "info_point": "WepresentAUTOPOIESIS,aself-evolvingservingparadigmthatshiftsLLMservingfromstatic,human- engineered policy design to continuous, LLM-driven policy evolution.By decoupling policy execution from policyevolutionthroughatwo-planearchitecture,AUTOPOIESIScontinuouslyobservesruntimedynamics, evolves serving",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p18-0157",
+      "info_point": "References",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p18-0158",
+      "info_point": "[1]Yuxin Wang, Yuhan Chen, Zeyu Li, Xueze Kang, Yuchu Fang, Yeju Zhou, Yang Zheng, Zhenheng Tang, Xin He, Rui Guo, et al.Burstgpt:A real-world workload dataset to optimize llm serving systems.In Proceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p18-0159",
+      "info_point": "[2]Biao Sun, Ziming Huang, Hanyu Zhao, Wencong Xiao, Xinyi Zhang, Yong Li, and Wei Lin.Llumnix:Dynamic schedul- ing for large language model serving.In 18th USENIX symposium on operating systems design and implementation (OSDI 24), pages 173–191, 2024.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p18-0160",
+      "info_point": "[3]Amey Agrawal, Nitin Kedia, Ashish Panwar, Jayashree Mohan, Nipun Kwatra, Bhargav Gulavani, Alexey Tumanov, and Ramachandran Ramjee.Taming {Throughput-Latency} tradeoff in {LLM} inference with {Sarathi-Serve}.In 18th USENIX symposium on operating systems design and implementation (OSDI 24), pages ",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p18-0161",
+      "info_point": "[4]Zhuohan Li, Lianmin Zheng, Yinmin Zhong, Vincent Liu, Ying Sheng, Xin Jin, Yanping Huang, Zhifeng Chen, Hao Zhang, Joseph E Gonzalez, et al.{AlpaServe}:Statistical multiplexing with model parallelism for deep learning",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p19-0162",
+      "info_point": "serving.In 17th USENIX Symposium on Operating Systems Design and Implementation (OSDI 23), pages 663–679, 2023.",
+      "covered": 0,
+      "reason": "fallback token match 0/10"
+    },
+    {
+      "paragraph_id": "p19-0163",
+      "info_point": "[5]YingSheng,ShiyiCao,DachengLi,BanghuaZhu,ZhuohanLi,DanyangZhuo,JosephEGonzalez,andIon Stoica.Fairness in serving large language models.In 18th USENIX Symposium on Operating Systems Design and Implementation (OSDI 24), pages 965–988, 2024.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p19-0164",
+      "info_point": "[6]Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu, Yibo Zhu, Xuanzhe Liu, Xin Jin, and Hao Zhang.{DistServe}: Disaggregatingprefillanddecodingforgoodput-optimizedlargelanguagemodelserving.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p19-0165",
+      "info_point": "[7]YaoFu,LeyangXue,YeqiHuang,Andrei-OctavianBrabete,DmitriiUstiugov,YuvrajPatel,andLuoMai.",
+      "covered": 0,
+      "reason": "fallback token match 0/8"
+    },
+    {
+      "paragraph_id": "p19-0166",
+      "info_point": "[8]Yuxing Xiang, Xue Li, Kun Qian, Yufan Yang, Diwen Zhu, Wenyuan Yu, Ennan Zhai, Xuanzhe Liu, Xin Jin, and Jingren Zhou.Aegaeon:Effective gpu pooling for concurrent llm serving on the market.In Proceedings of the ACM SIGOPS 31st Symposium on Operating Systems Principles, pages 1030–1045, 2025.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p19-0167",
+      "info_point": "[9]Bingyang Wu,Shengyu Liu,Yinmin Zhong,Peng Sun,Xuanzhe Liu,and Xin Jin.Loongserve:Efficiently serving long-contextlargelanguagemodelswithelasticsequenceparallelism.InProceedingsoftheACMSIGOPS30th Symposium on Operating Systems Principles, pages 640–654, 2024.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p19-0168",
+      "info_point": "[10]Marcel Wagenländer, Guo Li, Bo Zhao, Luo Mai, and Peter Pietzuch.Tenplex:Dynamic parallelism for deep learning using parallelizable tensor collections.In Proceedings of the ACM SIGOPS 30th Symposium on Operating Systems Principles, pages 195–210, 2024.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p19-0169",
+      "info_point": "[11]Xupeng Miao, Chunan Shi, Jiangfei Duan, Xiaoli Xi, Dahua Lin, Bin Cui, and Zhihao Jia.",
+      "covered": 0,
+      "reason": "fallback token match 0/8"
+    },
+    {
+      "paragraph_id": "p19-0170",
+      "info_point": "[12]YouheJiang,FangchengFu,XiaozheYao,TaiyiWang,BinCui,AnaKlimovic,andEikoYoneki.Thunderserve: High-performanceandcost-efficientllmservingincloudenvironments.ProceedingsofMachineLearningand Systems, 7, 2025.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p19-0171",
+      "info_point": "[13]Ziming Mao, Tian Xia, Zhanghao Wu, Wei-Lin Chiang, Tyler Griggs, Romil Bhardwaj, Zongheng Yang, Scott Shenker, and Ion Stoica.Skyserve:Serving ai models across regions and clouds with spot instances.In Proceedings of the Twentieth European Conference on Computer Systems, pages 159–175, 2025.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p19-0172",
+      "info_point": "[14]Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph Gonzalez, Hao Zhang, and Ion Stoica.Efficient memory management for large language model serving with pagedattention.In Proceedings of the 29th symposium on operating systems principles, pages 611–626, 2023.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p19-0173",
+      "info_point": "[15]Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soojeong Kim, and Byung-Gon Chun.Orca:A distributed serving system for {Transformer-Based} generative models.In 16th USENIX symposium on operating systems design and implementation (OSDI 22), pages 521–538, 2022.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p19-0174",
+      "info_point": "[16]Haoran Qiu, Weichao Mao, Archit Patke, Shengkun Cui, Saurabh Jha, Chen Wang, Hubertus Franke, Zbigniew T Kalbarczyk, Tamer Ba¸sar, and Ravishankar K Iyer.Efficient interactive llm serving with proxy model-based sequence length prediction.arXiv preprint arXiv:2404.08509, 2024.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p19-0175",
+      "info_point": "[17]RongxinCheng,YuxinLai,XingdaWei,RongChen,andHaiboChen.",
+      "covered": 0,
+      "reason": "fallback token match 0/5"
+    },
+    {
+      "paragraph_id": "p19-0176",
+      "info_point": "[18]RuoyuQin,ZhemingLi,WeiranHe,JialeiCui,HeyiTang,FengRen,TengMa,ShangmingCai,YinengZhang, Mingxing Zhang, et al.Mooncake:A kvcache-centric disaggregated architecture for llm serving.ACM Transactions on Storage, 2024.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p19-0177",
+      "info_point": "[19]Youhe Jiang, Ran Yan, and Binhang Yuan.Hexgen-2:Disaggregated generative inference of llms in heterogeneous environment.arXiv preprint arXiv:2502.07903, 2025.",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p19-0178",
+      "info_point": "[20]Bernardino Romera-Paredes, Mohammadamin Barekatain, Alexander Novikov, Matej Balog, M Pawan Kumar, Emilien Dupont, Francisco JR Ruiz, Jordan S Ellenberg, Pengming Wang, Omar Fawzi, et al.Mathematical discoveries from program search with large language models.Nature, 625(7995):468–475, 2024.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p20-0179",
+      "info_point": "[21]AlexanderNovikov,NgânV˜u,MarvinEisenberger,EmilienDupont,Po-SenHuang,AdamZsoltWagner,Sergey Shirobokov, Borislav Kozlovskii, Francisco JR Ruiz, Abbas Mehrabian, et al.Alphaevolve:A coding agent for scientific and algorithmic discovery.arXiv preprint arXiv:2506.13131, 2025.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p20-0180",
+      "info_point": "[22]ShuLiu,ShubhamAgarwal,MonishwaranMaheswaran,MertCemri,ZhifeiLi,QiuyangMang,AshwinNaren, Ethan Boneh, Audrey Cheng, Melissa Z Pan, et al.Evox:Meta-evolution for automated discovery.arXiv preprint arXiv:2602.23413, 2026.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p20-0181",
+      "info_point": "[23]Asankhaya Sharma.Openevolve:An open-source evolutionary coding agent, 2025.",
+      "covered": 0,
+      "reason": "fallback token match 1/9"
+    },
+    {
+      "paragraph_id": "p20-0182",
+      "info_point": "[24]Gang Liao, Hongsen Qin, Ying Wang, Alicia Golden, Michael Kuchnik, Yavuz Yetim, Jia Jiunn Ang, Chunli Fu, Yihan He, Samuel Hsia, et al.Kernelevolve:Scaling agentic kernel coding for heterogeneous ai accelerators at meta.arXiv preprint arXiv:2512.23236, 2025.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p20-0183",
+      "info_point": "[25]Audrey Cheng, Shu Liu, Melissa Pan, Zhifei Li, Bowen Wang, Alex Krentsel, Tian Xia, Mert Cemri, Jongseok Park, Shuo Yang, et al.Barbarians at the gate:How ai is upending systems research.arXiv preprint arXiv:2510.06189, 2025.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p20-0184",
+      "info_point": "[26]Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, and Bryan Catanzaro.Megatron- lm:Training multi-billion parameter language models using model parallelism.arXiv preprint arXiv:1909.08053, 2019.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p20-0185",
+      "info_point": "[27]Yanping Huang, Youlong Cheng, Ankur Bapna, Orhan Firat, Dehao Chen, Mia Chen, HyoukJoong Lee, Jiquan Ngiam, Quoc V Le, Yonghui Wu, et al.Gpipe:Efficient training of giant neural networks using pipeline parallelism.Advances in neural information processing systems, 32, 2019.",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p20-0186",
+      "info_point": "[28]Sam Ade Jacobs, Masahiro Tanaka, Chengming Zhang, Minjia Zhang, Shuaiwen Leon Song, Samyam Rajbhandari, and Yuxiong He.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p20-0187",
+      "info_point": "[29]SamyamRajbhandari,ConglongLi,ZheweiYao,MinjiaZhang,RezaYazdaniAminabadi,AmmarAhmadAwan, JeffRasley,andYuxiongHe.Deepspeed-moe:Advancingmixture-of-expertsinferenceandtrainingtopower next-generation ai scale.In International conference on machine learning, pages 18332–18346.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p20-0188",
+      "info_point": "[30]Henrique Assumpção, Diego Ferreira, Leandro Campos, and Fabricio Murai.Codeevolve:An open source evolutionary coding agent for algorithm discovery and optimization.arXiv preprint arXiv:2510.14150, 2025.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p20-0189",
+      "info_point": "[31]JohnRKoza.Geneticprogrammingasameansforprogrammingcomputersbynaturalselection.Statisticsand [32]Siyuan Chen, Zhichao Lu, and Qingfu Zhang.Evolution of kernels:Automated risc-v kernel optimization with large language models.arXiv preprint arXiv:2509.14265, 2025.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p20-0190",
+      "info_point": "[33]Jean-Baptiste Mouret and Jeff Clune.Illuminating search spaces by mapping elites.arXiv preprint arXiv:1504.04909, 2015.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p20-0191",
+      "info_point": "[34]Xiaozhe Yao.How SwissAI uses OpenTela for scalable LLM serving.Xiaozhe Yao (Blog),March 2026.Accessed: 2026-03-16.",
+      "covered": 1,
+      "reason": "fallback token match 3/11"
+    },
+    {
+      "paragraph_id": "p20-0192",
+      "info_point": "[35]You Peng, Youhe Jiang, Wenqi Jiang, Chen Wang, and Binhang Yuan.Hexgen-flow:Optimizing llm inference request scheduling for agentic text-to-sql.arXiv preprint arXiv:2505.05286, 2025.",
+      "covered": 1,
+      "reason": "fallback token match 10/12"
+    },
+    {
+      "paragraph_id": "p20-0193",
+      "info_point": "[36]Reiko Tanese.Distributed genetic algorithms for function optimization.University of Michigan, 1989.",
+      "covered": 1,
+      "reason": "fallback token match 3/10"
+    },
+    {
+      "paragraph_id": "p20-0194",
+      "info_point": "[37]Zhihang Yuan, Yuzhang Shang, Yang Zhou, Zhen Dong, Zhe Zhou, Chenhao Xue, Bingzhe Wu, Zhikai Li, Qingyi Gu, Yong Jae Lee, et al.Llm inference unveiled:Survey and roofline model insights.arXiv preprint arXiv:2402.16363, 2024.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p20-0195",
+      "info_point": "[38]Youhe Jiang, Fangcheng Fu, Xiaozhe Yao, Guoliang He, Xupeng Miao, Ana Klimovic, Bin Cui, Binhang Yuan, and Eiko Yoneki.Demystifying cost-efficiency in llm serving over heterogeneous gpus.arXiv preprint arXiv:2502.00722, 2025.",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p20-0196",
+      "info_point": "[39]LianminZheng,Wei-LinChiang,YingSheng,SiyuanZhuang,ZhanghaoWu,YonghaoZhuang,ZiLin,Zhuohan Li,DachengLi,EricXing,etal.Judgingllm-as-a-judgewithmt-benchandchatbotarena.Advancesinneural information processing systems, 36:46595–46623, 2023.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p21-0197",
+      "info_point": "[40]Yushi Bai, Xin Lv, Jiajie Zhang, Hongchang Lyu, Jiankai Tang, Zhidian Huang, Zhengxiao Du, Xiao Liu, Aohan Zeng, Lei Hou, et al.Longbench:A bilingual, multitask benchmark for long context understanding.In Proceedings of the 62nd annual meeting of the association for computational linguistics (vo",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p21-0198",
+      "info_point": "[41]Mohammad Shahrad, Rodrigo Fonseca, Inigo Goiri, Gohar Chaudhry, Paul Batum, Jason Cooke, Eduardo Laureano, Colby Tresness, Mark Russinovich, and Ricardo Bianchini.Serverless in the wild:Characterizing and optimizing the serverless workload at a large cloud provider.In 2020 USENIX annual technica",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p21-0199",
+      "info_point": "[42]Aohan Zeng, Xin Lv, Qinkai Zheng, Zhenyu Hou, Bin Chen, Chengxing Xie, Cunxiang Wang, Da Yin, Hao Zeng, Jiajie Zhang, et al.Glm-4.5:Agentic, reasoning, and coding (arc) foundation models.arXiv preprint arXiv:2508.06471, 2025.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p21-0200",
+      "info_point": "[43]Alexander Schrijver.Theory of linear and integer programming.John Wiley & Sons, 1998.",
+      "covered": 0,
+      "reason": "fallback token match 0/10"
+    },
+    {
+      "paragraph_id": "p21-0201",
+      "info_point": "[44]Li Zhang,Youhe Jiang,Guoliang He,Xin Chen,Han Lv,Qian Yao,Fangcheng Fu,and Kai Chen.Efficient mixed- precision large language model inference with turbomind.arXiv preprint arXiv:2508.15601, 2025.",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p21-0202",
+      "info_point": "[45]Yuhang Wang, Youhe Jiang, Bin Cui, and Fangcheng Fu.Thinking short and right over thinking long:Serving llm reasoning efficiently and accurately.arXiv preprint arXiv:2505.13326, 2025.",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p21-0203",
+      "info_point": "[46]LMDeploy Contributors.Lmdeploy:A toolkit for compressing, deploying, and serving llm, 2023.",
+      "covered": 0,
+      "reason": "fallback token match 0/7"
+    },
+    {
+      "paragraph_id": "p21-0204",
+      "info_point": "[47]YouheJiang,FangchengFu,WanruZhao,StephanRabanser,JintaoZhang,NicholasDLane,andBinhangYuan.",
+      "covered": 0,
+      "reason": "fallback token match 0/7"
+    },
+    {
+      "paragraph_id": "p21-0205",
+      "info_point": "[48]Youhe Jiang, Fangcheng Fu, and Eiko Yoneki.Boute:Cost-efficient llm serving with heterogeneous llms and gpus via multi-objective bayesian optimization.arXiv preprint arXiv:2602.10729, 2026.",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p21-0206",
+      "info_point": "[49]YouheJiang,FangchengFu,TaiyiWang,GuoliangHe,andEikoYoneki.Oserve:Acceleratingllmservingvia spatial-temporal workload orchestration.arXiv preprint arXiv:2602.12151, 2026.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p21-0207",
+      "info_point": "[50]Chris Tong, Youhe Jiang, Gufeng Chen, Tianyi Zhao, Sibian Lu, Wenjie Qu, Eric Yang, Lynn Ai, and Binhang Yuan.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p21-0208",
+      "info_point": "[51]Wenhao He, Youhe Jiang, Penghao Zhao, Quanqing Xu, Eiko Yoneki, Bin Cui, and Fangcheng Fu.Efficient multi-round llm inference over disaggregated serving.arXiv preprint arXiv:2602.14516, 2026.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p21-0209",
+      "info_point": "[52]PratyushPatel,EshaChoukse,ChaojieZhang,AashakaShah,ÍñigoGoiri,SaeedMaleki,andRicardoBianchini.",
+      "covered": 0,
+      "reason": "fallback token match 0/7"
+    },
+    {
+      "paragraph_id": "p21-0210",
+      "info_point": "[53]Bingyang Wu, Yinmin Zhong, Zili Zhang, Shengyu Liu, Fangyue Liu, Yuanhang Sun, Gang Huang, Xuanzhe Liu, and Xin Jin.Fast distributed inference serving for large language models.arXiv preprint arXiv:2305.05920, 2023.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p21-0211",
+      "info_point": "[54]Xupeng Miao, Yujie Wang, Youhe Jiang, Chunan Shi, Xiaonan Nie, Hailin Zhang, and Bin Cui.Galvatron:Efficient transformer training over multiple gpus using automatic parallelism.arXiv preprint arXiv:2211.13878, 2022.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p21-0212",
+      "info_point": "[55]YouheJiang,FangchengFu,XupengMiao,XiaonanNie,andBinCui.Osdp:Optimalshardeddataparallelfor distributed deep learning.arXiv preprint arXiv:2209.13258, 2022.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p21-0213",
+      "info_point": "[56]HE Guoliang, Youhe Jiang, Wencong Xiao, Jiang Kaihua, Shuguang Wang, Jun Wang, Du Zixian, Zhuo Jiang, Xinlei Zhang, Binhang Yuan, et al.Efficient pre-training of llms via topology-aware communication alignment on more than 9600 gpus.In The Thirty-ninth Annual Conference on Neural Information Pro",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p21-0214",
+      "info_point": "[57]YujieWang,YouheJiang,XupengMiao,FangchengFu,ShenhanZhu,XiaonanNie,YaofengTu,andBinCui.",
+      "covered": 0,
+      "reason": "fallback token match 0/8"
+    },
+    {
+      "paragraph_id": "p21-0215",
+      "info_point": "[58]Ran Yan, Youhe Jiang, Xiaonan Nie, Fangcheng Fu, Bin Cui, and Binhang Yuan.Hexiscale:Accommodating large language model training over heterogeneous environment.arXiv preprint arXiv:2409.01143, 2024.",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p22-0216",
+      "info_point": "Symbol Description i ∈{1, .",
+      "covered": 0,
+      "reason": "fallback token match 0/2"
+    },
+    {
+      "paragraph_id": "p22-0217",
+      "info_point": "A Notations",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p22-0218",
+      "info_point": "We summarize the notations used in the paper in Table 5.",
+      "covered": 0,
+      "reason": "fallback token match 1/4"
+    },
+    {
+      "paragraph_id": "p22-0219",
+      "info_point": "B Serving Simulator",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p22-0220",
+      "info_point": "We present the concrete cost models used in our roofline-based simulator to instantiate SERVE-COST, RECONFIG-COST, and Ttotal.Each GPU type g∈G has per-device HBM capacity mg, peak FP16 throughput Fg(FLOPs/s), HBM bandwidthBg(bytes/s),PCIebandwidthPg(bytes/s),andνgGPUsperphysicalnode.EachmodelMzis d",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p22-0221",
+      "info_point": "Model Weight Size.The total parameter footprint of Mzin bytes is:",
+      "covered": 1,
+      "reason": "fallback token match 2/8"
+    },
+    {
+      "paragraph_id": "p22-0222",
+      "info_point": "Wz= h Lz \u0000 3HzIz+ 2AzHzdz+ 2KzHzdz \u0001 + 2HzVz i ·η 8 (2) where the per-layer terms account for the three MLP projections (3HzIz),the query and output attention projections(2AzHzdz=2H2 z),thekeyandvalueprojections(2KzHzdz),andthesharedembeddingand output-projection matrices (2HzVz).",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p22-0223",
+      "info_point": "Roofline-Based Serve Cost.The latency Λ(z, g, t, b, sp, sd) for a replica group serving Mzon GPU type gwith TP degree t and per-replica batch size b is estimated via the hardware roofline model.For an operation requiring FFLOPs and accessing A bytes, the arithmetic intensity is AI = F/A and the ridg",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p23-0224",
+      "info_point": "The total serve latency sums Topacross all transformer sublayers for both the prefill and decode phases, plus the TP all-reduce communication overhead:",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p23-0225",
+      "info_point": "Λ(z, g, t, b, sp, sd) = Tprefill(z, g, t, b, sp) where Tprefilland Tdecodeapply Equation 3 and Equation 4 to each sublayer and add the ring-allreduce time incurred at each of the Lztransformer layers (two all-reduces per layer:after the attention output projection and after the MLP down-projection):",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p23-0226",
+      "info_point": "where s ∈{1, sp} is the sequence length for the decode and prefill phases respectively, and Rg,tis the effective interconnect bandwidth (intra-node when t ≤νg, cross-node otherwise).",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p23-0227",
+      "info_point": "MemoryFeasibility.Under TP degree t, each GPU shard of Mzholds Wz/t bytes of model weights.A group (z, g, t, b) is infeasible if the per-shard weight exceeds available device capacity, i.e., OOM issues occur:",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p23-0228",
+      "info_point": "whereθ=0.8isamemoryutilizationthresholdreservingheadroomfortheKVcache.Infeasiblegroups are assigned a penalty latency Λ∞≫0; the min-makespan objective then naturally avoids activating them without requiring additional constraints.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p23-0229",
+      "info_point": "Reconfiguration Cost.When consecutive plans σi−1 and σi differ for model Mz— i.e., the (GPU type,TP,count) tuples changes — the cluster must terminate old replicas and reload new ones via PCIe.Let ∆Mi⊆M denote the set of models whose placement changed from σi−1to σi.The reconfiguration cost decompos",
+      "covered": 1,
+      "reason": "fallback token match 5/12"
+    },
+    {
+      "paragraph_id": "p23-0230",
+      "info_point": "RECONFIG-COST(σi−1, σi) = Tterm(σi−1, σi) + Tload(σi) (8) For model Mzon GPU type g, the weight transfer time is TP-insensitive (the full model weight is transferred regardless of sharding degree):",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p23-0231",
+      "info_point": "where cz∈[5.3,11.5] is a model-size-dependent PCIe bandwidth utilization coefficient (smaller models incur higher per-byte overhead due to PCIe protocol amortization).",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p23-0232",
+      "info_point": "The termination cost is the time to drain and evict all changed models from HBM; since different GPU types can terminate concurrently, the bottleneck is the slowest group:",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p23-0233",
+      "info_point": "Tterm(σi−1, σi) =max z∈∆Mi max g∈G: σi−1deploys Mzon g τ(z, g) (10) The loading cost is the time to transfer new model weights to all target GPU types; since different GPU types load in parallel, the bottleneck is again the slowest:",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p23-0234",
+      "info_point": "Tload(σi) = max g∈G max z∈M: σideploys Mzon g τ(z, g) (11)",
+      "covered": 0,
+      "reason": "fallback token match 0/3"
+    },
+    {
+      "paragraph_id": "p24-0235",
+      "info_point": "C Scheduling Problem Formulation",
+      "covered": 1,
+      "reason": "fallback token match 1/3"
+    },
+    {
+      "paragraph_id": "p24-0236",
+      "info_point": "Scheduling problem formulation.Given a heterogeneous cluster of GPUs, we consider the problem of jointly scheduling multiple models under time-varying workloads.Let D = {d1, .",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p24-0237",
+      "info_point": "We consider a discrete time horizon of Ntimestamps.At each timestamp i ∈{1, .",
+      "covered": 0,
+      "reason": "fallback token match 1/7"
+    },
+    {
+      "paragraph_id": "p24-0238",
+      "info_point": "The scheduling plan must satisfy device memory constraints:",
+      "covered": 1,
+      "reason": "fallback token match 3/7"
+    },
+    {
+      "paragraph_id": "p24-0239",
+      "info_point": "MEM-CUMSUM(d, i) ≤md, ∀d ∈D,∀i ∈{1, .",
+      "covered": 1,
+      "reason": "fallback token match 1/1"
+    },
+    {
+      "paragraph_id": "p24-0240",
+      "info_point": "Each scheduling plan σiincurs four types of costs:",
+      "covered": 1,
+      "reason": "fallback token match 2/7"
+    },
+    {
+      "paragraph_id": "p24-0241",
+      "info_point": "•SERVE-COST(σi):the serving latency (or execution time) to process workloads at timestamp i; •RECONFIG-COST(σi−1, σi):the reconfiguration overhead due to changes in scheduling decisions across consecutive timestamps, i.e., from σi−1to σi; •STALE-COST(σi):the penalty incurred due to stale or delayed ",
+      "covered": 1,
+      "reason": "fallback token match 7/12"
+    },
+    {
+      "paragraph_id": "p24-0242",
+      "info_point": "The end-to-end latency for serving the workload over the time horizon is:",
+      "covered": 1,
+      "reason": "fallback token match 2/4"
+    },
+    {
+      "paragraph_id": "p24-0243",
+      "info_point": "Our objective is to find a sequence of scheduling plansσ={σ1, σ2, .",
+      "covered": 0,
+      "reason": "fallback token match 1/5"
+    },
+    {
+      "paragraph_id": "p24-0244",
+      "info_point": "Agentic Request Scheduling Formulation.Given a disaggregated prefill-decode serving cluster, we consider the problemofonlineschedulingformulti-callagenticworkflows.LetPandQdenotethesetsofprefilland decode instances, respectively.Each decode instance has a finite token-capacity budget, and different ",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p25-0245",
+      "info_point": "Let Ω= {ω1, .",
+      "covered": 0,
+      "reason": "fallback no tokens"
+    },
+    {
+      "paragraph_id": "p25-0246",
+      "info_point": "Ateachschedulingtriggeri∈{1, .",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p25-0247",
+      "info_point": "EachworkflowωhasacommittedhorizonSLOωandanactualcompletiontimeCω.Thequalityofa scheduling policy is measured by the completion ratio Cω/SLOω, and we use trace-level metrics such as 95th percentile, 99thpercentile, and mean Cω/SLOωto evaluate end-to-end performance.",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p25-0248",
+      "info_point": "Because scheduling is performed online, each plan σiincurs both a scheduling overhead and a serving cost.Let SCHED-COST(σi) denote the planning time at trigger i, and letSERVE-COST(σi) denote the resulting serving latency contribution.The total trace completion cost is:",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p25-0249",
+      "info_point": "h SCHED-COST(σi) + SERVE-COST(σi) i (15) Ourobjectiveistofindasequenceofschedulingplansσ={σ1, σ2, .",
+      "covered": 1,
+      "reason": "fallback token match 4/5"
+    },
+    {
+      "paragraph_id": "p25-0250",
+      "info_point": "D Initialization Configuration",
+      "covered": 1,
+      "reason": "fallback token match 1/2"
+    },
+    {
+      "paragraph_id": "p25-0251",
+      "info_point": "InTable6,wepresenttheinitializationconfigurationofAUTOPOIESISfortheevolutionaryprocess.These configurations are fine-tuned to achieve the optimal performance in the experiments presented in our paper.",
+      "covered": 1,
+      "reason": "fallback token match 3/11"
+    },
+    {
+      "paragraph_id": "p25-0252",
+      "info_point": "Table 6Configuration parameters used inAUTOPOIESISduring the evolutionary process.",
+      "covered": 0,
+      "reason": "fallback token match 0/6"
+    },
+    {
+      "paragraph_id": "p25-0253",
+      "info_point": "Configuration Scope Parameter Name Configured Value Primary Model Claude Opus 4.6 Sampling Weights 0.7 Secondary Model Claude Sonnet 4.6 Sampling Weights 0.3 Temperature 0.7 Max Tokens 16384 Max Code Length 50000 Max Iterations 100 Population Size 50 Number of Islands 3 Elite Selection Ratio 0.2",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p25-0254",
+      "info_point": "E System Prompts",
+      "covered": 0,
+      "reason": "fallback token match 0/1"
+    },
+    {
+      "paragraph_id": "p25-0255",
+      "info_point": "In this section, we present examples of system prompts we used in AUTOPOIESIS.Across evolutionary iterations, the following prompts are used to guide the LLM to fine-tune the generated program in the next evolutionary iteration.",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p25-0256",
+      "info_point": "Search–serving trade-off guidance:For a given workload and heterogeneous cluster, fine-grained exploration ofthecandidatesearchspacegenerallyyieldshigher-qualityschedulingdecisionsandlowerservingla- tency.Incontrast,coarse-grainedexplorationtendstoproducesuboptimalschedulingoutcomesandin- creasedser",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p26-0257",
+      "info_point": "searchgranularityagainstschedulingquality.Ourdetailedpromptmessageforthisguidanceisshownin prompt message episode 1.",
+      "covered": 0,
+      "reason": "fallback token match 1/5"
+    },
+    {
+      "paragraph_id": "p26-0258",
+      "info_point": "Reconfiguration and serving trade-off guidance:More comprehensive reconfiguration generally results in lower serving latency but incurs higher reconfiguration costs.Conversely, less extensive reconfiguration tends to reducereconfigurationcostsattheexpenseofincreasedservinglatency.Therefore,weguideth",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p26-0259",
+      "info_point": "Search Granularity vs.Scheduling Efficiency max_batch_per_replica controls how finely the ILP searches over batch sizes for each model.It represents a funda- mental search granularity vs.scheduling efficiency trade-off — there is no universally correct value; the right choice depends on the model’s ",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p26-0260",
+      "info_point": "Larger cap →fine-grained search, lower scheduling efficiency:",
+      "covered": 1,
+      "reason": "fallback token match 2/7"
+    },
+    {
+      "paragraph_id": "p26-0261",
+      "info_point": "•More batch-size candidates →larger ILP →slower solve time.",
+      "covered": 0,
+      "reason": "fallback token match 1/8"
+    },
+    {
+      "paragraph_id": "p26-0262",
+      "info_point": "•The scheduler can find placements that match the workload’s total_batch more precisely (e.g., a replica batch of 96 vs.",
+      "covered": 0,
+      "reason": "fallback token match 1/11"
+    },
+    {
+      "paragraph_id": "p26-0263",
+      "info_point": "•Each extra candidate adds integer and binary variables, making the solver (e.g., CBC) work harder.",
+      "covered": 0,
+      "reason": "fallback token match 1/11"
+    },
+    {
+      "paragraph_id": "p26-0264",
+      "info_point": "Smaller cap →coarse-grained search, higher scheduling efficiency:",
+      "covered": 1,
+      "reason": "fallback token match 2/7"
+    },
+    {
+      "paragraph_id": "p26-0265",
+      "info_point": "•Fewer candidates →smaller ILP →faster solve time.",
+      "covered": 0,
+      "reason": "fallback token match 1/6"
+    },
+    {
+      "paragraph_id": "p26-0266",
+      "info_point": "•The scheduler selects from a coarser set of batch sizes and may slightly over- or under-shoot the ideal per-replica load.",
+      "covered": 0,
+      "reason": "fallback token match 1/10"
+    },
+    {
+      "paragraph_id": "p26-0267",
+      "info_point": "•For models where latency is relatively insensitive to batch size in the relevant range, the quality loss is negligible while the speed gain is significant.",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p26-0268",
+      "info_point": "Key Insight:Some models need fine-grained search, others do not.",
+      "covered": 0,
+      "reason": "fallback token match 1/8"
+    },
+    {
+      "paragraph_id": "p26-0269",
+      "info_point": "•Models with large total_batch and flat latency-vs-batch curves benefit from finer granularity, enabling better packing.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p26-0270",
+      "info_point": "•Memory-constrainedmodelshavefewfeasiblebatchsizesregardlessofthecap—increasingitintroduces infeasible (OOM) candidates, adding overhead without benefit.",
+      "covered": 1,
+      "reason": "fallback token match 2/9"
+    },
+    {
+      "paragraph_id": "p26-0271",
+      "info_point": "•Models with steep latency-vs-batch curves benefit from a moderate cap that captures the efficient region without exploring far into OOM.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p26-0272",
+      "info_point": "Additional Insight:Raising the cap for small models can reduce the number of required replicas, thereby freeing GPUs for larger models.For example, if a small model has total_batch=256 and the cap is set to 256, only one replica is required (versus 8 replicas at cap = 32), freeing 7 GPUs that can be",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p26-0273",
+      "info_point": "ImplementationGuidance:Theinitialprogramusesauniformcap(definedinworkloads.py,whichisfixed), providing a safe and conservative baseline.LLM-evolved programs should instead choose per-model caps within their EVOLVE-BLOCKS based on model characteristics (e.g., weight size, memory footprint, and typica",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p26-0274",
+      "info_point": "The Reconfiguration Trade-off — When to Reschedule e2e = ilp solve time + serving latency + reconfig cost (16)",
+      "covered": 1,
+      "reason": "fallback token match 7/9"
+    },
+    {
+      "paragraph_id": "p27-0275",
+      "info_point": "A new schedule that saves ∆seconds of serving and scheduling latency is only worthwhile if:",
+      "covered": 1,
+      "reason": "fallback token match 2/7"
+    },
+    {
+      "paragraph_id": "p27-0276",
+      "info_point": "Suppose at ts0you have a large model on fast GPUs with serving latency 2000 ms.At ts1, traffic shifts, and you can reduce serving latency to 800 ms by moving to different GPUs (the following values serve as examples, and you should refer to the simulators for accurate values):",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p27-0277",
+      "info_point": "•Loading cost:∼0.25 s (high TP, fast PCIe).",
+      "covered": 1,
+      "reason": "fallback token match 3/5"
+    },
+    {
+      "paragraph_id": "p27-0278",
+      "info_point": "•Termination cost:∼0.25 s (high TP from previous config).",
+      "covered": 1,
+      "reason": "fallback token match 3/5"
+    },
+    {
+      "paragraph_id": "p27-0279",
+      "info_point": "•Serving latency gain:(2000 −800) ms = 1200 ms = 1.2 s.",
+      "covered": 0,
+      "reason": "fallback token match 0/4"
+    },
+    {
+      "paragraph_id": "p27-0280",
+      "info_point": "•Net gain:1.2 −0.5 = +0.7 s saved →.RESCHEDULE (profitable) Example B — Reschedule does NOT pay off:",
+      "covered": 1,
+      "reason": "fallback token match 2/7"
+    },
+    {
+      "paragraph_id": "p27-0281",
+      "info_point": "At ts1, you can improve serving latency from 2500 ms to 2100 ms (saving 400 ms = 0.4 s) by moving a large model to a different GPU type/TP configuration (the following values serve as examples, and you should refer to the simulators for accurate values):",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p27-0282",
+      "info_point": "•Net gain:0.4 −0.76 = −0.36 s →.STAY (reconfiguration costs more than it saves).",
+      "covered": 0,
+      "reason": "fallback token match 1/7"
+    },
+    {
+      "paragraph_id": "p27-0283",
+      "info_point": "Example C — Small-model reconfiguration is cheap:",
+      "covered": 1,
+      "reason": "fallback token match 2/5"
+    },
+    {
+      "paragraph_id": "p27-0284",
+      "info_point": "Moving a small model (13GB) from one GPU type to another (the following values serve as examples, and you should refer to the simulators for accurate values):",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p27-0285",
+      "info_point": "If this frees GPUs for larger models and saves 2 s of latency, net gain = +1.39 s →profitable.",
+      "covered": 0,
+      "reason": "fallback token match 0/8"
+    },
+    {
+      "paragraph_id": "p27-0286",
+      "info_point": "Example D — Staying put is sometimes optimal:",
+      "covered": 0,
+      "reason": "fallback token match 1/4"
+    },
+    {
+      "paragraph_id": "p27-0287",
+      "info_point": "If ts0→ts1traffic change is mild (same models, 10–20% batch size variation), the optimal plan barely differs.In this case:",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p27-0288",
+      "info_point": "•Expected latency gain from rescheduling:∼100 ms = 0.1 s.",
+      "covered": 0,
+      "reason": "fallback token match 0/4"
+    },
+    {
+      "paragraph_id": "p27-0289",
+      "info_point": "•Net:−0.4 s →STAY PUT (keep the same placement from ts0to ts1).",
+      "covered": 0,
+      "reason": "fallback token match 0/5"
+    },
+    {
+      "paragraph_id": "p27-0290",
+      "info_point": "F Additional Case Study",
+      "covered": 0,
+      "reason": "fallback token match 0/3"
+    },
+    {
+      "paragraph_id": "p27-0291",
+      "info_point": "Setup.We consider a real-world LLM serving deployment at the Swiss AI Center [34], where a heterogeneous GPUclusterservesmultipleLLMsunderdynamicworkloads.Inthisscenario,weisolatethescheduling algorithm as the optimization target:Given a fixed workload snapshot and cluster configuration, the objecti",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p28-0292",
+      "info_point": "to evolve a scheduling algorithm that produces serving plans (i.e., workload assignments, resource allocations, and parallelism strategies) of equivalent quality to a ILP-based [43] scheduling algorithm while minimizing plan generation time.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p28-0293",
+      "info_point": "Traces.WeusetwoworkloadsnapshotsfromSwissAICenter[34],eachrepresentingadistinctworkload and cluster configuration.Detailed problem formulation and trace information are shown in Appendix C and Appendix H.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p28-0294",
+      "info_point": "Results analysis.The baseline ILP-based scheduler requires an average of 120s per invocation across the two traces.The evolved scheduling algorithm reduces this to 9s, a 13× speedup, with less than 3% degradation in plan quality.Examining the evolved code reveals complementary modifications across m",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p28-0295",
+      "info_point": "Insight 5: Synthesis discovers deployment-tailored algorithmic optimizations.Rather than converging on a single type of improvement, the synthesis workflow discovers complementary optimizations spanning problem formulation, domain knowledge injection, objective shaping, and solver configuration.Cruc",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p28-0296",
+      "info_point": "G Evolved Scheduling Algorithm Analysis",
+      "covered": 0,
+      "reason": "fallback token match 1/4"
+    },
+    {
+      "paragraph_id": "p28-0297",
+      "info_point": "In this section, we analyze the details of the code generated by LLMs.The LLM-driven improvements include smarter batch selection, per-variable bounds, stronger weighted objective, and solver-specific tuning.These enhancements significantly reduce ILP solve time while preserving the optimal makespan",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p28-0298",
+      "info_point": "Optimizationonbatchcandidateselection.In the LLM-generated program, the selection of batch candidates was refined compared to the naive exhaustive search employed in the initial program, which served as the starting point for the LLM’s evolutionary improvements.Instead of traversing all possible bat",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p28-0299",
+      "info_point": "Batch Candidates = {1, 2, 3, 4, 6}∪{2k| k= 2, .",
+      "covered": 0,
+      "reason": "fallback token match 0/2"
+    },
+    {
+      "paragraph_id": "p28-0300",
+      "info_point": "Optimizations on the objective function and formulation.To enhance the efficiency of the ILP solver, the LLM- generated code incorporates two key optimizations:(i) tighter per-variable Big-M bounds, which strengthen the LP relaxation, and (ii) a weighted objective, which provides improved guidance w",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p28-0301",
+      "info_point": "•Per-variable Big-M bounds.For model type z, GPU type g, tensor-paralel degree t, and batch size b, the standard indicator constraint linking nz,g,t,band yz,g,t,bis:nz,g,t,b≤M ·yz,g,t,b, where Mis a sufficiently large constant; a naive formulation uses a single global bound M= maxg∈G κg, which is ov",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p29-0302",
+      "info_point": "Instead, the LLM defines a variable-specific bound for each possible tuple (z, g, t, b):",
+      "covered": 0,
+      "reason": "fallback token match 1/8"
+    },
+    {
+      "paragraph_id": "p29-0303",
+      "info_point": "The indicator constraint becomes: nz,g,t,b≤Mz,g,t,b · yz,g,t,b (20) t \u0005 bounds the number of replicas by available GPU capacity, \u0006 λz b \u0007 bounds the number of replicas required to cover the workload.The term per-variable emphasizes that each decision variable nz,g,t,b has its own tight upper bound, ",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p29-0304",
+      "info_point": "•Weighted objective.The primary objective is to minimize the global makespan:",
+      "covered": 0,
+      "reason": "fallback token match 0/7"
+    },
+    {
+      "paragraph_id": "p29-0305",
+      "info_point": "minTbalanced, s.t.Tbalanced≥Lz, ∀z∈M (21) Lz≥Λz,g,t,b · yz,g,t,b, ∀g∈G,t ∈Tg,b ∈Bz (22) Lzcaptures the completion latency of model Mz, determined by its slowest active replica group.While minimizing Tbalancedensures fairness across models, multiple solutions may achieve the same optimal makespan but",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p29-0306",
+      "info_point": "Table 7Tuned CBC solver parameters for ILP acceleration Enable parallel solving across multiple CPU threads, leveraging multiple CPU cores for faster computation.",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p29-0307",
+      "info_point": "RATIOGAP 0.003 Stop the solver when the solution is within 0.3% of the optimal value.",
+      "covered": 1,
+      "reason": "fallback token match 2/8"
+    },
+    {
+      "paragraph_id": "p29-0308",
+      "info_point": "Tuned branching parameter to guide variable selection during branch-and-bound.",
+      "covered": 1,
+      "reason": "fallback token match 2/9"
+    },
+    {
+      "paragraph_id": "p29-0309",
+      "info_point": "Number of presolve passes to simplify constraints and variables before solving.",
+      "covered": 0,
+      "reason": "fallback token match 0/8"
+    },
+    {
+      "paragraph_id": "p29-0310",
+      "info_point": "Number of cutting passes to generate additional valid inequalities for tighter bounds.",
+      "covered": 0,
+      "reason": "fallback token match 1/9"
+    },
+    {
+      "paragraph_id": "p29-0311",
+      "info_point": "This strategy assigns larger weights to larger LLMs, encouraging the solver to reduce their latency when possible.Compared to an unweighted and very small secondary term, this stronger formulation provides a clearer optimization signal, helping the solver distinguish between solutions with identical",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p29-0312",
+      "info_point": "We summarize the details in Table 7.These settings directly accelerate ILP convergence while maintaining solution quality within a negligible 0.3% optimality gap.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p30-0313",
+      "info_point": "Table8TraceforFigure2(left):Twoabruptphasetransitionsacross3timestamps(H→L→H).Phasetransitionsare marked with ⇒.",
+      "covered": 0,
+      "reason": "fallback token match 1/5"
+    },
+    {
+      "paragraph_id": "p30-0314",
+      "info_point": "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 H 64 64 64 384 256 128 ts1 ⇒L 960 480 288 64 32 16 ts2 ⇒H 64 64 64 384 256 128 Table9TraceforFigure2(right):5timestampscombiningastableperiodwithonemajorphaseshift(L→H).Phase transition is marked with ⇒.",
+      "covered": 1,
+      "reason": "fallback token match 2/7"
+    },
+    {
+      "paragraph_id": "p30-0315",
+      "info_point": "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 L 960 480 288 64 32 16 ts1 L 968 476 284 64 32 16 ts2 ⇒H 64 64 64 384 256 128 ts3 H 72 64 64 400 256 128 ts4 H 64 64 64 384 256 128",
+      "covered": 1,
+      "reason": "fallback token match 1/1"
+    },
+    {
+      "paragraph_id": "p30-0316",
+      "info_point": "H Trace Information",
+      "covered": 1,
+      "reason": "fallback token match 1/2"
+    },
+    {
+      "paragraph_id": "p30-0317",
+      "info_point": "H.1 Trace Information for the Motivation Section We present two motivating traces using Qwen2.5 models (1.5B–72B).",
+      "covered": 1,
+      "reason": "fallback token match 2/9"
+    },
+    {
+      "paragraph_id": "p30-0318",
+      "info_point": "TraceforFigure2(left).AsshowninTable8,this3-timestamptracefeaturestwoabruptphasetransitions, demonstrating the scheduler’s need for rapid response.The system starts in a heavy-dominant phase (ts0), abruptlyshiftstoalight-dominantphase(ts1),andrevertstoheavy-dominantatts2.Eachtransition dramatically ",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p30-0319",
+      "info_point": "Trace for Figure 2 (right).As shown in Table 9, this 5-timestamp trace hybridizes stable and volatile behavior.",
+      "covered": 1,
+      "reason": "fallback token match 2/9"
+    },
+    {
+      "paragraph_id": "p30-0320",
+      "info_point": "H.2 Trace Information for the Case Studies Stable workload in §8.1.We consider a production workload consisting of 10 timestamps (ts0–ts9) and three Qwen2.5 model sizes (1.5B, 3B, and 7B), where batch sizes and sequence lengths remain mostly stable with occasional variations.The prefill length is fi",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p30-0321",
+      "info_point": "Volatileworkloadin§8.1.Weusea highlydynamicworkload consistingof10timestamps (ts0–ts9)andsix Qwen2.5 model sizes (1.5B–72B), where the system alternates between two contrasting traffic regimes:a heavy-dominant phase and a light-dominant phase.In the heavy phase, small models (1.5B/3B/7B) serve low b",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p31-0322",
+      "info_point": "Table 10Stable workload:Batch sizes across 10 timestamps for three Qwen2.5 small models.",
+      "covered": 1,
+      "reason": "fallback token match 2/10"
+    },
+    {
+      "paragraph_id": "p31-0323",
+      "info_point": "Model ts0 ts1 ts2 ts3 ts4 ts5 ts6 ts7 ts8 ts9 1.5B 960 1008 952 960 968 956 962 958 1008 964 3B 480 476 484 480 544 478 482 479 481 483 7B 288 284 264 290 286 288 336 287 285 291 Table 11Volatile workload:Batch sizes per timestamp for six Qwen2.5 models.Phase transitions are marked with ⇒.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p31-0324",
+      "info_point": "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 H 64 64 64 384 256 128 ts1 H 80 64 64 400 256 128 ts2 H 64 64 64 384 256 128 ts3 ⇒L 960 480 288 64 32 16 ts4 L 1008 480 336 64 32 16 ts5 L 960 480 288 64 32 16 ts6 ⇒H 96 64 64 416 256 128 ts7 H 64 64 64 384 256 128 ts8 H 80 64 64 400 256 128 ts9 ⇒L 960 480 288 64 ",
+      "covered": 1,
+      "reason": "fallback token match 1/2"
+    },
+    {
+      "paragraph_id": "p31-0325",
+      "info_point": "Cluster and workload information in §8.2.The cluster evolves over five timestamps (ts0–ts4) across three GPU types:H100-SXM(80 GB,NVLink900 GB/s,PCIe64 GB/s),H200-SXM(141 GB,NVLink900 GB/s,PCIe 64 GB/s), and A100-80GB (80 GB, NVLink 600 GB/s, PCIe 32 GB/s).We present the detailed stable cluster info",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p31-0326",
+      "info_point": "H.3 Trace Information for the Main Experiments Across the main experiments, we use phase labels to indicate the dominant token-shape characteristic of each workload segment.A prefill-heavy phase has relatively long input sequences and short output sequences; a decode-heavy phase has relatively short",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p31-0327",
+      "info_point": "DistServe.The DistServe evaluation uses two traces sampled from ShareGPTand LongBench, respectively.We divide each trace into six workload phases, where each timestamp corresponds to the beginning of a workload phase.EachofthesixShareGPTphasescontains5120requests,andeachLongBenchphasecontains1728 re",
+      "covered": 1,
+      "reason": "fallback token match 4/12"
+    },
+    {
+      "paragraph_id": "p31-0328",
+      "info_point": "HexGen.The HexGen evaluation uses the same phase-wise token-shape profiles as DistServe.The difference is workload intensity:each workload phase in ShareGPTtrace contains 9216 requests, and each workload phase inLongBench contains3110 requests.Thus,theprefill anddecode lengthsin Table14 remainunchan",
+      "covered": 1,
+      "reason": "fallback token match 6/12"
+    },
+    {
+      "paragraph_id": "p31-0329",
+      "info_point": "SpotServe.This evaluation uses two MAF-derived traces, each combining hidden workload-pattern changes withatime-varyingelasticcluster-sizeschedule.BothtracesareextractedfromarealAzureFunctions applicationwindowandthenmappedintoanelasticclusterschedulerangingfrom24to64GPUs.Inthe",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p32-0330",
+      "info_point": "Table 12Stable cluster transition in §8.2:GPU counts per type across five timestamps.Cluster transitions are marked with ⇒.",
+      "covered": 1,
+      "reason": "fallback token match 4/11"
+    },
+    {
+      "paragraph_id": "p32-0331",
+      "info_point": "TS Transition A100-80GB H100-SXM H200-SXM Total GPUs ts0 H100+H200 – 16 16 32 ts1 ⇒H200 increased – 16 24 40 ts2 ⇒H100 increased – 24 24 48 ts3 ⇒A100 introduced, H100 and H200 reduced 16 16 8 40 ts4 ⇒A100 reduced, H100 and H200 increased 8 24 16 48 Table 13Volatile cluster transition in §8.2:GPU cou",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p32-0332",
+      "info_point": "TS Transition A100-80GB H100-SXM H200-SXM Total GPUs ts0 A100+H100+H200 8 16 16 40 ts1 ⇒A100 and H100 reduced, H200 increased – 8 24 32 ts2 ⇒A100 introduced, H100 increased, H200 redcued 16 24 8 48 ts3 ⇒H100 spiked 16 40 8 64 ts4 ⇒A100, H100 reduced, H200 increased 8 24 16 48 current construction, t",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p32-0333",
+      "info_point": "I Discussion and Limitation",
+      "covered": 0,
+      "reason": "fallback token match 0/2"
+    },
+    {
+      "paragraph_id": "p32-0334",
+      "info_point": "LLM API stability and cost.The evolutionary process relies on LLM API calls for candidate mutation, making itsensitivetoAPIavailabilityandlatency.UnstableAPIendpointscanstallindividualevolutioncycles, prolonging the time before an improved policy is deployed.Additionally, LLM inference introduces no",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    },
+    {
+      "paragraph_id": "p32-0335",
+      "info_point": "Moreover,LLMhallucinationscangenerate syntactically valid but semantically incorrect policies.Our multi-level timeout hierarchy (§6) and automated evaluation(§5.3)serveassafeguardsbydiscardingcandidatesthatcrash,diverge,ordegradefitness,but hallucination rates at production scale remain a factor tha",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p32-0336",
+      "info_point": "Conversely, an overly short window may be dominated by transient fluctuations, causing the evolved policy to overfit to momentary noise rather than sustained trends.In our current implementation, the window size is a configurable parameter; adaptive window sizing based on detected workload volatilit",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p32-0337",
+      "info_point": "Evolutiontimeoverhead.Eachevolutioncycleincurswall-clocktimeforcandidategeneration,evaluation, andselection.Weaddressthisthroughtwomechanisms:(i)Warm-startre-evolution(§6),whichreduces convergence time by up to 83% when consecutive snapshots reflect gradual shifts, and (ii) parallel candidate evalua",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p32-0338",
+      "info_point": "Adaptabilitytodiverseservingobjectives.Ourexecutionmodelandevaluatorareformulatedaroundend- to-endtracecompletiontime,butthischoiceisnotfundamentaltothearchitecture.Thepolicyinterface",
+      "covered": 0,
+      "reason": "fallback token match 0/5"
+    },
+    {
+      "paragraph_id": "p33-0339",
+      "info_point": "Table 14Phase-wise workload profiles used by DistServe and HexGen:The mean prefill length and decode length in each phase are presented.",
+      "covered": 1,
+      "reason": "fallback token match 3/12"
+    },
+    {
+      "paragraph_id": "p33-0340",
+      "info_point": "ts0 Prefill-heavy 1231.9 14.0 ts1 Decode-heavy 535.2 545.4 ts2 Balanced-short 549.0 17.5 ts3 Stable-mixed 1093.9 290.3 ts4 Stable-mixed 1100.6 292.4 ts5 Stable-mixed 1096.8 288.5 ts0 Prefill-heavy 2035.2 4.8 ts1 Prefill-heavy 2036.8 3.2 ts2 Decode-heavy 1596.6 372.6 ts3 Stable-decode-heavy 1604.8 37",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p33-0341",
+      "info_point": "ts0 Decode-heavy 512 1024 ts1 Mixed 2048 256 ts2 Prefill-heavy 4096 128 ts3 Mixed-stable 2048 256 ts0 Prefill-heavy 4096 128 ts1 Mixed 2048 256 ts2 Decode-heavy 512 1024 ts3 Mixed-stable 2048 256 Table 16Shared SpotServe cluster schedule:planner-visible elastic cluster sizes for both MAF traces.Each",
+      "covered": 0,
+      "reason": "fallback token match 0/12"
+    },
+    {
+      "paragraph_id": "p33-0342",
+      "info_point": "Time Interval (s) [0,3) [3,6) [6,9) [9,12) [12,15) [15,18) [18,21) [21,24) [24,27) [27,30) [30,33) [33,36) Cluster Size 24 25 26 27 29 30 32 33 36 38 42 45 Time Interval (s) [36,39) [39,42) [42,45) [45,48) [48,54) [54,57) [57,60) [60,63) [63,66) [66,69) [69,75) [75,78) Cluster Size 48 51 54 55 60 63",
+      "covered": 1,
+      "reason": "fallback token match 4/8"
+    },
+    {
+      "paragraph_id": "p33-0343",
+      "info_point": "J Extended Related Work",
+      "covered": 1,
+      "reason": "fallback token match 1/3"
+    },
+    {
+      "paragraph_id": "p33-0344",
+      "info_point": "LLMservingsystems.RecentworkshaveproposedseveralsystemsandmethodsforhighlyefficientLLM serving[12,19,35,44–51].AlpaServe[4]optimizessystemservicelevelobjectives(SLOs)byutilizing dataandmodelparallelism;DistServe[6]andSplitwise[52]splittheprefillanddecodingphasesonto separate GPUs to eliminate interf",
+      "covered": 0,
+      "reason": "fallback token match 1/12"
+    },
+    {
+      "paragraph_id": "p34-0345",
+      "info_point": "Parallelism strategies.Training and serving LLMs that exceed the memory capacity of a single GPU requires a combination of parallelism strategies.Data parallelism replicates the full model across devices and partitions trainingbatchesordistributesinferencerequestsamongreplicas,scalingthroughputbutre",
+      "covered": 1,
+      "reason": "fallback token match 2/12"
+    }
+  ],
+  "summary": {
+    "covered_count": 214,
+    "total_count": 345,
+    "coverage_ratio": 0.62,
+    "top_missing_points": [
+      "1 Introduction",
+      "Toaccommodatesuchdynamics,servingsystemsemployservingpolicies(e.g.,schedulingalgorithmsand rescheduling strategies) that produce different serving plans (including workload assignment, resource alloca- tion, and parallelism strategy), in response to dynamic status.However, implementing an effective ",
+      "Existing LLM serving systems [2, 6, 9, 18] employ static, human-engineered serving policies1.While these systems generate different serving plans in response to runtime dynamics, the policies that produce those plans remain fixed, failing to account for the runtime trade-offs outlined above.As we de",
+      "Recent advances have demonstrated that combining the code-generation capabilities of LLMs with the iterative refinement of evolutionary algorithms enables automatic discovery of optimal solutions in design spaces far 1For example, DistServe [6] replicates a pre-computed optimal parallelism configura",
+      "more vast than human engineers can navigate [20, 21].This mechanism has successfully synthesized novel, highly-tailored algorithms across diverse domains, from mathematical and scientific optimization [22, 23] to hardware-specific GPU kernel tuning [24, 25].In this work, we bring this synthesis capa",
+      "Contribution 1:WeproposeanLLM-drivenprogramsynthesisworkflowforservingpolicyoptimization.The workflow combines an evolutionary algorithm that iteratively generates, mutates, and selects policy candidates; a highly calibrated, lightweight evaluator that faithfully reproduces real-world runtime dynami",
+      "2.1 LLM Serving Preliminaries",
+      "Formally, it is composed of three primary dimensions:(i) Workload assignment, which determines the mapping of heterogeneous user requests to specific models; systems such as Llumnix [2] and DistServe [6] optimize request assignment to mitigate load imbalance and enhance overall serving throughput.(i"
+    ]
+  }
+}

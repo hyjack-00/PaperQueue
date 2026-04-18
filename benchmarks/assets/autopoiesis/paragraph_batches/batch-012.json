@@ -1,0 +1,206 @@
+[
+  {
+    "paragraph_id": "p16-0133",
+    "translation": "Insight 1:EvolvedpoliciesreshapetheParetofrontier.TheschedulingalgorithmdesignspaceexhibitsaPareto frontierbetweentwocompetingcosts:Schedulingandreconfiguration(Σtstale+ Σtreconfig)vs.servingtime(Σtserve). More thorough ",
+    "info_points": [
+      "Insight 1:EvolvedpoliciesreshapetheParetofrontier.TheschedulingalgorithmdesignspaceexhibitsaPareto frontierbetweentwocompetingcosts:Schedulingandreconfiguration(Σtstale+ Σtreconfig)vs.servingtime(Σtserve)."
+    ],
+    "keywords": [
+      "Insight",
+      "EvolvedpoliciesreshapetheParetofrontier",
+      "TheschedulingalgorithmdesignspaceexhibitsaPareto",
+      "frontierbetweentwocompetingcosts",
+      "Schedulingandreconfiguration",
+      "tstale",
+      "treconfig",
+      "servingtime"
+    ],
+    "source_text": "Insight 1:EvolvedpoliciesreshapetheParetofrontier.TheschedulingalgorithmdesignspaceexhibitsaPareto frontierbetweentwocompetingcosts:Schedulingandreconfiguration(Σtstale+ Σtreconfig)vs.servingtime(Σtserve). More thorough scheduling and reconfiguration typically result in lower serving time.Conventional policies (e.g., greedy, ILP) occupy fixed points on this frontier, trading one cost for the other.LLM-driven synthesis escapes this fixed frontier through two complementary behaviors:(i) Frontier-shifting.The evolved policy discovers workload-specific scheduling principles that simultaneously improve both scheduling and reconfiguration cost and serving time, reaching operating points no conventional policy accesses.(ii) Frontier-navigating.Where simultaneous improvement on both axes is not possible, the evolved policy locates the narrow efficient region on the existing frontier, accepting a marginal concession on one axis in exchange for the majority of achievable savings on the other.This dual behavior demonstrates that the synthesis workflow tailors not only policy parameters but the fundamental algorithmic strategy to the current workload structure."
+  },
+  {
+    "paragraph_id": "p16-0134",
+    "translation": "Reschedulingstrategyanalysis.Thegreedy-basedpolicy,duetoitsminimizedper-reschedulingoverhead, choosestorescheduleateverytransitionacrossbothtraces(N=10),outperformingtheILP-basedpolicy whentheworkloadisvolatilebutaccumul",
+    "info_points": [
+      "Reschedulingstrategyanalysis.Thegreedy-basedpolicy,duetoitsminimizedper-reschedulingoverhead, choosestorescheduleateverytransitionacrossbothtraces(N=10),outperformingtheILP-basedpolicy whentheworkloadisvolatilebutaccumulatingunnecessaryschedulingandreconfigurationoverheadon stable intervals.In contr"
+    ],
+    "keywords": [
+      "Reschedulingstrategyanalysis",
+      "Thegreedy-basedpolicy",
+      "duetoitsminimizedper-reschedulingoverhead",
+      "choosestorescheduleateverytransitionacrossbothtraces",
+      "outperformingtheILP-basedpolicy",
+      "whentheworkloadisvolatilebutaccumulatingunnecessaryschedulingandreconfigurationoverheadon",
+      "stable",
+      "intervals"
+    ],
+    "source_text": "Reschedulingstrategyanalysis.Thegreedy-basedpolicy,duetoitsminimizedper-reschedulingoverhead, choosestorescheduleateverytransitionacrossbothtraces(N=10),outperformingtheILP-basedpolicy whentheworkloadisvolatilebutaccumulatingunnecessaryschedulingandreconfigurationoverheadon stable intervals.In contrast,the ILP-based policy,due to its high scheduling cost,reschedules only once at initialization (N=1), outperforming the greedy-based policy when the workload is stable but suffering from stale plans during volatile intervals.The evolved rescheduling strategy adapts its frequency to the workload’s volatility:Underthevolatiletrace,itreschedules9timestokeepplansfresh;underthestabletrace,it reschedules only twice, avoiding overhead with minimal latency impact."
+  },
+  {
+    "paragraph_id": "p16-0135",
+    "translation": "Insight 2:Schedulingalgorithmandreschedulingstrategyrequireco-evolution. Reschedulingfrequencyand scheduling algorithm design are fundamentally coupled:A lightweight scheduler can afford frequent rescheduling but yields ",
+    "info_points": [
+      "Insight 2:Schedulingalgorithmandreschedulingstrategyrequireco-evolution."
+    ],
+    "keywords": [
+      "Insight",
+      "Schedulingalgorithmandreschedulingstrategyrequireco-evolution",
+      "Reschedulingfrequencyand",
+      "scheduling",
+      "algorithm",
+      "design",
+      "fundamentally",
+      "coupled"
+    ],
+    "source_text": "Insight 2:Schedulingalgorithmandreschedulingstrategyrequireco-evolution. Reschedulingfrequencyand scheduling algorithm design are fundamentally coupled:A lightweight scheduler can afford frequent rescheduling but yields diminishing plan quality, while a computationally intensive scheduler produces superior plans but cannot sustain the overhead of frequent invocation.Conventional approaches are constrained by this coupling because their algorithmic cost profiles are fixed at design time.Co-evolution breaks this coupling by reshaping the algorithm’s computational profiletomatchthereschedulingfrequencyeachworkloadregimedemands,ratherthanforcingthefrequencyto accommodate a fixed overhead."
+  },
+  {
+    "paragraph_id": "p16-0136",
+    "translation": "8.2 Elastic Cluster Dynamics",
+    "info_points": [
+      "8.2 Elastic Cluster Dynamics"
+    ],
+    "keywords": [
+      "Elastic",
+      "Cluster",
+      "Dynamics"
+    ],
+    "source_text": "8.2 Elastic Cluster Dynamics"
+  },
+  {
+    "paragraph_id": "p16-0137",
+    "translation": "Setup.Weconsiderthesamedeploymentsettingas§8.1,butwheretheclustertopologychangesduring serving, driven by two common sources:Involuntary changes from spot instance preemption [11] (e.g., AWS g4dn instances being reclaime",
+    "info_points": [
+      "Setup.Weconsiderthesamedeploymentsettingas§8.1,butwheretheclustertopologychangesduring serving, driven by two common sources:Involuntary changes from spot instance preemption [11] (e.g., AWS g4dn instances being reclaimed) and voluntary changes from autoscaling mechanisms [7] (e.g., scaling out unde"
+    ],
+    "keywords": [
+      "Setup",
+      "Weconsiderthesamedeploymentsettingas",
+      "butwheretheclustertopologychangesduring",
+      "serving",
+      "driven",
+      "common",
+      "sources",
+      "Involuntary"
+    ],
+    "source_text": "Setup.Weconsiderthesamedeploymentsettingas§8.1,butwheretheclustertopologychangesduring serving, driven by two common sources:Involuntary changes from spot instance preemption [11] (e.g., AWS g4dn instances being reclaimed) and voluntary changes from autoscaling mechanisms [7] (e.g., scaling out underincreasedloadorscalinginduringlowutilization).Theservingobjectiveremainsconsistentwith §8.1.In both cases, rescheduling is mandatory at each cluster transition, as the previous plan may reference unavailable hardware or leave newly added resources idle.The key trade-off therefore shifts from scheduling thoroughness and frequency to reconfiguration aggressiveness:How much of the serving plan to reconfigure at each transition."
+  },
+  {
+    "paragraph_id": "p16-0138",
+    "translation": "Traces.We subsample two traces from the Microsoft Azure Functions (MAF) dataset [41] with volatile and stable cluster change characteristics (scheduling problem formulation and trace information in Appendix C and Appendi",
+    "info_points": [
+      "Traces.We subsample two traces from the Microsoft Azure Functions (MAF) dataset [41] with volatile and stable cluster change characteristics (scheduling problem formulation and trace information in Appendix C and Appendix H)."
+    ],
+    "keywords": [
+      "Traces",
+      "subsample",
+      "traces",
+      "from",
+      "Microsoft",
+      "Azure",
+      "Functions",
+      "dataset"
+    ],
+    "source_text": "Traces.We subsample two traces from the Microsoft Azure Functions (MAF) dataset [41] with volatile and stable cluster change characteristics (scheduling problem formulation and trace information in Appendix C and Appendix H)."
+  },
+  {
+    "paragraph_id": "p16-0139",
+    "translation": "Baselines.We compare against two static baselines:A full-migration policy optimized for serving performance by always reconfiguring to the globally optimal plan, and a minimal-migration policy optimized for reconfigurati",
+    "info_points": [
+      "Baselines.We compare against two static baselines:A full-migration policy optimized for serving performance by always reconfiguring to the globally optimal plan, and a minimal-migration policy optimized for reconfiguration"
+    ],
+    "keywords": [
+      "Baselines",
+      "compare",
+      "against",
+      "static",
+      "baselines",
+      "full-migration",
+      "policy",
+      "optimized"
+    ],
+    "source_text": "Baselines.We compare against two static baselines:A full-migration policy optimized for serving performance by always reconfiguring to the globally optimal plan, and a minimal-migration policy optimized for reconfiguration"
+  },
+  {
+    "paragraph_id": "p17-0140",
+    "translation": "Table 3E2E comparison under elastic cluster dynamics.",
+    "info_points": [
+      "Table 3E2E comparison under elastic cluster dynamics."
+    ],
+    "keywords": [
+      "Table",
+      "comparison",
+      "under",
+      "elastic",
+      "cluster",
+      "dynamics"
+    ],
+    "source_text": "Table 3E2E comparison under elastic cluster dynamics."
+  },
+  {
+    "paragraph_id": "p17-0141",
+    "translation": "Trace Policy Σtstale Σtreconfig Overall Thpt Full-migration 9.7 108.8s 8,433 t/s Minimal-migration 1.6s 8.4s 13,304 t/s Ours 0.7s 44.4s 14,843 t/s Full-migration 9.6s 67.9s 11,080 t/s Minimal-migration 2.1s 6.3s 10,187 t",
+    "info_points": [
+      "Trace Policy Σtstale Σtreconfig Overall Thpt Full-migration 9.7 108.8s 8,433 t/s Minimal-migration 1.6s 8.4s 13,304 t/s Ours 0.7s 44.4s 14,843 t/s Full-migration 9.6s 67.9s 11,080 t/s Minimal-migration 2.1s 6.3s 10,187 t/s Ours 0.6s 30.8s 12,731 t/s efficiency by always reconfiguring to the nearest "
+    ],
+    "keywords": [
+      "Trace",
+      "Policy",
+      "tstale",
+      "treconfig",
+      "Overall",
+      "Thpt",
+      "Full-migration",
+      "Minimal-migration"
+    ],
+    "source_text": "Trace Policy Σtstale Σtreconfig Overall Thpt Full-migration 9.7 108.8s 8,433 t/s Minimal-migration 1.6s 8.4s 13,304 t/s Ours 0.7s 44.4s 14,843 t/s Full-migration 9.6s 67.9s 11,080 t/s Minimal-migration 2.1s 6.3s 10,187 t/s Ours 0.6s 30.8s 12,731 t/s efficiency by always reconfiguring to the nearest operational plan."
+  },
+  {
+    "paragraph_id": "p17-0142",
+    "translation": "Results analysis.Table 3 summarizes the results.The elastic cluster dynamics scenario is primarily governed by the trade-off between reconfiguration aggressiveness and serving performance.The full-migration policy achiev",
+    "info_points": [
+      "Results analysis.Table 3 summarizes the results.The elastic cluster dynamics scenario is primarily governed by the trade-off between reconfiguration aggressiveness and serving performance.The full-migration policy achieves the highest plan quality on both traces at the cost of heavy scheduling and r"
+    ],
+    "keywords": [
+      "Results",
+      "analysis",
+      "Table",
+      "summarizes",
+      "results",
+      "elastic",
+      "cluster",
+      "dynamics"
+    ],
+    "source_text": "Results analysis.Table 3 summarizes the results.The elastic cluster dynamics scenario is primarily governed by the trade-off between reconfiguration aggressiveness and serving performance.The full-migration policy achieves the highest plan quality on both traces at the cost of heavy scheduling and reconfiguration overhead (14.9s + 108.8s on volatile, 9.6s + 67.9s on stable), while the minimal-migration policy minimizes overhead (2.4s+6.3sonvolatile,2.1s+6.3sonstable)atthecostofdegradedservingthroughput.Asaresult, minimal-migration prevails on the volatile trace where reconfiguration overhead dominates (13,304 t/s vs. 8,433t/s),whilefull-migrationprevailsonthestabletracewhereplanqualitydominates(11,080t/svs. 10,187 t/s).The evolved policy achieves the highest throughput on both traces (14,843 t/s and 12,731 t/s) while incurring moderate reconfiguration overhead (30.8s), improving over the better-performing baseline by16%onthevolatiletraceand15%onthestabletrace.Thissuggeststhattheevolvedpolicydiscovers reconfiguration strategies that capture the majority of the serving benefit without full plan replacement."
+  },
+  {
+    "paragraph_id": "p17-0143",
+    "translation": "Insight 3:Reconfigurationstrategysimilarlybenefitsfromevolution.Inelasticclusterdynamicsscenarioswhere reconfiguration aggressiveness becomes the primary trade-off, an optimal reconfiguration strategy must (i) navigate t",
+    "info_points": [
+      "Insight 3:Reconfigurationstrategysimilarlybenefitsfromevolution.Inelasticclusterdynamicsscenarioswhere reconfiguration aggressiveness becomes the primary trade-off, an optimal reconfiguration strategy must (i) navigate the trade-off between reconfiguration aggressiveness and serving performance, and"
+    ],
+    "keywords": [
+      "Insight",
+      "Reconfigurationstrategysimilarlybenefitsfromevolution",
+      "Inelasticclusterdynamicsscenarioswhere",
+      "reconfiguration",
+      "aggressiveness",
+      "becomes",
+      "primary",
+      "trade-off"
+    ],
+    "source_text": "Insight 3:Reconfigurationstrategysimilarlybenefitsfromevolution.Inelasticclusterdynamicsscenarioswhere reconfiguration aggressiveness becomes the primary trade-off, an optimal reconfiguration strategy must (i) navigate the trade-off between reconfiguration aggressiveness and serving performance, and (ii) find the minimum reconfiguration necessary to achieve near-optimal serving quality.The evolved policy addresses both by incorporating and fine-tuning reconfiguration-aware mechanisms (e.g., per-model migration cost-benefit checks, reconfiguration penalty magnitude adjustment), simultaneously controlling the overall aggressiveness and minimizing unnecessary transitions."
+  },
+  {
+    "paragraph_id": "p17-0144",
+    "translation": "8.3 Agentic Request Scheduling",
+    "info_points": [
+      "8.3 Agentic Request Scheduling"
+    ],
+    "keywords": [
+      "Agentic",
+      "Request",
+      "Scheduling"
+    ],
+    "source_text": "8.3 Agentic Request Scheduling"
+  }
+]

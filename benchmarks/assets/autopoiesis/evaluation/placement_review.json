@@ -1,0 +1,459 @@
+{
+  "items": [
+    {
+      "reference_id": "figure:1",
+      "kind": "figure",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:1",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:2",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:2",
+      "kind": "figure",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:3",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:4",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:4",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "equation:13",
+      "kind": "equation",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:5",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:5",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:1",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "equation:13",
+      "kind": "equation",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:1",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "equation:13",
+      "kind": "equation",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:3",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:6",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:6",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:6",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:7",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "equation:13",
+      "kind": "equation",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:7",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:8",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:8",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:9",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:2",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:2",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:3",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:3",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:4",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:4",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "equation:2",
+      "kind": "equation",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:5",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "equation:3",
+      "kind": "equation",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "equation:4",
+      "kind": "equation",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:6",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:5",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:7",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:7",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:8",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:9",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 1,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "figure:2",
+      "kind": "figure",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:9",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:10",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:10",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:11",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:11",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:14",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:14",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:12",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:13",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:15",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:16",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:14",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:15",
+      "kind": "table",
+      "covered": 1,
+      "placement_ok": 0,
+      "interleaved_ok": 1,
+      "reason": "fallback token heuristic"
+    },
+    {
+      "reference_id": "table:16",
+      "kind": "table",
+      "covered": 0,
+      "placement_ok": 0,
+      "interleaved_ok": 0,
+      "reason": "fallback token heuristic"
+    }
+  ],
+  "summary": {
+    "coverage_ratio": 0.782,
+    "placement_ratio": 0.182,
+    "interleaving_ratio": 0.782,
+    "top_placement_issues": [
+      "figure:1",
+      "figure:1",
+      "figure:2",
+      "figure:2",
+      "figure:3",
+      "figure:4",
+      "equation:13",
+      "figure:5"
+    ]
+  }
+}

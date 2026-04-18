@@ -1,0 +1,218 @@
+[
+  {
+    "paragraph_id": "p21-0205",
+    "translation": "[48]Youhe Jiang, Fangcheng Fu, and Eiko Yoneki.Boute:Cost-efficient llm serving with heterogeneous llms and gpus via multi-objective bayesian optimization.arXiv preprint arXiv:2602.10729, 2026.",
+    "info_points": [
+      "[48]Youhe Jiang, Fangcheng Fu, and Eiko Yoneki.Boute:Cost-efficient llm serving with heterogeneous llms and gpus via multi-objective bayesian optimization.arXiv preprint arXiv:2602.10729, 2026."
+    ],
+    "keywords": [
+      "Youhe",
+      "Jiang",
+      "Fangcheng",
+      "Eiko",
+      "Yoneki",
+      "Boute",
+      "Cost-efficient",
+      "serving"
+    ],
+    "source_text": "[48]Youhe Jiang, Fangcheng Fu, and Eiko Yoneki.Boute:Cost-efficient llm serving with heterogeneous llms and gpus via multi-objective bayesian optimization.arXiv preprint arXiv:2602.10729, 2026."
+  },
+  {
+    "paragraph_id": "p21-0206",
+    "translation": "[49]YouheJiang,FangchengFu,TaiyiWang,GuoliangHe,andEikoYoneki.Oserve:Acceleratingllmservingvia spatial-temporal workload orchestration.arXiv preprint arXiv:2602.12151, 2026.",
+    "info_points": [
+      "[49]YouheJiang,FangchengFu,TaiyiWang,GuoliangHe,andEikoYoneki.Oserve:Acceleratingllmservingvia spatial-temporal workload orchestration.arXiv preprint arXiv:2602.12151, 2026."
+    ],
+    "keywords": [
+      "YouheJiang",
+      "FangchengFu",
+      "TaiyiWang",
+      "GuoliangHe",
+      "andEikoYoneki",
+      "Oserve",
+      "Acceleratingllmservingvia",
+      "spatial-temporal"
+    ],
+    "source_text": "[49]YouheJiang,FangchengFu,TaiyiWang,GuoliangHe,andEikoYoneki.Oserve:Acceleratingllmservingvia spatial-temporal workload orchestration.arXiv preprint arXiv:2602.12151, 2026."
+  },
+  {
+    "paragraph_id": "p21-0207",
+    "translation": "[50]Chris Tong, Youhe Jiang, Gufeng Chen, Tianyi Zhao, Sibian Lu, Wenjie Qu, Eric Yang, Lynn Ai, and Binhang Yuan. Parallax:Efficient llm inference service over decentralized environment.arXiv preprint arXiv:2509.26182, ",
+    "info_points": [
+      "[50]Chris Tong, Youhe Jiang, Gufeng Chen, Tianyi Zhao, Sibian Lu, Wenjie Qu, Eric Yang, Lynn Ai, and Binhang Yuan."
+    ],
+    "keywords": [
+      "Chris",
+      "Tong",
+      "Youhe",
+      "Jiang",
+      "Gufeng",
+      "Chen",
+      "Tianyi",
+      "Zhao"
+    ],
+    "source_text": "[50]Chris Tong, Youhe Jiang, Gufeng Chen, Tianyi Zhao, Sibian Lu, Wenjie Qu, Eric Yang, Lynn Ai, and Binhang Yuan. Parallax:Efficient llm inference service over decentralized environment.arXiv preprint arXiv:2509.26182, 2025."
+  },
+  {
+    "paragraph_id": "p21-0208",
+    "translation": "[51]Wenhao He, Youhe Jiang, Penghao Zhao, Quanqing Xu, Eiko Yoneki, Bin Cui, and Fangcheng Fu.Efficient multi-round llm inference over disaggregated serving.arXiv preprint arXiv:2602.14516, 2026.",
+    "info_points": [
+      "[51]Wenhao He, Youhe Jiang, Penghao Zhao, Quanqing Xu, Eiko Yoneki, Bin Cui, and Fangcheng Fu.Efficient multi-round llm inference over disaggregated serving.arXiv preprint arXiv:2602.14516, 2026."
+    ],
+    "keywords": [
+      "Wenhao",
+      "Youhe",
+      "Jiang",
+      "Penghao",
+      "Zhao",
+      "Quanqing",
+      "Eiko",
+      "Yoneki"
+    ],
+    "source_text": "[51]Wenhao He, Youhe Jiang, Penghao Zhao, Quanqing Xu, Eiko Yoneki, Bin Cui, and Fangcheng Fu.Efficient multi-round llm inference over disaggregated serving.arXiv preprint arXiv:2602.14516, 2026."
+  },
+  {
+    "paragraph_id": "p21-0209",
+    "translation": "[52]PratyushPatel,EshaChoukse,ChaojieZhang,AashakaShah,ÍñigoGoiri,SaeedMaleki,andRicardoBianchini. Splitwise:Efficientgenerativellminferenceusingphasesplitting.In2024ACM/IEEE51stAnnualInternational Symposium on Computer ",
+    "info_points": [
+      "[52]PratyushPatel,EshaChoukse,ChaojieZhang,AashakaShah,ÍñigoGoiri,SaeedMaleki,andRicardoBianchini."
+    ],
+    "keywords": [
+      "PratyushPatel",
+      "EshaChoukse",
+      "ChaojieZhang",
+      "AashakaShah",
+      "igoGoiri",
+      "SaeedMaleki",
+      "andRicardoBianchini",
+      "Splitwise"
+    ],
+    "source_text": "[52]PratyushPatel,EshaChoukse,ChaojieZhang,AashakaShah,ÍñigoGoiri,SaeedMaleki,andRicardoBianchini. Splitwise:Efficientgenerativellminferenceusingphasesplitting.In2024ACM/IEEE51stAnnualInternational Symposium on Computer Architecture (ISCA), pages 118–132. IEEE, 2024."
+  },
+  {
+    "paragraph_id": "p21-0210",
+    "translation": "[53]Bingyang Wu, Yinmin Zhong, Zili Zhang, Shengyu Liu, Fangyue Liu, Yuanhang Sun, Gang Huang, Xuanzhe Liu, and Xin Jin.Fast distributed inference serving for large language models.arXiv preprint arXiv:2305.05920, 2023.",
+    "info_points": [
+      "[53]Bingyang Wu, Yinmin Zhong, Zili Zhang, Shengyu Liu, Fangyue Liu, Yuanhang Sun, Gang Huang, Xuanzhe Liu, and Xin Jin.Fast distributed inference serving for large language models.arXiv preprint arXiv:2305.05920, 2023."
+    ],
+    "keywords": [
+      "Bingyang",
+      "Yinmin",
+      "Zhong",
+      "Zili",
+      "Zhang",
+      "Shengyu",
+      "Fangyue",
+      "Yuanhang"
+    ],
+    "source_text": "[53]Bingyang Wu, Yinmin Zhong, Zili Zhang, Shengyu Liu, Fangyue Liu, Yuanhang Sun, Gang Huang, Xuanzhe Liu, and Xin Jin.Fast distributed inference serving for large language models.arXiv preprint arXiv:2305.05920, 2023."
+  },
+  {
+    "paragraph_id": "p21-0211",
+    "translation": "[54]Xupeng Miao, Yujie Wang, Youhe Jiang, Chunan Shi, Xiaonan Nie, Hailin Zhang, and Bin Cui.Galvatron:Efficient transformer training over multiple gpus using automatic parallelism.arXiv preprint arXiv:2211.13878, 2022.",
+    "info_points": [
+      "[54]Xupeng Miao, Yujie Wang, Youhe Jiang, Chunan Shi, Xiaonan Nie, Hailin Zhang, and Bin Cui.Galvatron:Efficient transformer training over multiple gpus using automatic parallelism.arXiv preprint arXiv:2211.13878, 2022."
+    ],
+    "keywords": [
+      "Xupeng",
+      "Miao",
+      "Yujie",
+      "Wang",
+      "Youhe",
+      "Jiang",
+      "Chunan",
+      "Xiaonan"
+    ],
+    "source_text": "[54]Xupeng Miao, Yujie Wang, Youhe Jiang, Chunan Shi, Xiaonan Nie, Hailin Zhang, and Bin Cui.Galvatron:Efficient transformer training over multiple gpus using automatic parallelism.arXiv preprint arXiv:2211.13878, 2022."
+  },
+  {
+    "paragraph_id": "p21-0212",
+    "translation": "[55]YouheJiang,FangchengFu,XupengMiao,XiaonanNie,andBinCui.Osdp:Optimalshardeddataparallelfor distributed deep learning.arXiv preprint arXiv:2209.13258, 2022.",
+    "info_points": [
+      "[55]YouheJiang,FangchengFu,XupengMiao,XiaonanNie,andBinCui.Osdp:Optimalshardeddataparallelfor distributed deep learning.arXiv preprint arXiv:2209.13258, 2022."
+    ],
+    "keywords": [
+      "YouheJiang",
+      "FangchengFu",
+      "XupengMiao",
+      "XiaonanNie",
+      "andBinCui",
+      "Osdp",
+      "Optimalshardeddataparallelfor",
+      "distributed"
+    ],
+    "source_text": "[55]YouheJiang,FangchengFu,XupengMiao,XiaonanNie,andBinCui.Osdp:Optimalshardeddataparallelfor distributed deep learning.arXiv preprint arXiv:2209.13258, 2022."
+  },
+  {
+    "paragraph_id": "p21-0213",
+    "translation": "[56]HE Guoliang, Youhe Jiang, Wencong Xiao, Jiang Kaihua, Shuguang Wang, Jun Wang, Du Zixian, Zhuo Jiang, Xinlei Zhang, Binhang Yuan, et al.Efficient pre-training of llms via topology-aware communication alignment on mor",
+    "info_points": [
+      "[56]HE Guoliang, Youhe Jiang, Wencong Xiao, Jiang Kaihua, Shuguang Wang, Jun Wang, Du Zixian, Zhuo Jiang, Xinlei Zhang, Binhang Yuan, et al.Efficient pre-training of llms via topology-aware communication alignment on more than 9600 gpus.In The Thirty-ninth Annual Conference on Neural Information Pro"
+    ],
+    "keywords": [
+      "Guoliang",
+      "Youhe",
+      "Jiang",
+      "Wencong",
+      "Xiao",
+      "Jiang",
+      "Kaihua",
+      "Shuguang"
+    ],
+    "source_text": "[56]HE Guoliang, Youhe Jiang, Wencong Xiao, Jiang Kaihua, Shuguang Wang, Jun Wang, Du Zixian, Zhuo Jiang, Xinlei Zhang, Binhang Yuan, et al.Efficient pre-training of llms via topology-aware communication alignment on more than 9600 gpus.In The Thirty-ninth Annual Conference on Neural Information Processing Systems."
+  },
+  {
+    "paragraph_id": "p21-0214",
+    "translation": "[57]YujieWang,YouheJiang,XupengMiao,FangchengFu,ShenhanZhu,XiaonanNie,YaofengTu,andBinCui. Improving automatic parallel training via balanced memory workload optimization.IEEE Transactions on Knowledge and Data Engineeri",
+    "info_points": [
+      "[57]YujieWang,YouheJiang,XupengMiao,FangchengFu,ShenhanZhu,XiaonanNie,YaofengTu,andBinCui."
+    ],
+    "keywords": [
+      "YujieWang",
+      "YouheJiang",
+      "XupengMiao",
+      "FangchengFu",
+      "ShenhanZhu",
+      "XiaonanNie",
+      "YaofengTu",
+      "andBinCui"
+    ],
+    "source_text": "[57]YujieWang,YouheJiang,XupengMiao,FangchengFu,ShenhanZhu,XiaonanNie,YaofengTu,andBinCui. Improving automatic parallel training via balanced memory workload optimization.IEEE Transactions on Knowledge and Data Engineering, 36(8):3906–3920, 2024."
+  },
+  {
+    "paragraph_id": "p21-0215",
+    "translation": "[58]Ran Yan, Youhe Jiang, Xiaonan Nie, Fangcheng Fu, Bin Cui, and Binhang Yuan.Hexiscale:Accommodating large language model training over heterogeneous environment.arXiv preprint arXiv:2409.01143, 2024.",
+    "info_points": [
+      "[58]Ran Yan, Youhe Jiang, Xiaonan Nie, Fangcheng Fu, Bin Cui, and Binhang Yuan.Hexiscale:Accommodating large language model training over heterogeneous environment.arXiv preprint arXiv:2409.01143, 2024."
+    ],
+    "keywords": [
+      "Youhe",
+      "Jiang",
+      "Xiaonan",
+      "Fangcheng",
+      "Binhang",
+      "Yuan",
+      "Hexiscale",
+      "Accommodating"
+    ],
+    "source_text": "[58]Ran Yan, Youhe Jiang, Xiaonan Nie, Fangcheng Fu, Bin Cui, and Binhang Yuan.Hexiscale:Accommodating large language model training over heterogeneous environment.arXiv preprint arXiv:2409.01143, 2024."
+  },
+  {
+    "paragraph_id": "p22-0216",
+    "translation": "Symbol Description i ∈{1, . . . , N} Timestamp index; Nis the total number of timestamps. σi Scheduling plan at timestamp i, specifying model assignment and parallelism. σ= {σ1, . . . , σN} Sequence of scheduling plans o",
+    "info_points": [
+      "Symbol Description i ∈{1, ."
+    ],
+    "keywords": [
+      "Symbol",
+      "Description",
+      "Timestamp",
+      "index",
+      "total",
+      "number",
+      "timestamps",
+      "Scheduling"
+    ],
+    "source_text": "Symbol Description i ∈{1, . . . , N} Timestamp index; Nis the total number of timestamps. σi Scheduling plan at timestamp i, specifying model assignment and parallelism. σ= {σ1, . . . , σN} Sequence of scheduling plans over the time horizon. Ttotal Total end-to-end latency over the time horizon. d ∈D GPU device in the heterogeneous device set D = {d1, . . . , dK}. md Memory capacity of device d. g∈G GPU type in the type set G = {g1, . . . , gP }. κg Total device count for GPU type g. mg, Fg, Bg, Pg Per-device HBM capacity, peak FP16 throughput, HBM bandwidth, PCIe bandwidth of type g. M = {M1, . . . , MZ} Set of Zmodels. Wz= {wz,1, . . . , wz,Jz} Set of Jzworkload types for model Mz. Wz Total weight size of model Mzin bytes (see Equation 2). λz,i Total concurrent request count (batch size) for Mzat timestamp i. sp z,i, sd z,i Prefill (input) and decode (output) lengths for Mzat timestamp i. bmax z,i Maximum per-replica batch size for Mzat timestamp i. Tg Set of valid tensor-parallel (TP) degrees for GPU type g. Bz,i Candidate per-replica batch sizes for Mzat timestamp i. nz,g,t,b∈Z≥0 Number of replicas of Mzon GPU type gwith TP degree t and batch size b. yz,g,t,b∈{0, 1} Indicator:1 iff replica group (z, g, t, b) is active. Lz Completion latency of model Mz(slowest active replica group). Tbalanced Global makespan:maxz∈M Lz. SERVE-COST(σi) Serving latency to process workloads under plan σi. RECONFIG-COST(σi−1, σi) Reconfiguration overhead between consecutive scheduling plans. STALE-COST(σi) Penalty for stale or delayed serving at timestamp i. SCHED-COST Scheduling overhead (ILP solve time). τ(z, g) Weight transfer time for model Mzon GPU type gvia PCIe. cz PCIe bandwidth efficiency coefficient for model Mz."
+  }
+]

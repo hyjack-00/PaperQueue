@@ -1,0 +1,206 @@
+[
+  {
+    "paragraph_id": "p23-0229",
+    "translation": "Reconfiguration Cost.When consecutive plans σi−1 and σi differ for model Mz— i.e., the (GPU type,TP,count) tuples changes — the cluster must terminate old replicas and reload new ones via PCIe.Let ∆Mi⊆M denote the set of",
+    "info_points": [
+      "Reconfiguration Cost.When consecutive plans σi−1 and σi differ for model Mz— i.e., the (GPU type,TP,count) tuples changes — the cluster must terminate old replicas and reload new ones via PCIe.Let ∆Mi⊆M denote the set of models whose placement changed from σi−1to σi.The reconfiguration cost decompos"
+    ],
+    "keywords": [
+      "Reconfiguration",
+      "Cost",
+      "When",
+      "consecutive",
+      "plans",
+      "differ",
+      "model",
+      "type"
+    ],
+    "source_text": "Reconfiguration Cost.When consecutive plans σi−1 and σi differ for model Mz— i.e., the (GPU type,TP,count) tuples changes — the cluster must terminate old replicas and reload new ones via PCIe.Let ∆Mi⊆M denote the set of models whose placement changed from σi−1to σi.The reconfiguration cost decomposes as:"
+  },
+  {
+    "paragraph_id": "p23-0230",
+    "translation": "RECONFIG-COST(σi−1, σi) = Tterm(σi−1, σi) + Tload(σi) (8) For model Mzon GPU type g, the weight transfer time is TP-insensitive (the full model weight is transferred regardless of sharding degree):",
+    "info_points": [
+      "RECONFIG-COST(σi−1, σi) = Tterm(σi−1, σi) + Tload(σi) (8) For model Mzon GPU type g, the weight transfer time is TP-insensitive (the full model weight is transferred regardless of sharding degree):"
+    ],
+    "keywords": [
+      "RECONFIG-COST",
+      "Tterm",
+      "Tload",
+      "model",
+      "Mzon",
+      "type",
+      "weight",
+      "transfer"
+    ],
+    "source_text": "RECONFIG-COST(σi−1, σi) = Tterm(σi−1, σi) + Tload(σi) (8) For model Mzon GPU type g, the weight transfer time is TP-insensitive (the full model weight is transferred regardless of sharding degree):"
+  },
+  {
+    "paragraph_id": "p23-0231",
+    "translation": "where cz∈[5.3,11.5] is a model-size-dependent PCIe bandwidth utilization coefficient (smaller models incur higher per-byte overhead due to PCIe protocol amortization).",
+    "info_points": [
+      "where cz∈[5.3,11.5] is a model-size-dependent PCIe bandwidth utilization coefficient (smaller models incur higher per-byte overhead due to PCIe protocol amortization)."
+    ],
+    "keywords": [
+      "where",
+      "model-size-dependent",
+      "PCIe",
+      "bandwidth",
+      "utilization",
+      "coefficient",
+      "smaller",
+      "models"
+    ],
+    "source_text": "where cz∈[5.3,11.5] is a model-size-dependent PCIe bandwidth utilization coefficient (smaller models incur higher per-byte overhead due to PCIe protocol amortization)."
+  },
+  {
+    "paragraph_id": "p23-0232",
+    "translation": "The termination cost is the time to drain and evict all changed models from HBM; since different GPU types can terminate concurrently, the bottleneck is the slowest group:",
+    "info_points": [
+      "The termination cost is the time to drain and evict all changed models from HBM; since different GPU types can terminate concurrently, the bottleneck is the slowest group:"
+    ],
+    "keywords": [
+      "termination",
+      "cost",
+      "time",
+      "drain",
+      "evict",
+      "changed",
+      "models",
+      "from"
+    ],
+    "source_text": "The termination cost is the time to drain and evict all changed models from HBM; since different GPU types can terminate concurrently, the bottleneck is the slowest group:"
+  },
+  {
+    "paragraph_id": "p23-0233",
+    "translation": "Tterm(σi−1, σi) =max z∈∆Mi max g∈G: σi−1deploys Mzon g τ(z, g) (10) The loading cost is the time to transfer new model weights to all target GPU types; since different GPU types load in parallel, the bottleneck is again ",
+    "info_points": [
+      "Tterm(σi−1, σi) =max z∈∆Mi max g∈G: σi−1deploys Mzon g τ(z, g) (10) The loading cost is the time to transfer new model weights to all target GPU types; since different GPU types load in parallel, the bottleneck is again the slowest:"
+    ],
+    "keywords": [
+      "Tterm",
+      "deploys",
+      "Mzon",
+      "loading",
+      "cost",
+      "time",
+      "transfer",
+      "model"
+    ],
+    "source_text": "Tterm(σi−1, σi) =max z∈∆Mi max g∈G: σi−1deploys Mzon g τ(z, g) (10) The loading cost is the time to transfer new model weights to all target GPU types; since different GPU types load in parallel, the bottleneck is again the slowest:"
+  },
+  {
+    "paragraph_id": "p23-0234",
+    "translation": "Tload(σi) = max g∈G max z∈M: σideploys Mzon g τ(z, g) (11)",
+    "info_points": [
+      "Tload(σi) = max g∈G max z∈M: σideploys Mzon g τ(z, g) (11)"
+    ],
+    "keywords": [
+      "Tload",
+      "ideploys",
+      "Mzon"
+    ],
+    "source_text": "Tload(σi) = max g∈G max z∈M: σideploys Mzon g τ(z, g) (11)"
+  },
+  {
+    "paragraph_id": "p24-0235",
+    "translation": "C Scheduling Problem Formulation",
+    "info_points": [
+      "C Scheduling Problem Formulation"
+    ],
+    "keywords": [
+      "Scheduling",
+      "Problem",
+      "Formulation"
+    ],
+    "source_text": "C Scheduling Problem Formulation"
+  },
+  {
+    "paragraph_id": "p24-0236",
+    "translation": "Scheduling problem formulation.Given a heterogeneous cluster of GPUs, we consider the problem of jointly scheduling multiple models under time-varying workloads.Let D = {d1, . . . , dK} denote a set of Kheteroge- neous G",
+    "info_points": [
+      "Scheduling problem formulation.Given a heterogeneous cluster of GPUs, we consider the problem of jointly scheduling multiple models under time-varying workloads.Let D = {d1, ."
+    ],
+    "keywords": [
+      "Scheduling",
+      "problem",
+      "formulation",
+      "Given",
+      "heterogeneous",
+      "cluster",
+      "GPUs",
+      "consider"
+    ],
+    "source_text": "Scheduling problem formulation.Given a heterogeneous cluster of GPUs, we consider the problem of jointly scheduling multiple models under time-varying workloads.Let D = {d1, . . . , dK} denote a set of Kheteroge- neous GPU devices, where each device d has a memory capacity mdand distinct compute characteristics.Let M = {M1, . . . , MZ} denote a set of Zmodels.Each model Mzmay serve multiple types of workloads (e.g., inference requests with different input sizes or other requirements), denoted as Wz= {wz,1, . . . , wz,Jz}."
+  },
+  {
+    "paragraph_id": "p24-0237",
+    "translation": "We consider a discrete time horizon of Ntimestamps.At each timestamp i ∈{1, . . . , N}, the system observes a workload demand Wiacross all models and workload types.A scheduling plan at timestamp i is denoted as σi, whic",
+    "info_points": [
+      "We consider a discrete time horizon of Ntimestamps.At each timestamp i ∈{1, ."
+    ],
+    "keywords": [
+      "consider",
+      "discrete",
+      "time",
+      "horizon",
+      "Ntimestamps",
+      "each",
+      "timestamp",
+      "system"
+    ],
+    "source_text": "We consider a discrete time horizon of Ntimestamps.At each timestamp i ∈{1, . . . , N}, the system observes a workload demand Wiacross all models and workload types.A scheduling plan at timestamp i is denoted as σi, which specifies (i) the assignment of models and workloads to devices, and (ii) the parallel execution configuration, i.e., data, pipeline, or tensor parallelism, for each model.In our context, the data parallelism means the number of inference replicas."
+  },
+  {
+    "paragraph_id": "p24-0238",
+    "translation": "The scheduling plan must satisfy device memory constraints:",
+    "info_points": [
+      "The scheduling plan must satisfy device memory constraints:"
+    ],
+    "keywords": [
+      "scheduling",
+      "plan",
+      "must",
+      "satisfy",
+      "device",
+      "memory",
+      "constraints"
+    ],
+    "source_text": "The scheduling plan must satisfy device memory constraints:"
+  },
+  {
+    "paragraph_id": "p24-0239",
+    "translation": "MEM-CUMSUM(d, i) ≤md, ∀d ∈D,∀i ∈{1, . . . , N} (12) whereMEM-CUMSUM(d, i) denotes the total memory consumption on device d at timestamp i.",
+    "info_points": [
+      "MEM-CUMSUM(d, i) ≤md, ∀d ∈D,∀i ∈{1, ."
+    ],
+    "keywords": [
+      "MEM-CUMSUM",
+      "whereMEM-CUMSUM",
+      "denotes",
+      "total",
+      "memory",
+      "consumption",
+      "device",
+      "timestamp"
+    ],
+    "source_text": "MEM-CUMSUM(d, i) ≤md, ∀d ∈D,∀i ∈{1, . . . , N} (12) whereMEM-CUMSUM(d, i) denotes the total memory consumption on device d at timestamp i."
+  },
+  {
+    "paragraph_id": "p24-0240",
+    "translation": "Each scheduling plan σiincurs four types of costs:",
+    "info_points": [
+      "Each scheduling plan σiincurs four types of costs:"
+    ],
+    "keywords": [
+      "Each",
+      "scheduling",
+      "plan",
+      "iincurs",
+      "four",
+      "types",
+      "costs"
+    ],
+    "source_text": "Each scheduling plan σiincurs four types of costs:"
+  }
+]

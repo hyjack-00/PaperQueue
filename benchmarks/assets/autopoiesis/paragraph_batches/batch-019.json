@@ -1,0 +1,202 @@
+[
+  {
+    "paragraph_id": "p22-0217",
+    "translation": "A Notations",
+    "info_points": [
+      "A Notations"
+    ],
+    "keywords": [
+      "Notations"
+    ],
+    "source_text": "A Notations"
+  },
+  {
+    "paragraph_id": "p22-0218",
+    "translation": "We summarize the notations used in the paper in Table 5.",
+    "info_points": [
+      "We summarize the notations used in the paper in Table 5."
+    ],
+    "keywords": [
+      "summarize",
+      "notations",
+      "used",
+      "paper",
+      "Table"
+    ],
+    "source_text": "We summarize the notations used in the paper in Table 5."
+  },
+  {
+    "paragraph_id": "p22-0219",
+    "translation": "B Serving Simulator",
+    "info_points": [
+      "B Serving Simulator"
+    ],
+    "keywords": [
+      "Serving",
+      "Simulator"
+    ],
+    "source_text": "B Serving Simulator"
+  },
+  {
+    "paragraph_id": "p22-0220",
+    "translation": "We present the concrete cost models used in our roofline-based simulator to instantiate SERVE-COST, RECONFIG-COST, and Ttotal.Each GPU type g∈G has per-device HBM capacity mg, peak FP16 throughput Fg(FLOPs/s), HBM bandwi",
+    "info_points": [
+      "We present the concrete cost models used in our roofline-based simulator to instantiate SERVE-COST, RECONFIG-COST, and Ttotal.Each GPU type g∈G has per-device HBM capacity mg, peak FP16 throughput Fg(FLOPs/s), HBM bandwidthBg(bytes/s),PCIebandwidthPg(bytes/s),andνgGPUsperphysicalnode.EachmodelMzis d"
+    ],
+    "keywords": [
+      "present",
+      "concrete",
+      "cost",
+      "models",
+      "used",
+      "roofline-based",
+      "simulator",
+      "instantiate"
+    ],
+    "source_text": "We present the concrete cost models used in our roofline-based simulator to instantiate SERVE-COST, RECONFIG-COST, and Ttotal.Each GPU type g∈G has per-device HBM capacity mg, peak FP16 throughput Fg(FLOPs/s), HBM bandwidthBg(bytes/s),PCIebandwidthPg(bytes/s),andνgGPUsperphysicalnode.EachmodelMzis described by:layers Lz, hidden dimension Hz, MLP intermediate dimension Iz, vocabulary size Vz, attention heads Az, key-value heads Kz≤Az, per-head dimension dz= Hz/Az, and weight precision ηbits."
+  },
+  {
+    "paragraph_id": "p22-0221",
+    "translation": "Model Weight Size.The total parameter footprint of Mzin bytes is:",
+    "info_points": [
+      "Model Weight Size.The total parameter footprint of Mzin bytes is:"
+    ],
+    "keywords": [
+      "Model",
+      "Weight",
+      "Size",
+      "total",
+      "parameter",
+      "footprint",
+      "Mzin",
+      "bytes"
+    ],
+    "source_text": "Model Weight Size.The total parameter footprint of Mzin bytes is:"
+  },
+  {
+    "paragraph_id": "p22-0222",
+    "translation": "Wz= h Lz \u0000 3HzIz+ 2AzHzdz+ 2KzHzdz \u0001 + 2HzVz i ·η 8 (2) where the per-layer terms account for the three MLP projections (3HzIz),the query and output attention projections(2AzHzdz=2H2 z),thekeyandvalueprojections(2KzHzdz)",
+    "info_points": [
+      "Wz= h Lz \u0000 3HzIz+ 2AzHzdz+ 2KzHzdz \u0001 + 2HzVz i ·η 8 (2) where the per-layer terms account for the three MLP projections (3HzIz),the query and output attention projections(2AzHzdz=2H2 z),thekeyandvalueprojections(2KzHzdz),andthesharedembeddingand output-projection matrices (2HzVz)."
+    ],
+    "keywords": [
+      "HzIz",
+      "AzHzdz",
+      "KzHzdz",
+      "HzVz",
+      "where",
+      "per-layer",
+      "terms",
+      "account"
+    ],
+    "source_text": "Wz= h Lz \u0000 3HzIz+ 2AzHzdz+ 2KzHzdz \u0001 + 2HzVz i ·η 8 (2) where the per-layer terms account for the three MLP projections (3HzIz),the query and output attention projections(2AzHzdz=2H2 z),thekeyandvalueprojections(2KzHzdz),andthesharedembeddingand output-projection matrices (2HzVz)."
+  },
+  {
+    "paragraph_id": "p22-0223",
+    "translation": "Roofline-Based Serve Cost.The latency Λ(z, g, t, b, sp, sd) for a replica group serving Mzon GPU type gwith TP degree t and per-replica batch size b is estimated via the hardware roofline model.For an operation requiring",
+    "info_points": [
+      "Roofline-Based Serve Cost.The latency Λ(z, g, t, b, sp, sd) for a replica group serving Mzon GPU type gwith TP degree t and per-replica batch size b is estimated via the hardware roofline model.For an operation requiring FFLOPs and accessing A bytes, the arithmetic intensity is AI = F/A and the ridg"
+    ],
+    "keywords": [
+      "Roofline-Based",
+      "Serve",
+      "Cost",
+      "latency",
+      "replica",
+      "group",
+      "serving",
+      "Mzon"
+    ],
+    "source_text": "Roofline-Based Serve Cost.The latency Λ(z, g, t, b, sp, sd) for a replica group serving Mzon GPU type gwith TP degree t and per-replica batch size b is estimated via the hardware roofline model.For an operation requiring FFLOPs and accessing A bytes, the arithmetic intensity is AI = F/A and the ridge point is AI∗= Fg/Bg.The achieved performance and operation time are:"
+  },
+  {
+    "paragraph_id": "p23-0224",
+    "translation": "The total serve latency sums Topacross all transformer sublayers for both the prefill and decode phases, plus the TP all-reduce communication overhead:",
+    "info_points": [
+      "The total serve latency sums Topacross all transformer sublayers for both the prefill and decode phases, plus the TP all-reduce communication overhead:"
+    ],
+    "keywords": [
+      "total",
+      "serve",
+      "latency",
+      "sums",
+      "Topacross",
+      "transformer",
+      "sublayers",
+      "both"
+    ],
+    "source_text": "The total serve latency sums Topacross all transformer sublayers for both the prefill and decode phases, plus the TP all-reduce communication overhead:"
+  },
+  {
+    "paragraph_id": "p23-0225",
+    "translation": "Λ(z, g, t, b, sp, sd) = Tprefill(z, g, t, b, sp) where Tprefilland Tdecodeapply Equation 3 and Equation 4 to each sublayer and add the ring-allreduce time incurred at each of the Lztransformer layers (two all-reduces per",
+    "info_points": [
+      "Λ(z, g, t, b, sp, sd) = Tprefill(z, g, t, b, sp) where Tprefilland Tdecodeapply Equation 3 and Equation 4 to each sublayer and add the ring-allreduce time incurred at each of the Lztransformer layers (two all-reduces per layer:after the attention output projection and after the MLP down-projection):"
+    ],
+    "keywords": [
+      "Tprefill",
+      "where",
+      "Tprefilland",
+      "Tdecodeapply",
+      "Equation",
+      "Equation",
+      "each",
+      "sublayer"
+    ],
+    "source_text": "Λ(z, g, t, b, sp, sd) = Tprefill(z, g, t, b, sp) where Tprefilland Tdecodeapply Equation 3 and Equation 4 to each sublayer and add the ring-allreduce time incurred at each of the Lztransformer layers (two all-reduces per layer:after the attention output projection and after the MLP down-projection):"
+  },
+  {
+    "paragraph_id": "p23-0226",
+    "translation": "where s ∈{1, sp} is the sequence length for the decode and prefill phases respectively, and Rg,tis the effective interconnect bandwidth (intra-node when t ≤νg, cross-node otherwise).",
+    "info_points": [
+      "where s ∈{1, sp} is the sequence length for the decode and prefill phases respectively, and Rg,tis the effective interconnect bandwidth (intra-node when t ≤νg, cross-node otherwise)."
+    ],
+    "keywords": [
+      "where",
+      "sequence",
+      "length",
+      "decode",
+      "prefill",
+      "phases",
+      "respectively",
+      "effective"
+    ],
+    "source_text": "where s ∈{1, sp} is the sequence length for the decode and prefill phases respectively, and Rg,tis the effective interconnect bandwidth (intra-node when t ≤νg, cross-node otherwise)."
+  },
+  {
+    "paragraph_id": "p23-0227",
+    "translation": "MemoryFeasibility.Under TP degree t, each GPU shard of Mzholds Wz/t bytes of model weights.A group (z, g, t, b) is infeasible if the per-shard weight exceeds available device capacity, i.e., OOM issues occur:",
+    "info_points": [
+      "MemoryFeasibility.Under TP degree t, each GPU shard of Mzholds Wz/t bytes of model weights.A group (z, g, t, b) is infeasible if the per-shard weight exceeds available device capacity, i.e., OOM issues occur:"
+    ],
+    "keywords": [
+      "MemoryFeasibility",
+      "Under",
+      "degree",
+      "each",
+      "shard",
+      "Mzholds",
+      "bytes",
+      "model"
+    ],
+    "source_text": "MemoryFeasibility.Under TP degree t, each GPU shard of Mzholds Wz/t bytes of model weights.A group (z, g, t, b) is infeasible if the per-shard weight exceeds available device capacity, i.e., OOM issues occur:"
+  },
+  {
+    "paragraph_id": "p23-0228",
+    "translation": "whereθ=0.8isamemoryutilizationthresholdreservingheadroomfortheKVcache.Infeasiblegroups are assigned a penalty latency Λ∞≫0; the min-makespan objective then naturally avoids activating them without requiring additional co",
+    "info_points": [
+      "whereθ=0.8isamemoryutilizationthresholdreservingheadroomfortheKVcache.Infeasiblegroups are assigned a penalty latency Λ∞≫0; the min-makespan objective then naturally avoids activating them without requiring additional constraints."
+    ],
+    "keywords": [
+      "where",
+      "isamemoryutilizationthresholdreservingheadroomfortheKVcache",
+      "Infeasiblegroups",
+      "assigned",
+      "penalty",
+      "latency",
+      "min-makespan",
+      "objective"
+    ],
+    "source_text": "whereθ=0.8isamemoryutilizationthresholdreservingheadroomfortheKVcache.Infeasiblegroups are assigned a penalty latency Λ∞≫0; the min-makespan objective then naturally avoids activating them without requiring additional constraints."
+  }
+]

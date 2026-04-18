@@ -1,0 +1,203 @@
+[
+  {
+    "paragraph_id": "p30-0313",
+    "translation": "Table8TraceforFigure2(left):Twoabruptphasetransitionsacross3timestamps(H→L→H).Phasetransitionsare marked with ⇒.",
+    "info_points": [
+      "Table8TraceforFigure2(left):Twoabruptphasetransitionsacross3timestamps(H→L→H).Phasetransitionsare marked with ⇒."
+    ],
+    "keywords": [
+      "Table8TraceforFigure2",
+      "left",
+      "Twoabruptphasetransitionsacross3timestamps",
+      "Phasetransitionsare",
+      "marked",
+      "with"
+    ],
+    "source_text": "Table8TraceforFigure2(left):Twoabruptphasetransitionsacross3timestamps(H→L→H).Phasetransitionsare marked with ⇒."
+  },
+  {
+    "paragraph_id": "p30-0314",
+    "translation": "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 H 64 64 64 384 256 128 ts1 ⇒L 960 480 288 64 32 16 ts2 ⇒H 64 64 64 384 256 128 Table9TraceforFigure2(right):5timestampscombiningastableperiodwithonemajorphaseshift(L→H).Phase transitio",
+    "info_points": [
+      "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 H 64 64 64 384 256 128 ts1 ⇒L 960 480 288 64 32 16 ts2 ⇒H 64 64 64 384 256 128 Table9TraceforFigure2(right):5timestampscombiningastableperiodwithonemajorphaseshift(L→H).Phase transition is marked with ⇒."
+    ],
+    "keywords": [
+      "Phase",
+      "Table9TraceforFigure2",
+      "right",
+      "timestampscombiningastableperiodwithonemajorphaseshift",
+      "Phase",
+      "transition",
+      "marked",
+      "with"
+    ],
+    "source_text": "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 H 64 64 64 384 256 128 ts1 ⇒L 960 480 288 64 32 16 ts2 ⇒H 64 64 64 384 256 128 Table9TraceforFigure2(right):5timestampscombiningastableperiodwithonemajorphaseshift(L→H).Phase transition is marked with ⇒."
+  },
+  {
+    "paragraph_id": "p30-0315",
+    "translation": "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 L 960 480 288 64 32 16 ts1 L 968 476 284 64 32 16 ts2 ⇒H 64 64 64 384 256 128 ts3 H 72 64 64 400 256 128 ts4 H 64 64 64 384 256 128",
+    "info_points": [
+      "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 L 960 480 288 64 32 16 ts1 L 968 476 284 64 32 16 ts2 ⇒H 64 64 64 384 256 128 ts3 H 72 64 64 400 256 128 ts4 H 64 64 64 384 256 128"
+    ],
+    "keywords": [
+      "Phase"
+    ],
+    "source_text": "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 L 960 480 288 64 32 16 ts1 L 968 476 284 64 32 16 ts2 ⇒H 64 64 64 384 256 128 ts3 H 72 64 64 400 256 128 ts4 H 64 64 64 384 256 128"
+  },
+  {
+    "paragraph_id": "p30-0316",
+    "translation": "H Trace Information",
+    "info_points": [
+      "H Trace Information"
+    ],
+    "keywords": [
+      "Trace",
+      "Information"
+    ],
+    "source_text": "H Trace Information"
+  },
+  {
+    "paragraph_id": "p30-0317",
+    "translation": "H.1 Trace Information for the Motivation Section We present two motivating traces using Qwen2.5 models (1.5B–72B). In the heavy-dominant phase (H), small models(1.5B/3B/7B)servelowbatchsizes(64/64/64)with256-tokenprefill",
+    "info_points": [
+      "H.1 Trace Information for the Motivation Section We present two motivating traces using Qwen2.5 models (1.5B–72B)."
+    ],
+    "keywords": [
+      "Trace",
+      "Information",
+      "Motivation",
+      "Section",
+      "present",
+      "motivating",
+      "traces",
+      "using"
+    ],
+    "source_text": "H.1 Trace Information for the Motivation Section We present two motivating traces using Qwen2.5 models (1.5B–72B). In the heavy-dominant phase (H), small models(1.5B/3B/7B)servelowbatchsizes(64/64/64)with256-tokenprefillsequencelengthandshort decode sequence lengths (2048/1536/3072 tokens),while large models (14B/32B/72B) carry high batch loads(384/256/128)with512-tokenprefilllengthandlongdecodesequencelengths(8192/6144/5120 tokens);inthelight-dominantphase(L),smallmodelsdominate(960/480/288batch,256-tokenprefill sequence length, 4096/3072/6144-token decoding sequence length), while large models are minimally loaded (64/32/16 batch, 256-token prefill sequence length, 2048/1536/1280-token decoding sequence length)."
+  },
+  {
+    "paragraph_id": "p30-0318",
+    "translation": "TraceforFigure2(left).AsshowninTable8,this3-timestamptracefeaturestwoabruptphasetransitions, demonstrating the scheduler’s need for rapid response.The system starts in a heavy-dominant phase (ts0), abruptlyshiftstoalight",
+    "info_points": [
+      "TraceforFigure2(left).AsshowninTable8,this3-timestamptracefeaturestwoabruptphasetransitions, demonstrating the scheduler’s need for rapid response.The system starts in a heavy-dominant phase (ts0), abruptlyshiftstoalight-dominantphase(ts1),andrevertstoheavy-dominantatts2.Eachtransition dramatically "
+    ],
+    "keywords": [
+      "TraceforFigure2",
+      "left",
+      "AsshowninTable8",
+      "this3-timestamptracefeaturestwoabruptphasetransitions",
+      "demonstrating",
+      "scheduler",
+      "need",
+      "rapid"
+    ],
+    "source_text": "TraceforFigure2(left).AsshowninTable8,this3-timestamptracefeaturestwoabruptphasetransitions, demonstrating the scheduler’s need for rapid response.The system starts in a heavy-dominant phase (ts0), abruptlyshiftstoalight-dominantphase(ts1),andrevertstoheavy-dominantatts2.Eachtransition dramatically redistributes load across all model sizes."
+  },
+  {
+    "paragraph_id": "p30-0319",
+    "translation": "Trace for Figure 2 (right).As shown in Table 9, this 5-timestamp trace hybridizes stable and volatile behavior. The workload begins in a light-dominant phase with minor perturbations (ts0–ts1), undergoes one abrupt shift",
+    "info_points": [
+      "Trace for Figure 2 (right).As shown in Table 9, this 5-timestamp trace hybridizes stable and volatile behavior."
+    ],
+    "keywords": [
+      "Trace",
+      "Figure",
+      "right",
+      "shown",
+      "Table",
+      "this",
+      "timestamp",
+      "trace"
+    ],
+    "source_text": "Trace for Figure 2 (right).As shown in Table 9, this 5-timestamp trace hybridizes stable and volatile behavior. The workload begins in a light-dominant phase with minor perturbations (ts0–ts1), undergoes one abrupt shift to the heavy-dominant phase at ts2, and then stabilizes with minor perturbations (ts3–ts4).This demonstrates that even predominantly stable workloads benefit from adaptive rescheduling at shift boundaries."
+  },
+  {
+    "paragraph_id": "p30-0320",
+    "translation": "H.2 Trace Information for the Case Studies Stable workload in §8.1.We consider a production workload consisting of 10 timestamps (ts0–ts9) and three Qwen2.5 model sizes (1.5B, 3B, and 7B), where batch sizes and sequence ",
+    "info_points": [
+      "H.2 Trace Information for the Case Studies Stable workload in §8.1.We consider a production workload consisting of 10 timestamps (ts0–ts9) and three Qwen2.5 model sizes (1.5B, 3B, and 7B), where batch sizes and sequence lengths remain mostly stable with occasional variations.The prefill length is fi"
+    ],
+    "keywords": [
+      "Trace",
+      "Information",
+      "Case",
+      "Studies",
+      "Stable",
+      "workload",
+      "consider",
+      "production"
+    ],
+    "source_text": "H.2 Trace Information for the Case Studies Stable workload in §8.1.We consider a production workload consisting of 10 timestamps (ts0–ts9) and three Qwen2.5 model sizes (1.5B, 3B, and 7B), where batch sizes and sequence lengths remain mostly stable with occasional variations.The prefill length is fixed at 256 tokens for all models throughout.The decoding lengths are 4096, 3072, and 6144 tokens for the 1.5B, 3B, and 7B models, respectively.The slight variation exmpales include:at ts1 and ts8, the 1.5B batch increases by 5% (960→1008); at ts2, the 7B batch slightly decreases (288→264); at ts3, the 1.5B decode length doubles to 8192 tokens (batch unchanged); at ts4, the 3B batch increases by 13% (480→544); at ts6, the 7B batch increases by 17% (288→336) and its prefill length doubles to 512 tokens.More detailed batch size variations are shown in Table 10."
+  },
+  {
+    "paragraph_id": "p30-0321",
+    "translation": "Volatileworkloadin§8.1.Weusea highlydynamicworkload consistingof10timestamps (ts0–ts9)andsix Qwen2.5 model sizes (1.5B–72B), where the system alternates between two contrasting traffic regimes:a heavy-dominant phase and ",
+    "info_points": [
+      "Volatileworkloadin§8.1.Weusea highlydynamicworkload consistingof10timestamps (ts0–ts9)andsix Qwen2.5 model sizes (1.5B–72B), where the system alternates between two contrasting traffic regimes:a heavy-dominant phase and a light-dominant phase.In the heavy phase, small models (1.5B/3B/7B) serve low b"
+    ],
+    "keywords": [
+      "Volatileworkloadin",
+      "Weusea",
+      "highlydynamicworkload",
+      "consistingof10timestamps",
+      "andsix",
+      "Qwen2",
+      "model",
+      "sizes"
+    ],
+    "source_text": "Volatileworkloadin§8.1.Weusea highlydynamicworkload consistingof10timestamps (ts0–ts9)andsix Qwen2.5 model sizes (1.5B–72B), where the system alternates between two contrasting traffic regimes:a heavy-dominant phase and a light-dominant phase.In the heavy phase, small models (1.5B/3B/7B) serve low batch sizes (64/64/64) with 256-token prefill length and short decode lengths (2048/1536/3072 tokens), while large models (14B/32B/72B) carry high batch loads (384/256/128) with 512-token prefill sequence length and long decode sequence lengths (8192/6144/5120 tokens).In the light phase,the roles reverse: small models dominate with large batches (960/480/288), 256-token prefill sequence length, and decode"
+  },
+  {
+    "paragraph_id": "p31-0322",
+    "translation": "Table 10Stable workload:Batch sizes across 10 timestamps for three Qwen2.5 small models.",
+    "info_points": [
+      "Table 10Stable workload:Batch sizes across 10 timestamps for three Qwen2.5 small models."
+    ],
+    "keywords": [
+      "Table",
+      "Stable",
+      "workload",
+      "Batch",
+      "sizes",
+      "across",
+      "timestamps",
+      "three"
+    ],
+    "source_text": "Table 10Stable workload:Batch sizes across 10 timestamps for three Qwen2.5 small models."
+  },
+  {
+    "paragraph_id": "p31-0323",
+    "translation": "Model ts0 ts1 ts2 ts3 ts4 ts5 ts6 ts7 ts8 ts9 1.5B 960 1008 952 960 968 956 962 958 1008 964 3B 480 476 484 480 544 478 482 479 481 483 7B 288 284 264 290 286 288 336 287 285 291 Table 11Volatile workload:Batch sizes per",
+    "info_points": [
+      "Model ts0 ts1 ts2 ts3 ts4 ts5 ts6 ts7 ts8 ts9 1.5B 960 1008 952 960 968 956 962 958 1008 964 3B 480 476 484 480 544 478 482 479 481 483 7B 288 284 264 290 286 288 336 287 285 291 Table 11Volatile workload:Batch sizes per timestamp for six Qwen2.5 models.Phase transitions are marked with ⇒."
+    ],
+    "keywords": [
+      "Model",
+      "Table",
+      "Volatile",
+      "workload",
+      "Batch",
+      "sizes",
+      "timestamp",
+      "Qwen2"
+    ],
+    "source_text": "Model ts0 ts1 ts2 ts3 ts4 ts5 ts6 ts7 ts8 ts9 1.5B 960 1008 952 960 968 956 962 958 1008 964 3B 480 476 484 480 544 478 482 479 481 483 7B 288 284 264 290 286 288 336 287 285 291 Table 11Volatile workload:Batch sizes per timestamp for six Qwen2.5 models.Phase transitions are marked with ⇒."
+  },
+  {
+    "paragraph_id": "p31-0324",
+    "translation": "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 H 64 64 64 384 256 128 ts1 H 80 64 64 400 256 128 ts2 H 64 64 64 384 256 128 ts3 ⇒L 960 480 288 64 32 16 ts4 L 1008 480 336 64 32 16 ts5 L 960 480 288 64 32 16 ts6 ⇒H 96 64 64 416 256 ",
+    "info_points": [
+      "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 H 64 64 64 384 256 128 ts1 H 80 64 64 400 256 128 ts2 H 64 64 64 384 256 128 ts3 ⇒L 960 480 288 64 32 16 ts4 L 1008 480 336 64 32 16 ts5 L 960 480 288 64 32 16 ts6 ⇒H 96 64 64 416 256 128 ts7 H 64 64 64 384 256 128 ts8 H 80 64 64 400 256 128 ts9 ⇒L 960 480 288 64 "
+    ],
+    "keywords": [
+      "Phase",
+      "sequence",
+      "lengths",
+      "tokens",
+      "while",
+      "large",
+      "models",
+      "minimally"
+    ],
+    "source_text": "TS Phase 1.5B 3B 7B 14B 32B 72B ts0 H 64 64 64 384 256 128 ts1 H 80 64 64 400 256 128 ts2 H 64 64 64 384 256 128 ts3 ⇒L 960 480 288 64 32 16 ts4 L 1008 480 336 64 32 16 ts5 L 960 480 288 64 32 16 ts6 ⇒H 96 64 64 416 256 128 ts7 H 64 64 64 384 256 128 ts8 H 80 64 64 400 256 128 ts9 ⇒L 960 480 288 64 32 16 sequence lengths of 4096/3072/6144 tokens, while large models are minimally loaded (64/32/16 batch) with 256-token prefill sequence length and decode sequence lengths of 2048/1536/1280 tokens.Detailed batch configurations are presented in Table 11.Phase transitions at ts3, ts6, and ts9 encounter abrupt workload shifts."
+  }
+]

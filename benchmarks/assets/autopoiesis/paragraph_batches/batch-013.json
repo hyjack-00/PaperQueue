@@ -1,0 +1,211 @@
+[
+  {
+    "paragraph_id": "p17-0145",
+    "translation": "Setup.We consider a request scheduling problem in LLM serving for agentic workflows,where the system must determine request-to-GPU assignment and queuing order within each GPU’s local queue before each round of request p",
+    "info_points": [
+      "Setup.We consider a request scheduling problem in LLM serving for agentic workflows,where the system must determine request-to-GPU assignment and queuing order within each GPU’s local queue before each round of request processing.Unlike the previous scenarios that operate at cluster-level deployment"
+    ],
+    "keywords": [
+      "Setup",
+      "consider",
+      "request",
+      "scheduling",
+      "problem",
+      "serving",
+      "agentic",
+      "workflows"
+    ],
+    "source_text": "Setup.We consider a request scheduling problem in LLM serving for agentic workflows,where the system must determine request-to-GPU assignment and queuing order within each GPU’s local queue before each round of request processing.Unlike the previous scenarios that operate at cluster-level deployment granularity, schedulingdecisionsherearemaderoundbyround,andtheobjectiveistominimizeend-to-endrequest processing time.The core trade-off is therefore direct:Scheduling computation time competes with request completion time."
+  },
+  {
+    "paragraph_id": "p17-0146",
+    "translation": "Trace.We use two non-overlapping 64-workflow slices subsampled from ShareGPT [39].Each workflow is a multi-call agentic request trace with online call revelation.Detailed scheduling problem formulation and trace informat",
+    "info_points": [
+      "Trace.We use two non-overlapping 64-workflow slices subsampled from ShareGPT [39].Each workflow is a multi-call agentic request trace with online call revelation.Detailed scheduling problem formulation and trace information are provided in Appendix C and Appendix H."
+    ],
+    "keywords": [
+      "Trace",
+      "non-overlapping",
+      "workflow",
+      "slices",
+      "subsampled",
+      "from",
+      "ShareGPT",
+      "Each"
+    ],
+    "source_text": "Trace.We use two non-overlapping 64-workflow slices subsampled from ShareGPT [39].Each workflow is a multi-call agentic request trace with online call revelation.Detailed scheduling problem formulation and trace information are provided in Appendix C and Appendix H."
+  },
+  {
+    "paragraph_id": "p17-0147",
+    "translation": "Baselines.We compare against two static baselines:An MILP-based policy that solves the request assignment and queuing problem optimally but incurs high per-round scheduling overhead, and a greedy-based policy that produc",
+    "info_points": [
+      "Baselines.We compare against two static baselines:An MILP-based policy that solves the request assignment and queuing problem optimally but incurs high per-round scheduling overhead, and a greedy-based policy that produces assignments quickly but struggles to achieve optimal request completion time."
+    ],
+    "keywords": [
+      "Baselines",
+      "compare",
+      "against",
+      "static",
+      "baselines",
+      "MILP-based",
+      "policy",
+      "that"
+    ],
+    "source_text": "Baselines.We compare against two static baselines:An MILP-based policy that solves the request assignment and queuing problem optimally but incurs high per-round scheduling overhead, and a greedy-based policy that produces assignments quickly but struggles to achieve optimal request completion time.Table 4 summarizes the results."
+  },
+  {
+    "paragraph_id": "p17-0148",
+    "translation": "Executionmodelcalibration.Asthisscenariooperatesattherequestlevelratherthantheclusterlevel,no model migration or parallelism reconfiguration occurs between rounds.The execution model (§5.1) naturally accommodatesthis by ",
+    "info_points": [
+      "Executionmodelcalibration.Asthisscenariooperatesattherequestlevelratherthantheclusterlevel,no model migration or parallelism reconfiguration occurs between rounds.The execution model (§5.1) naturally accommodatesthis by eliminatingthe reconfigurationcomponent,reducingTtotaltothe sum ofper-round sche"
+    ],
+    "keywords": [
+      "Executionmodelcalibration",
+      "Asthisscenariooperatesattherequestlevelratherthantheclusterlevel",
+      "model",
+      "migration",
+      "parallelism",
+      "reconfiguration",
+      "occurs",
+      "between"
+    ],
+    "source_text": "Executionmodelcalibration.Asthisscenariooperatesattherequestlevelratherthantheclusterlevel,no model migration or parallelism reconfiguration occurs between rounds.The execution model (§5.1) naturally accommodatesthis by eliminatingthe reconfigurationcomponent,reducingTtotaltothe sum ofper-round scheduling overhead and serving time (i.e., Σtsched + Σtserve)."
+  },
+  {
+    "paragraph_id": "p17-0149",
+    "translation": "Results analysis.The evolved policy outperforms all baselines on both traces.On Trace 1, the greedy-based policies maintain negligible scheduling overhead but produce weaker serving plans, yielding Ttotalof 10.5s.",
+    "info_points": [
+      "Results analysis.The evolved policy outperforms all baselines on both traces.On Trace 1, the greedy-based policies maintain negligible scheduling overhead but produce weaker serving plans, yielding Ttotalof 10.5s."
+    ],
+    "keywords": [
+      "Results",
+      "analysis",
+      "evolved",
+      "policy",
+      "outperforms",
+      "baselines",
+      "both",
+      "traces"
+    ],
+    "source_text": "Results analysis.The evolved policy outperforms all baselines on both traces.On Trace 1, the greedy-based policies maintain negligible scheduling overhead but produce weaker serving plans, yielding Ttotalof 10.5s."
+  },
+  {
+    "paragraph_id": "p18-0150",
+    "translation": "Table 4End-to-end comparison under asynchronous request scheduling on two ShareGPT traces.",
+    "info_points": [
+      "Table 4End-to-end comparison under asynchronous request scheduling on two ShareGPT traces."
+    ],
+    "keywords": [
+      "Table",
+      "End-to-end",
+      "comparison",
+      "under",
+      "asynchronous",
+      "request",
+      "scheduling",
+      "ShareGPT"
+    ],
+    "source_text": "Table 4End-to-end comparison under asynchronous request scheduling on two ShareGPT traces."
+  },
+  {
+    "paragraph_id": "p18-0151",
+    "translation": "Trace 1 Trace 2 Policy Σtsched Σtserve Ttotal Σtsched Σtserve Ttotal Greedy 0.1s 10.4s 10.5s 0.1s 18.0s 18.1s MILP 6.9s 25.0s 31.9s 2.2s 10.3s 12.5s Ours 1.3s 5.6s 6.8s 0.4s 6.7s 7.1s TheMILP-basedpolicy optimizeseach ro",
+    "info_points": [
+      "Trace 1 Trace 2 Policy Σtsched Σtserve Ttotal Σtsched Σtserve Ttotal Greedy 0.1s 10.4s 10.5s 0.1s 18.0s 18.1s MILP 6.9s 25.0s 31.9s 2.2s 10.3s 12.5s Ours 1.3s 5.6s 6.8s 0.4s 6.7s 7.1s TheMILP-basedpolicy optimizeseach roundexactly butbecomes scheduling-dominated:Its accumulated scheduling overhead r"
+    ],
+    "keywords": [
+      "Trace",
+      "Trace",
+      "Policy",
+      "tsched",
+      "tserve",
+      "Ttotal",
+      "tsched",
+      "tserve"
+    ],
+    "source_text": "Trace 1 Trace 2 Policy Σtsched Σtserve Ttotal Σtsched Σtserve Ttotal Greedy 0.1s 10.4s 10.5s 0.1s 18.0s 18.1s MILP 6.9s 25.0s 31.9s 2.2s 10.3s 12.5s Ours 1.3s 5.6s 6.8s 0.4s 6.7s 7.1s TheMILP-basedpolicy optimizeseach roundexactly butbecomes scheduling-dominated:Its accumulated scheduling overhead reaches 6.9s, inflating Ttotalto 31.9s.In contrast, the evolved policy reduces scheduling time to 1.3s while simultaneously improving serving quality, achieving a Ttotalof 6.8s (35% reduction over the greedy baseline and 79% over the MILP-based policy).A similar trend holds on the harder Trace 2, where the evolved policy achieves Ttotalof 7.1s, outperforming the greedy-based (18.1s, 61% reduction) and MILP-based (12.5s, 43% reduction) policies."
+  },
+  {
+    "paragraph_id": "p18-0152",
+    "translation": "Insight 4: Our LLM-driven program synthesis workflow adapts across serving scenarios.The LLM-driven program synthesisworkflow(§5.3)adaptstodifferenttypesofruntimedynamics(fromcluster-leveldeploymenttorequest- levelschedu",
+    "info_points": [
+      "Insight 4: Our LLM-driven program synthesis workflow adapts across serving scenarios.The LLM-driven program synthesisworkflow(§5.3)adaptstodifferenttypesofruntimedynamics(fromcluster-leveldeploymenttorequest- levelscheduling)bytailoringtheexecutionmodel(§5.1)tothesystemcoststructureofeachscenario.In"
+    ],
+    "keywords": [
+      "Insight",
+      "LLM-driven",
+      "program",
+      "synthesis",
+      "workflow",
+      "adapts",
+      "across",
+      "serving"
+    ],
+    "source_text": "Insight 4: Our LLM-driven program synthesis workflow adapts across serving scenarios.The LLM-driven program synthesisworkflow(§5.3)adaptstodifferenttypesofruntimedynamics(fromcluster-leveldeploymenttorequest- levelscheduling)bytailoringtheexecutionmodel(§5.1)tothesystemcoststructureofeachscenario.Inrequest scheduling, the evolved policy synthesizes domain-specific principles (e.g., priority-aware queuing, load-aware affinity) thatapproximateoptimalsolutionsatafractionofthecomputationalcost,demonstratingourworkflow’sabilityto discover efficient operating points in diverse trade-off spaces and serving scenarios."
+  },
+  {
+    "paragraph_id": "p18-0153",
+    "translation": "Additional case studies and insights.We also present one additional case studies in Appendix F.It isolates the scheduling algorithm as the optimization target, revealing that the synthesis workflow discovers deployment- ",
+    "info_points": [
+      "Additional case studies and insights.We also present one additional case studies in Appendix F.It isolates the scheduling algorithm as the optimization target, revealing that the synthesis workflow discovers deployment- tailored algorithmic optimizations."
+    ],
+    "keywords": [
+      "Additional",
+      "case",
+      "studies",
+      "insights",
+      "also",
+      "present",
+      "additional",
+      "case"
+    ],
+    "source_text": "Additional case studies and insights.We also present one additional case studies in Appendix F.It isolates the scheduling algorithm as the optimization target, revealing that the synthesis workflow discovers deployment- tailored algorithmic optimizations."
+  },
+  {
+    "paragraph_id": "p18-0154",
+    "translation": "Discussion.WhileAUTOPOIESISdemonstrates strong performance across diverse runtime dynamics, several practicalconsiderationsremainregardingdeploymentcost,LLMreliability,configurationsensitivity,and evolutionary efficiency",
+    "info_points": [
+      "Discussion.WhileAUTOPOIESISdemonstrates strong performance across diverse runtime dynamics, several practicalconsiderationsremainregardingdeploymentcost,LLMreliability,configurationsensitivity,and evolutionary efficiency.We provide a detailed discussion in Appendix I."
+    ],
+    "keywords": [
+      "Discussion",
+      "WhileAUTOPOIESISdemonstrates",
+      "strong",
+      "performance",
+      "across",
+      "diverse",
+      "runtime",
+      "dynamics"
+    ],
+    "source_text": "Discussion.WhileAUTOPOIESISdemonstrates strong performance across diverse runtime dynamics, several practicalconsiderationsremainregardingdeploymentcost,LLMreliability,configurationsensitivity,and evolutionary efficiency.We provide a detailed discussion in Appendix I."
+  },
+  {
+    "paragraph_id": "p18-0155",
+    "translation": "9 Conclusion",
+    "info_points": [
+      "9 Conclusion"
+    ],
+    "keywords": [
+      "Conclusion"
+    ],
+    "source_text": "9 Conclusion"
+  },
+  {
+    "paragraph_id": "p18-0156",
+    "translation": "WepresentAUTOPOIESIS,aself-evolvingservingparadigmthatshiftsLLMservingfromstatic,human- engineered policy design to continuous, LLM-driven policy evolution.By decoupling policy execution from policyevolutionthroughatwo-p",
+    "info_points": [
+      "WepresentAUTOPOIESIS,aself-evolvingservingparadigmthatshiftsLLMservingfromstatic,human- engineered policy design to continuous, LLM-driven policy evolution.By decoupling policy execution from policyevolutionthroughatwo-planearchitecture,AUTOPOIESIScontinuouslyobservesruntimedynamics, evolves serving"
+    ],
+    "keywords": [
+      "WepresentAUTOPOIESIS",
+      "aself-evolvingservingparadigmthatshiftsLLMservingfromstatic",
+      "human-",
+      "engineered",
+      "policy",
+      "design",
+      "continuous",
+      "LLM-driven"
+    ],
+    "source_text": "WepresentAUTOPOIESIS,aself-evolvingservingparadigmthatshiftsLLMservingfromstatic,human- engineered policy design to continuous, LLM-driven policy evolution.By decoupling policy execution from policyevolutionthroughatwo-planearchitecture,AUTOPOIESIScontinuouslyobservesruntimedynamics, evolves serving policies via LLM-driven program synthesis, and deploys superior policies without disrupting liveserving.Evaluationsacrossdifferentservingscenariosdemonstrateupto53%andonaverage34% improvementoverstate-of-the-artservingsystems.WebelieveAUTOPOIESISestablishesanewparadigm inwhichservingpoliciesarenolongerfixedartifactsbutlivingcodethatevolvesalongsidetheruntime conditions."
+  }
+]
