@@ -1,5 +1,8 @@
 请审读这份论文阅读稿的渲染效果，重点检查可读性问题，不要重写全文。
 
+- Markdown path: {note_path}
+- PDF path: {pdf_path}
+
 请按下面维度输出简洁 review：
 - Figure stacking: 是否出现多张图连续堆叠
 - Figure/text interleaving: 图和解释文字是否自然交错
@@ -12,3 +15,5 @@
 1. 优先关注阅读体验，不关注代码实现。
 2. 如果图片位置不合理，要明确指出应该靠近哪一类段落。
 3. 只输出 review，不要直接生成新文章。
+4. 只报告会明显伤害阅读体验的实质问题；不要为了挑错而给出可选优化建议。
+5. 如果没有实质性问题，请明确输出：`No material readability issues.`，并且不要再列 `Top fixes`。

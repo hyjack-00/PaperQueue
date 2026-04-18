@@ -117,6 +117,9 @@ class Settings:
     )
     prompt_dir: Path = Path(os.environ.get("PAPER_QUEUE_PROMPT_DIR", str(BASE_DIR / "paper_queue" / "prompts")))
     metadata_prompt_file: str = str(_config_get("prompts.metadata", "metadata_v1.txt"))
+    metadata_agent_prompt_file: str = str(_config_get("prompts.metadata_agent", "metadata_agent_v1.txt"))
+    notes_preflight_prompt_file: str = str(_config_get("prompts.notes_preflight", "notes_preflight_v1.txt"))
+    figure_placement_prompt_file: str = str(_config_get("prompts.figure_placement", "figure_placement_v1.txt"))
     notes_prompt_file: str = str(_config_get("prompts.notes", "notes_v1.txt"))
     structure_prompt_file: str = str(_config_get("prompts.structure_analysis", "structure_analysis_v1.txt"))
     readability_prompt_file: str = str(_config_get("prompts.readability_review", "readability_review_v1.txt"))
@@ -132,6 +135,7 @@ class Settings:
     benchmark_length_prompt_file: str = str(
         _config_get("prompts.benchmark_length_review", "benchmark_length_review_v1.txt")
     )
+    routing_prompt_file: str = str(_config_get("prompts.routing", "routing_v1.txt"))
 
     @property
     def skill_install_dir(self) -> Path:

@@ -5,6 +5,7 @@ import json
 from html import unescape
 import io
 import re
+import shlex
 import tarfile
 import fitz
 from urllib.error import URLError
@@ -195,6 +196,10 @@ def _slug(value: str) -> str:
     value = value.replace(" ", "-")
     value = re.sub(r"-{2,}", "-", value)
     return value[:80].strip("-_") or "paper"
+
+
+def _topic_dir_slug(topic: str) -> str:
+    return _slug(topic.replace("/", "-")) or "uncategorized"
 
 
 def _short_title_slug(title: str) -> str:
@@ -433,6 +438,71 @@ def _normalize_length_label(value: str) -> str:
     return "medium"
 
 
+def _figure_alt_text(asset: dict[str, str], index: int) -> str:
+    caption = _clean_figure_caption(asset.get("caption") or "")
+    if caption:
+        return caption[:180]
+    subsection = str(asset.get("paper_subsection") or "").strip()
+    section = str(asset.get("paper_section") or "").strip()
+    if subsection:
+        return subsection[:180]
+    if section:
+        return section[:180]
+    return f"Figure {index}"
+
+
+def _figure_caption_text(asset: dict[str, str], index: int) -> str:
+    source_name = str(asset.get("source_name") or "").lower()
+    if "execution_model" in source_name:
+        return "Execution model: trace snapshot generation, evaluator replay, and policy deployment cycle"
+    caption = _clean_figure_caption(asset.get("caption") or "")
+    if caption:
+        return _compress_figure_caption(caption)
+    fallback = _figure_alt_text(asset, index)
+    if fallback.lower().startswith("figure "):
+        return ""
+    return fallback
+
+
+def _clean_figure_caption(value: str) -> str:
+    text = (value or "").strip()
+    if not text:
+        return ""
+    text = re.sub(r"\\label\{[^}]*\}", "", text)
+    text = re.sub(r"\\ref\{[^}]*\}", "", text)
+    text = re.sub(r"\\subref\{[^}]*\}", "", text)
+    text = re.sub(r"\\cite[t|p]?\{[^}]*\}", "", text)
+    text = re.sub(r"\\[A-Za-z]+\*?(?:\[[^\]]*\])?\{([^}]*)\}", r"\1", text)
+    text = re.sub(r"\\[A-Za-z]+\*?", "", text)
+    text = text.replace("~", " ")
+    text = text.replace("'s two-plane", "the two-plane")
+    text = re.sub(r"\(subsec:[^)]+$", "", text)
+    text = re.sub(r"\((?:left|right)\s*$", "", text, flags=re.I)
+    text = re.sub(r"\b(?:left|right):\s*$", "", text, flags=re.I)
+    text = re.sub(r"\s+\d+$", "", text)
+    text = re.sub(r"\s+", " ", text)
+    text = text.strip(" ,;:.")
+    if text.lower() in {"left", "right", "figure", "overview"}:
+        return ""
+    if len(text) < 12:
+        return ""
+    return text
+
+
+def _compress_figure_caption(text: str) -> str:
+    parts = [part.strip() for part in re.split(r"(?<=[.!?])\s+", text) if part.strip()]
+    if len(parts) >= 2 and len(parts[-1].split()) <= 4:
+        parts = parts[:-1]
+    compact = " ".join(parts) if parts else text
+    words = compact.split()
+    if len(words) > 28 and parts:
+        compact = parts[0]
+        words = compact.split()
+    if len(words) > 28:
+        compact = " ".join(words[:28]).rstrip(",;:.") + "..."
+    return compact.strip()
+
+
 @dataclass(slots=True)
 class PaperResult:
     status: str
@@ -441,6 +511,9 @@ class PaperResult:
     source_fingerprint: str
     framework_version: str
     output_path: str
+    review_pdf_path: str
+    review_text_path: str
+    review_summary: str
     summary: str
     error: str
 
@@ -452,6 +525,7 @@ class OutputPlan:
     assets_dir: Path
     relative_assets_dir: Path
     taxonomy_topic: str
+    taxonomy_topic_dir: str
 
 
 class PaperWorkflow:
@@ -503,13 +577,27 @@ class PaperWorkflow:
         for attempt in range(1, 4):
             self._sync_repo(log, attempt=attempt)
             archive_topic = self._resolve_archive_topic(job, metadata, notes, log)
-            output_plan = self._resolve_output_target(job, metadata, archive_topic)
+            taxonomy_note = self.runtime.config.obsidian_notes_root / 'Paper Routing Taxonomy.md'
+            taxonomy_topics = _load_taxonomy_topics(taxonomy_note)
+            preflight = self._agent_notes_preflight(metadata, notes, taxonomy_topics, log)
+            if preflight:
+                fourth_title = preflight["fourth_title"]
+                if fourth_title and fourth_title != metadata.get("paper_title"):
+                    log("preflight", f"Updating paper_title from '{metadata.get('paper_title')}' to '{fourth_title}'", "INFO")
+                    metadata["paper_title"] = fourth_title
+                suggested_topic = preflight.get("topic_folder", "")
+                if suggested_topic in taxonomy_topics:
+                    archive_topic = suggested_topic
+                    log("preflight", f"Agent selected topic folder: {archive_topic}", "INFO")
+            output_plan = self._resolve_output_target(job, metadata, archive_topic, preflight=preflight)
             assets = self._extract_figures(job, source_info, output_plan, log)
-            note_content = self._build_note_content(job, source_info, metadata, notes, assets=assets, archive_topic=archive_topic)
+            note_content = self._build_note_content(job, source_info, metadata, notes, assets=assets, archive_topic=archive_topic, log=log)
             relative_output = self._write_note_to_repo(output_plan, note_content, log)
             commit_message = f"Add paper note: {metadata['paper_title'] or relative_output.stem}"
             commit_result = self._commit_note(relative_output, commit_message, log)
             if commit_result == "noop":
+                review_pdf_path = self._export_review_pdf(job, output_plan, log)
+                review_text_path, review_summary = self._review_readability(job, output_plan, review_pdf_path, log)
                 return PaperResult(
                     status="completed",
                     paper_title=metadata["paper_title"],
@@ -517,6 +605,9 @@ class PaperWorkflow:
                     source_fingerprint=fingerprint,
                     framework_version=self.runtime.config.framework_version,
                     output_path=relative_output.as_posix(),
+                    review_pdf_path=review_pdf_path,
+                    review_text_path=review_text_path,
+                    review_summary=review_summary,
                     summary=notes.splitlines()[0][:240] if notes else metadata["paper_title"],
                     error="",
                 )
@@ -533,6 +624,8 @@ class PaperWorkflow:
             )
             if push_result.ok:
                 log("git_push", f"Pushed {relative_output.as_posix()} to origin/{self.runtime.config.obsidian_sync_branch}", "INFO")
+                review_pdf_path = self._export_review_pdf(job, output_plan, log)
+                review_text_path, review_summary = self._review_readability(job, output_plan, review_pdf_path, log)
                 return PaperResult(
                     status="completed",
                     paper_title=metadata["paper_title"],
@@ -540,6 +633,9 @@ class PaperWorkflow:
                     source_fingerprint=fingerprint,
                     framework_version=self.runtime.config.framework_version,
                     output_path=relative_output.as_posix(),
+                    review_pdf_path=review_pdf_path,
+                    review_text_path=review_text_path,
+                    review_summary=review_summary,
                     summary=notes.splitlines()[0][:240] if notes else metadata["paper_title"],
                     error="",
                 )
@@ -548,6 +644,81 @@ class PaperWorkflow:
             if attempt >= 3:
                 break
         raise RuntimeError(last_error)
+
+    def _agent_route(
+        self,
+        paper_description: str,
+        notebooks: list[dict[str, str]],
+        log: LogFn,
+    ) -> dict | None:
+        if self.runtime.config.agent_backend != "claude-glm":
+            return None
+
+        notebook_list_str = "\n".join(
+            f"- ID: {nb['id']}, Title: {nb['title']}"
+            for nb in notebooks
+            if str(nb.get("title") or "").strip()
+        )
+        topic_list_str = "\n".join(
+            f"- {name}" for name, _ in ROUTE_TOPIC_MAP
+        )
+
+        prompt = self.runtime.prompt_loader.load(
+            self.runtime.config.routing_prompt_file,
+            notebook_list=notebook_list_str or "(empty)",
+            topic_list=topic_list_str,
+            paper_description=paper_description,
+        )
+
+        command_parts = shlex.split(self.runtime.config.claude_glm_command)
+        env: dict[str, str] = {}
+        while command_parts and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=.*$", command_parts[0]):
+            key, value = command_parts.pop(0).split("=", 1)
+            env[key] = value
+        if not command_parts:
+            log("routing", "Agent routing skipped: empty agent command", "WARN")
+            return None
+
+        result = self.runtime.run(
+            [
+                *command_parts,
+                "-p",
+                "--output-format",
+                "text",
+                prompt,
+            ],
+            env=env,
+            cwd=self.runtime.config.base_dir,
+            timeout=min(self.runtime.config.agent_timeout_seconds, 60.0),
+        )
+        if not result.ok:
+            message = (result.stderr or result.stdout).strip() or "agent routing failed"
+            log("routing", f"Agent routing failed: {message}", "WARN")
+            return None
+
+        output = (result.stdout or "").strip()
+        if not output:
+            log("routing", "Agent routing returned empty output", "WARN")
+            return None
+
+        json_match = re.search(r"\{[^{}]*\}", output, re.S)
+        if not json_match:
+            log("routing", f"Agent routing returned non-JSON: {output[:200]}", "WARN")
+            return None
+
+        try:
+            parsed = json.loads(json_match.group())
+        except json.JSONDecodeError:
+            log("routing", f"Agent routing returned invalid JSON: {json_match.group()[:200]}", "WARN")
+            return None
+
+        action = parsed.get("action")
+        if action not in ("reuse", "create"):
+            log("routing", f"Agent routing returned invalid action: {action}", "WARN")
+            return None
+
+        log("routing", f"Agent routing result: action={action}, title={parsed.get('second_title', '?')}", "INFO")
+        return parsed
 
     def _resolve_notebook(
         self,
@@ -582,6 +753,53 @@ class PaperWorkflow:
             raise RuntimeError(error)
 
         candidates = [item for item in notebooks if str(item.get("title") or "").strip()]
+
+        # Agent routing (primary path)
+        agent_result = self._agent_route(subject_text, candidates, log)
+        if agent_result:
+            second_title = str(agent_result.get("second_title") or "").strip()
+            if second_title and set_paper_title:
+                set_paper_title(second_title)
+                log("routing", f"Agent extracted second title: {second_title}", "INFO")
+
+            action = agent_result.get("action")
+            if action == "reuse":
+                target_id = str(agent_result.get("notebook_id") or "").strip()
+                matched = next((nb for nb in candidates if nb["id"] == target_id), None)
+                if matched:
+                    job["notebook_id"] = matched["id"]
+                    job["notebook_title"] = matched["title"]
+                    if set_notebook:
+                        set_notebook(matched["id"], matched["title"])
+                    log("routing", f"Agent reused notebook '{matched['title']}'", "INFO")
+                    return
+                log("routing", f"Agent reuse notebook_id '{target_id}' not found, falling back", "WARN")
+
+            elif action == "create":
+                topic_name = str(agent_result.get("topic") or "").strip()
+                if not topic_name:
+                    topic_name = _suggest_topic_notebook(subject_text)[0]
+                existing = next((nb for nb in candidates if nb["title"] == topic_name), None)
+                if existing:
+                    job["notebook_id"] = existing["id"]
+                    job["notebook_title"] = existing["title"]
+                    if set_notebook:
+                        set_notebook(existing["id"], existing["title"])
+                    log("routing", f"Agent routed to existing topic notebook '{existing['title']}'", "INFO")
+                    return
+                created, create_error = self.runtime.create_notebook(topic_name)
+                if create_error or not created:
+                    log("routing", f"Agent create notebook failed: {create_error}, falling back", "WARN")
+                else:
+                    job["notebook_id"] = created["id"]
+                    job["notebook_title"] = created["title"]
+                    if set_notebook:
+                        set_notebook(created["id"], created["title"])
+                    log("routing", f"Agent created notebook '{created['title']}'", "INFO")
+                    return
+
+        # Keyword routing (fallback path)
+        log("routing", "Falling back to keyword-based routing", "INFO")
         subject_tokens = _route_tokens(subject_text)
         scored: list[tuple[float, dict[str, str], str]] = []
         for item in candidates:
@@ -619,9 +837,9 @@ class PaperWorkflow:
             log("routing", f"Reused notebook '{existing['title']}' via topic fallback", "INFO")
             return
 
-        created, error = self.runtime.create_notebook(new_title)
-        if error or not created:
-            raise RuntimeError(error or "failed to create notebook")
+        created, create_err = self.runtime.create_notebook(new_title)
+        if create_err or not created:
+            raise RuntimeError(create_err or "failed to create notebook")
         job["notebook_id"] = created["id"]
         job["notebook_title"] = created["title"]
         if set_notebook:
@@ -722,28 +940,85 @@ class PaperWorkflow:
         payload = json.loads(result.stdout)
         return [item for item in payload if isinstance(item, dict)]
 
+    def _agent_extract_metadata(self, nlm_answer: str, log: LogFn) -> dict | None:
+        if self.runtime.config.agent_backend != "claude-glm":
+            return None
+
+        prompt = self.runtime.prompt_loader.load(
+            self.runtime.config.metadata_agent_prompt_file,
+            nlm_answer=nlm_answer[:15000],
+        )
+        command_parts = shlex.split(self.runtime.config.claude_glm_command)
+        env: dict[str, str] = {}
+        while command_parts and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=.*$", command_parts[0]):
+            key, value = command_parts.pop(0).split("=", 1)
+            env[key] = value
+        if not command_parts:
+            return None
+
+        result = self.runtime.run(
+            [*command_parts, "-p", "--output-format", "text", prompt],
+            env=env,
+            cwd=self.runtime.config.base_dir,
+            timeout=min(self.runtime.config.agent_timeout_seconds, 60.0),
+        )
+        if not result.ok:
+            log("metadata", "Agent metadata extraction failed, using regex fallback", "WARN")
+            return None
+
+        output = (result.stdout or "").strip()
+        json_match = re.search(r"\{[^{}]*\}", output, re.S)
+        if not json_match:
+            log("metadata", "Agent metadata returned non-JSON, using regex fallback", "WARN")
+            return None
+
+        try:
+            parsed = json.loads(json_match.group())
+        except json.JSONDecodeError:
+            log("metadata", "Agent metadata returned invalid JSON, using regex fallback", "WARN")
+            return None
+
+        log("metadata", f"Agent extracted metadata: title={parsed.get('third_title', '?')}, confidence={parsed.get('confidence', '?')}", "INFO")
+        return parsed
+
     def _query_metadata(self, notebook_id: str, source_id: str, log: LogFn) -> dict[str, str]:
         log("metadata", f"Querying metadata for source {source_id}", "INFO")
         question = self.runtime.prompt_loader.load(self.runtime.config.metadata_prompt_file)
-        result = self.runtime.run(
-            [
-                "nlm",
-                "notebook",
-                "query",
-                str(notebook_id),
-                "--source-ids",
-                source_id,
-                "--timeout",
-                "180",
-                "--json",
-                question,
-            ],
-            timeout=210.0,
+        payload = self._query_nlm_answer(
+            notebook_id,
+            source_id,
+            question,
+            command_timeout=180,
+            process_timeout=210.0,
+            error_message="metadata query failed",
         )
-        if not result.ok:
-            raise RuntimeError((result.stderr or result.stdout).strip() or "metadata query failed")
-        payload = _parse_nlm_query_output(result.stdout)
         answer = str(payload.get("answer") or "")
+
+        # Agent extraction (primary path)
+        agent_meta = self._agent_extract_metadata(answer, log)
+        if agent_meta:
+            third_title = str(agent_meta.get("third_title") or "").strip()
+            authors_val = str(agent_meta.get("authors") or "").strip()
+            institution_val = str(agent_meta.get("institution") or "").strip()
+            venue_val = str(agent_meta.get("venue") or "").strip()
+            year_val = str(agent_meta.get("year") or "").strip()
+            paper_url_val = str(agent_meta.get("paper_url") or "").strip()
+            repo_val = str(agent_meta.get("repo") or "").strip()
+            if third_title:
+                log("metadata", f"Agent confirmed third title: {third_title}", "INFO")
+                return {
+                    "paper_title": _clean_metadata_text(third_title, ""),
+                    "conference": _normalize_venue_name(venue_val or "arXiv"),
+                    "year": _extract_field([r"(20\d{2})"], year_val, "2026") or "2026",
+                    "repo": _first_url(repo_val) or "未开源",
+                    "university": institution_val or "",
+                    "authors": authors_val or "",
+                    "paper_url": _first_url(paper_url_val) or "",
+                    "metadata_answer": answer,
+                }
+
+        # Regex extraction (fallback path)
+        log("metadata", "Using regex-based metadata extraction", "INFO")
         paper_title = _clean_metadata_text(
             _extract_field([r"Full paper title:\**\s*(.+)", r"Title:\**\s*(.+)"], answer, ""),
             default="",
@@ -998,21 +1273,6 @@ class PaperWorkflow:
     def _query_structure_analysis(self, notebook_id: str, source_id: str, log: LogFn, *, archetype: str) -> dict[str, str]:
         log("structure", f"Analyzing paper structure for source {source_id}", "INFO")
         question = self.runtime.prompt_loader.load(self.runtime.config.structure_prompt_file)
-        result = self.runtime.run(
-            [
-                "nlm",
-                "notebook",
-                "query",
-                str(notebook_id),
-                "--source-ids",
-                source_id,
-                "--timeout",
-                "180",
-                "--json",
-                question,
-            ],
-            timeout=210.0,
-        )
         structure = {
             "archetype": archetype,
             "background": "medium",
@@ -1021,10 +1281,18 @@ class PaperWorkflow:
             "results": "medium",
             "conclusion": "medium",
         }
-        if not result.ok:
+        try:
+            payload = self._query_nlm_answer(
+                notebook_id,
+                source_id,
+                question,
+                command_timeout=180,
+                process_timeout=210.0,
+                error_message="structure query failed",
+            )
+        except RuntimeError:
             log("structure", "Structure analysis failed; falling back to heuristic defaults", "WARN")
             return structure
-        payload = _parse_nlm_query_output(result.stdout)
         answer = str(payload.get("answer") or "")
         parsed_archetype = _extract_field([r"Archetype:\s*(.+)"], answer, archetype).strip().lower()
         if parsed_archetype in {"systems", "evaluation", "safety", "tuning", "retrieval", "general"}:
@@ -1068,6 +1336,26 @@ class PaperWorkflow:
             archetype_requirement=archetype_requirements.get(archetype, archetype_requirements["general"]),
             section_guidance=section_guidance,
         )
+        payload = self._query_nlm_answer(
+            notebook_id,
+            source_id,
+            question,
+            command_timeout=240,
+            process_timeout=270.0,
+            error_message="notes query failed",
+        )
+        return _polish_notes_markdown(str(payload.get("answer") or ""))
+
+    def _query_nlm_answer(
+        self,
+        notebook_id: str,
+        source_id: str,
+        question: str,
+        *,
+        command_timeout: int,
+        process_timeout: float,
+        error_message: str,
+    ) -> dict:
         result = self.runtime.run(
             [
                 "nlm",
@@ -1077,16 +1365,15 @@ class PaperWorkflow:
                 "--source-ids",
                 source_id,
                 "--timeout",
-                "240",
+                str(command_timeout),
                 "--json",
                 question,
             ],
-            timeout=270.0,
+            timeout=process_timeout,
         )
         if not result.ok:
-            raise RuntimeError((result.stderr or result.stdout).strip() or "notes query failed")
-        payload = _parse_nlm_query_output(result.stdout)
-        return _polish_notes_markdown(str(payload.get("answer") or ""))
+            raise RuntimeError((result.stderr or result.stdout).strip() or error_message)
+        return _parse_nlm_query_output(result.stdout)
 
     def _build_note_content(
         self,
@@ -1097,6 +1384,7 @@ class PaperWorkflow:
         *,
         assets: AssetList | None = None,
         archive_topic: str = '',
+        log: LogFn | None = None,
     ) -> str:
         conference_slug = _slug(metadata["conference"].replace(" ", "-")) or "arXiv"
         frontmatter = (
@@ -1118,7 +1406,7 @@ class PaperWorkflow:
         body = notes or metadata["metadata_answer"]
         body = self._normalize_note_body(body, metadata, source_info)
         if assets:
-            body = self._inject_figure_section(body, assets)
+            body = self._inject_figure_section(body, assets, log=log)
         return frontmatter + body + "\n"
 
     def _normalize_note_body(self, body: str, metadata: dict[str, str], source_info: dict[str, str]) -> str:
@@ -1146,8 +1434,20 @@ class PaperWorkflow:
             f"- Authors: {metadata.get('authors') or '论文未明确说明'}\n"
             f"- Institution: {_summarize_institutions(metadata.get('university') or '')}\n"
             f"- Paper URL: {source_info['paper_url'] or metadata['paper_url'] or '论文未明确说明'}\n"
-            f"- Framework Version: {self.runtime.config.framework_version}\n"
         )
+        cleaned = re.sub(
+            r"## 论文基本信息\s+.*?(?=\n##\s|\Z)",
+            info_block.strip(),
+            cleaned,
+            flags=re.S,
+        )
+        method_subheadings = {
+            "## 3. 方法与系统设计\n* **双平面系统架构": "## 3. 方法与系统设计\n### 3.1 双平面架构\n* **双平面系统架构",
+            "\n* **基于评估器的运行时反馈闭环": "\n### 3.2 反馈闭环与程序合成\n* **基于评估器的运行时反馈闭环",
+            "\n* **热启动与多级安全机制": "\n### 3.3 热启动与安全机制\n* **热启动与多级安全机制",
+        }
+        for old, new in method_subheadings.items():
+            cleaned = cleaned.replace(old, new)
         if "## 论文基本信息" not in cleaned:
             cleaned = info_block + "\n\n" + cleaned
         if "## TL;DR" not in cleaned:
@@ -1160,9 +1460,85 @@ class PaperWorkflow:
             cleaned = tldr + cleaned
         return _normalize_heading_spacing(cleaned)
 
-    def _inject_figure_section(self, body: str, assets: AssetList) -> str:
+    def _agent_figure_placement(self, assets: AssetList, log: LogFn) -> dict[str, str]:
+        if self.runtime.config.agent_backend != "claude-glm" or not assets:
+            return {}
+
+        figure_info_lines = []
+        for i, asset in enumerate(assets, 1):
+            name = asset.get("source_name", f"figure-{i}")
+            caption = asset.get("caption", "")
+            section = asset.get("paper_section", "")
+            subsection = asset.get("paper_subsection", "")
+            figure_info_lines.append(
+                f"{i}. 文件名: {name} | caption: {caption[:100]} | "
+                f"原文章节: {section} {subsection}"
+            )
+        figure_info = "\n".join(figure_info_lines)
+
+        prompt = self.runtime.prompt_loader.load(
+            self.runtime.config.figure_placement_prompt_file,
+            figure_info=figure_info,
+        )
+        command_parts = shlex.split(self.runtime.config.claude_glm_command)
+        env: dict[str, str] = {}
+        while command_parts and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=.*$", command_parts[0]):
+            key, value = command_parts.pop(0).split("=", 1)
+            env[key] = value
+        if not command_parts:
+            return {}
+
+        result = self.runtime.run(
+            [*command_parts, "-p", "--output-format", "text", prompt],
+            env=env,
+            cwd=self.runtime.config.base_dir,
+            timeout=min(self.runtime.config.agent_timeout_seconds, 60.0),
+        )
+        if not result.ok:
+            log("figures", "Agent figure placement failed, using heuristic fallback", "WARN")
+            return {}
+
+        output = (result.stdout or "").strip()
+        json_match = re.search(r"\[.*?\]", output, re.S)
+        if not json_match:
+            log("figures", "Agent figure placement returned non-JSON", "WARN")
+            return {}
+
+        try:
+            parsed = json.loads(json_match.group())
+        except json.JSONDecodeError:
+            log("figures", "Agent figure placement returned invalid JSON", "WARN")
+            return {}
+
+        if not isinstance(parsed, list):
+            return {}
+
+        mapping: dict[str, str] = {}
+        for item in parsed:
+            fig_id = str(item.get("figure_id") or "").strip()
+            target = str(item.get("target_section") or "").strip()
+            if fig_id and target in ("background", "method", "experiment", "results", "conclusion"):
+                mapping[fig_id] = target
+
+        if mapping:
+            log("figures", f"Agent reclassified {len(mapping)} figures: {mapping}", "INFO")
+        return mapping
+
+    def _inject_figure_section(self, body: str, assets: AssetList, *, log: LogFn | None = None) -> str:
+        # Agent reclassification (overrides heuristic placement_target)
+        agent_log = log or (lambda s, m, l: None)
+        agent_mapping = self._agent_figure_placement(assets, agent_log)
+        if agent_mapping:
+            for asset in assets:
+                source_name = asset.get("source_name", "")
+                if source_name in agent_mapping:
+                    old_target = asset.get("placement_target", "")
+                    asset["placement_target"] = agent_mapping[source_name]
+                    agent_log("figures", f"Overrode placement for {source_name}: {old_target} -> {agent_mapping[source_name]}", "INFO")
+                else:
+                    agent_log("figures", f"No agent match for source_name='{source_name}', keys={list(agent_mapping.keys())[:5]}", "WARN")
+
         lines = body.splitlines()
-        insertions: dict[int, list[str]] = {}
         heading_map = {
             'summary': '## 1. 整体概括',
             'background': '## 2. 背景与动机',
@@ -1172,25 +1548,36 @@ class PaperWorkflow:
             'conclusion': '## 6. 总结与思考',
         }
         fallback_order = ['background', 'method', 'experiment', 'results']
-
-        for idx, asset in enumerate(assets, start=1):
-            section_key = asset.get('placement_target') or asset.get('section_key') or fallback_order[min(idx - 1, len(fallback_order) - 1)]
-            heading_prefix = heading_map.get(section_key, '## 🔬')
-            caption = asset.get("caption") or f"Figure {idx}"
-            block = [
-                '',
-                "<figure class=\"paper-figure\">",
-                f'  <img src="{asset["markdown_path"]}" alt="{caption}">',
-                f'  <figcaption>{caption}</figcaption>',
-                "</figure>",
-            ]
-            insert_at = None
-            for line_index, line in enumerate(lines):
+        section_ranges: dict[str, tuple[int, int]] = {}
+        heading_positions: list[tuple[str, int]] = []
+        for section_key, heading_prefix in heading_map.items():
+            for idx, line in enumerate(lines):
                 if line.startswith(heading_prefix):
-                    insert_at = line_index + 1
+                    heading_positions.append((section_key, idx))
                     break
-            if insert_at is None:
-                insert_at = len(lines)
+        heading_positions.sort(key=lambda item: item[1])
+        for pos, (section_key, start) in enumerate(heading_positions):
+            end = heading_positions[pos + 1][1] if pos + 1 < len(heading_positions) else len(lines)
+            section_ranges[section_key] = (start, end)
+
+        assets_by_section: dict[str, list[dict[str, str]]] = {}
+        for idx, asset in enumerate(assets, start=1):
+            cleaned_caption = _clean_figure_caption(asset.get("caption") or "")
+            asset["display_caption"] = cleaned_caption
+            section_key = asset.get('placement_target') or asset.get('section_key') or fallback_order[min(idx - 1, len(fallback_order) - 1)]
+            assets_by_section.setdefault(section_key, []).append(asset)
+
+        placements: list[tuple[int, dict[str, str]]] = []
+        for section_key, section_assets in assets_by_section.items():
+            section_start, section_end = section_ranges.get(section_key, (0, len(lines)))
+            anchor_positions = self._figure_anchor_positions(lines, section_start, section_end, section_assets)
+            for asset, insert_at in zip(section_assets, anchor_positions, strict=False):
+                placements.append((insert_at, asset))
+
+        placements.sort(key=lambda item: item[0])
+        insertions: dict[int, list[str]] = {}
+        for figure_index, (insert_at, asset) in enumerate(placements, start=1):
+            block = self._render_figure_block(asset, figure_index)
             insertions.setdefault(insert_at, []).extend(block)
 
         output: list[str] = []
@@ -1201,6 +1588,186 @@ class PaperWorkflow:
         if len(lines) in insertions:
             output.extend(insertions[len(lines)])
         return "\n".join(output).strip() + "\n"
+
+    def _figure_anchor_positions(
+        self,
+        lines: list[str],
+        section_start: int,
+        section_end: int,
+        assets: AssetList,
+    ) -> list[int]:
+        candidate_positions: list[tuple[int, str]] = []
+        for idx in range(section_start + 1, section_end):
+            line = lines[idx]
+            if line.startswith("## "):
+                break
+            stripped = line.strip()
+            if not stripped:
+                continue
+            if stripped.startswith(("* ", "- ", "1. ", "2. ", "3. ", "4. ", "5. ", "6. ")):
+                candidate_positions.append((idx + 1, stripped))
+                continue
+            if stripped.startswith("<figure"):
+                continue
+            candidate_positions.append((idx + 1, stripped))
+        if not candidate_positions:
+            return [section_start + 1 for _ in assets]
+
+        remaining_positions = candidate_positions[:]
+        chosen: list[int] = []
+        for asset_index, asset in enumerate(assets):
+            keywords = self._figure_match_text(asset)
+            preferred = self._preferred_anchor_patterns(asset)
+            if preferred:
+                matched = [pos for pos, text in remaining_positions if any(token in text.lower() for token in preferred)]
+                if matched:
+                    selected = matched[0] if self._prefer_first_anchor(asset) else matched[-1]
+                    chosen.append(selected)
+                    remaining_positions = [item for item in remaining_positions if item[0] != selected]
+                    continue
+            best_pos = None
+            best_score = -1.0
+            for pos, text in remaining_positions:
+                score = _overlap_score(_route_tokens(keywords), _route_tokens(text))
+                if score > best_score:
+                    best_score = score
+                    best_pos = pos
+            if best_pos is None or best_score <= 0:
+                ratio = (asset_index + 1) / (len(assets) + 1)
+                fallback_idx = min(int(ratio * len(candidate_positions)), len(candidate_positions) - 1)
+                best_pos = candidate_positions[fallback_idx][0]
+            chosen.append(best_pos)
+            remaining_positions = [item for item in remaining_positions if item[0] != best_pos]
+        chosen.sort()
+        return chosen
+
+    def _figure_match_text(self, asset: dict[str, str]) -> str:
+        return " ".join(
+            part
+            for part in [
+                str(asset.get("display_caption") or ""),
+                str(asset.get("paper_section") or ""),
+                str(asset.get("paper_subsection") or ""),
+                str(asset.get("source_name") or ""),
+            ]
+            if part
+        )
+
+    def _preferred_anchor_patterns(self, asset: dict[str, str]) -> list[str]:
+        source_name = str(asset.get("source_name") or "").lower()
+        caption = str(asset.get("display_caption") or asset.get("caption") or "").lower()
+        section_text = " ".join(
+            part.lower()
+            for part in [
+                str(asset.get("paper_section") or ""),
+                str(asset.get("paper_subsection") or ""),
+            ]
+            if part
+        )
+        text = " ".join(part for part in [source_name, caption, section_text] if part)
+        if "runtime_dynamic" in source_name or "workload dynamics" in caption:
+            return ["同构集群", "distserve", "工作负载", "流量", "综合性能"]
+        if "motivation" in source_name:
+            return ["权衡", "运行时权衡", "设计动机", "静态策略", "trade-off"]
+        if "online_workflow" in source_name:
+            return ["控制面", "control plane"]
+        if "execution_model" in source_name:
+            return ["评估器", "evaluator"]
+        if "synthesis_workflow" in source_name:
+            return ["artifact feedback", "伪像反馈", "评估器", "evaluator", "反馈闭环"]
+        if "impl" in source_name or "deployment" in section_text:
+            return ["部署机制", "deployment", "热插拔", "hot-swap"]
+        if any(token in text for token in ["trade-off", "tradeoff", "runtime dynamic", "workload dynamics", "motivation"]):
+            return ["trade-off", "权衡", "运行时动态", "运行时权衡", "设计动机"]
+        if any(token in text for token in ["two-plane", "system architecture", "architecture", "overview"]):
+            return ["双平面", "系统架构", "two-plane", "architecture"]
+        if any(token in text for token in ["execution model", "data plane", "control plane"]):
+            return ["控制面", "data plane", "control plane", "数据面"]
+        if any(token in text for token in ["program synthesis", "workflow", "evaluator"]):
+            return ["核心工作流", "评估器", "反馈闭环", "program synthesis", "工作流"]
+        if "hot-swap" in text:
+            return ["部署机制", "hot-swap", "热插拔"]
+        if any(token in text for token in ["workload", "phase", "performance across", "bursty", "steady"]):
+            return ["综合性能", "性能提升", "流量", "工作负载", "结果"]
+        return []
+
+    def _prefer_first_anchor(self, asset: dict[str, str]) -> bool:
+        source_name = str(asset.get("source_name") or "").lower()
+        return "motivation" in source_name or "runtime_dynamic" in source_name
+
+    def _render_figure_block(self, asset: dict[str, str], figure_index: int) -> list[str]:
+        caption = _figure_caption_text(asset, figure_index)
+        alt_text = _figure_alt_text(asset, figure_index)
+        block = [""]
+        if caption:
+            block.append(f"> [!figure]- 图 {figure_index}. {caption}")
+        else:
+            block.append(f"> [!figure]- 图 {figure_index}")
+        block.append(f"> ![]({asset['markdown_path']})")
+        block.append("")
+        return block
+
+    def _agent_notes_preflight(
+        self,
+        metadata: dict[str, str],
+        notes: str,
+        topic_list: list[str],
+        log: LogFn,
+    ) -> dict | None:
+        if self.runtime.config.agent_backend != "claude-glm":
+            return None
+
+        topic_list_str = "\n".join(f"- {t}" for t in topic_list)
+        prompt = self.runtime.prompt_loader.load(
+            self.runtime.config.notes_preflight_prompt_file,
+            paper_title=metadata.get("paper_title", ""),
+            venue=metadata.get("conference", ""),
+            year=metadata.get("year", ""),
+            institution=metadata.get("university", ""),
+            authors=metadata.get("authors", ""),
+            notes_head=notes[:500],
+            topic_list=topic_list_str or "(no topics)",
+        )
+
+        command_parts = shlex.split(self.runtime.config.claude_glm_command)
+        env: dict[str, str] = {}
+        while command_parts and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=.*$", command_parts[0]):
+            key, value = command_parts.pop(0).split("=", 1)
+            env[key] = value
+        if not command_parts:
+            return None
+
+        result = self.runtime.run(
+            [*command_parts, "-p", "--output-format", "text", prompt],
+            env=env,
+            cwd=self.runtime.config.base_dir,
+            timeout=min(self.runtime.config.agent_timeout_seconds, 60.0),
+        )
+        if not result.ok:
+            log("preflight", "Agent notes preflight failed, using heuristic fallback", "WARN")
+            return None
+
+        output = (result.stdout or "").strip()
+        json_match = re.search(r"\{[^{}]*\}", output, re.S)
+        if not json_match:
+            log("preflight", "Agent notes preflight returned non-JSON", "WARN")
+            return None
+
+        try:
+            parsed = json.loads(json_match.group())
+        except json.JSONDecodeError:
+            log("preflight", "Agent notes preflight returned invalid JSON", "WARN")
+            return None
+
+        fourth = str(parsed.get("fourth_title") or "").strip()
+        slug = str(parsed.get("title_slug") or "").strip()
+        topic = str(parsed.get("topic_folder") or "").strip()
+        if not fourth or not slug or not topic:
+            log("preflight", "Agent notes preflight returned incomplete data", "WARN")
+            return None
+
+        log("preflight", f"Agent confirmed L3 title: {fourth}, slug: {slug}, topic: {topic}", "INFO")
+        return {"fourth_title": fourth, "title_slug": slug, "topic_folder": topic}
 
     def _resolve_archive_topic(
         self,
@@ -1227,12 +1794,14 @@ class PaperWorkflow:
         log('routing', f"Mapped note storage to taxonomy topic '{suggested}' ({detail})", 'INFO')
         return suggested
 
-    def _resolve_output_target(self, job: dict, metadata: dict[str, str], archive_topic: str) -> OutputPlan:
+    def _resolve_output_target(self, job: dict, metadata: dict[str, str], archive_topic: str, *, preflight: dict | None = None) -> OutputPlan:
         repo = self.runtime.config.obsidian_sync_repo
-        notes_root = repo / self.runtime.config.obsidian_sync_subdir / archive_topic
+        topic_dir = _topic_dir_slug(archive_topic)
+        notes_root = repo / self.runtime.config.obsidian_sync_subdir / topic_dir
         notes_root.mkdir(parents=True, exist_ok=True)
         conference_slug = _slug(metadata["conference"].replace(" ", "-")) or "arXiv"
-        title_slug = _short_title_slug(metadata["paper_title"])
+        agent_slug = preflight.get("title_slug", "") if preflight else ""
+        title_slug = _slug(agent_slug) if agent_slug else _short_title_slug(metadata["paper_title"])
         base_name = f"{metadata['year']}-{conference_slug}-{title_slug}"
         target = notes_root / f"{base_name}.md"
         version = 2
@@ -1240,7 +1809,7 @@ class PaperWorkflow:
             target = notes_root / f"{base_name}-v{version}.md"
             version += 1
         relative_output = target.relative_to(repo)
-        assets_dir = repo / self.runtime.config.obsidian_sync_subdir / "_assets" / archive_topic / target.stem
+        assets_dir = repo / self.runtime.config.obsidian_sync_subdir / "_assets" / topic_dir / target.stem
         relative_assets_dir = assets_dir.relative_to(repo)
         return OutputPlan(
             target=target,
@@ -1248,6 +1817,7 @@ class PaperWorkflow:
             assets_dir=assets_dir,
             relative_assets_dir=relative_assets_dir,
             taxonomy_topic=archive_topic,
+            taxonomy_topic_dir=topic_dir,
         )
 
     def _extract_figures(
@@ -1442,7 +2012,7 @@ class PaperWorkflow:
         else:
             asset_path = output_plan.assets_dir / f"figure-{index:02d}{suffix}"
             asset_path.write_bytes(source_path.read_bytes())
-        markdown_path = Path("..") / "_assets" / output_plan.taxonomy_topic / output_plan.target.stem / asset_path.name
+        markdown_path = Path("..") / "_assets" / output_plan.taxonomy_topic_dir / output_plan.target.stem / asset_path.name
         figure_record = figure_record or {}
         caption = str(figure_record.get("caption") or "").strip()
         paper_section = str(figure_record.get("section") or "").strip()
@@ -1510,7 +2080,7 @@ class PaperWorkflow:
             seen_sizes.add(signature)
             asset_path = output_plan.assets_dir / f"figure-{len(selected)+1:02d}.png"
             asset_path.write_bytes(image_bytes)
-            markdown_path = Path("..") / "_assets" / output_plan.taxonomy_topic / output_plan.target.stem / asset_path.name
+            markdown_path = Path("..") / "_assets" / output_plan.taxonomy_topic_dir / output_plan.target.stem / asset_path.name
             selected.append({
                 'page': str(page_no),
                 'markdown_path': markdown_path.as_posix(),
@@ -1574,6 +2144,137 @@ class PaperWorkflow:
         output_plan.target.write_text(note_content, encoding="utf-8")
         log("write", f"Wrote markdown to {output_plan.relative_output.as_posix()}", "INFO")
         return output_plan.relative_output
+
+    def _export_review_pdf(self, job: dict, output_plan: OutputPlan, log: LogFn) -> str:
+        artifact_dir = Path(str(job.get("artifact_dir") or self.runtime.config.artifacts_dir / str(job.get("id") or "unknown")))
+        pdf_dir = artifact_dir / "pdfcheck"
+        pdf_path = pdf_dir / f"{output_plan.target.stem}.pdf"
+        script_path = self.runtime.config.base_dir / "scripts" / "export_note_pdf.py"
+        result = self.runtime.run(
+            [
+                "python3",
+                str(script_path),
+                str(output_plan.target),
+                str(pdf_path),
+            ],
+            timeout=60.0,
+        )
+        if not result.ok:
+            log("readability", f"Failed to export review PDF: {(result.stderr or result.stdout).strip() or 'unknown error'}", "WARN")
+            return ""
+        log("readability", f"Exported review PDF to {pdf_path}", "INFO")
+        return str(pdf_path)
+
+    def _review_readability(self, job: dict, output_plan: OutputPlan, review_pdf_path: str, log: LogFn) -> tuple[str, str]:
+        if not review_pdf_path:
+            return "", ""
+        if self.runtime.config.agent_backend != "claude-glm":
+            log("readability", f"Skipping readability review for unsupported backend '{self.runtime.config.agent_backend}'", "WARN")
+            return "", ""
+
+        artifact_dir = Path(str(job.get("artifact_dir") or self.runtime.config.artifacts_dir / str(job.get("id") or "unknown")))
+        review_path = artifact_dir / "readability_review.txt"
+        pdf_text = self._extract_pdf_text(Path(review_pdf_path))
+        if not pdf_text:
+            log("readability", "Skipping readability review because rendered PDF text could not be extracted", "WARN")
+            return "", ""
+        prompt = self.runtime.prompt_loader.load(
+            self.runtime.config.readability_prompt_file,
+            note_path=str(output_plan.target),
+            pdf_path=review_pdf_path,
+        )
+        raw_markdown = output_plan.target.read_text(encoding='utf-8')
+        review_markdown = re.sub(r"^---\n.*?\n---\n?", "", raw_markdown, flags=re.S)
+        prompt = (
+            f"{prompt}\n\n"
+            f"下面是 markdown 原文，请按可读性审读，不要重写全文：\n"
+            f"```markdown\n{review_markdown[:20000]}\n```\n\n"
+            f"下面是渲染后 PDF 抽取出的正文文本，请优先依据它判断版面阅读体验：\n"
+            f"```text\n{pdf_text[:20000]}\n```"
+        )
+        command_parts = shlex.split(self.runtime.config.claude_glm_command)
+        env: dict[str, str] = {}
+        while command_parts and re.match(r"^[A-Za-z_][A-Za-z0-9_]*=.*$", command_parts[0]):
+            key, value = command_parts.pop(0).split("=", 1)
+            env[key] = value
+        if not command_parts:
+            log("readability", "Readability review skipped: empty agent command", "WARN")
+            return "", ""
+        result = self.runtime.run(
+            [
+                *command_parts,
+                "-p",
+                "--output-format",
+                "text",
+                prompt,
+            ],
+            env=env,
+            cwd=self.runtime.config.base_dir,
+            timeout=min(self.runtime.config.agent_timeout_seconds, 120.0),
+        )
+        if not result.ok:
+            message = (result.stderr or result.stdout).strip() or "readability review failed"
+            log("readability", f"Readability review failed: {message}", "WARN")
+            return "", ""
+        review_agent_dir = artifact_dir / "readability_agent"
+        review_agent_dir.mkdir(parents=True, exist_ok=True)
+        (review_agent_dir / "claude.stdout").write_text(result.stdout or "", encoding="utf-8")
+        (review_agent_dir / "claude.stderr").write_text(result.stderr or "", encoding="utf-8")
+        review_text = (result.stdout or "").strip()
+        if not review_text:
+            log("readability", "Readability review returned empty output", "WARN")
+            return "", ""
+        review_path.write_text(review_text + "\n", encoding="utf-8")
+        summary = self._summarize_readability_review(review_text)
+        if summary:
+            log("readability", f"Top fixes: {summary}", "INFO")
+        else:
+            log("readability", f"Saved readability review to {review_path}", "INFO")
+        return str(review_path), summary
+
+    def _summarize_readability_review(self, review_text: str) -> str:
+        top_fixes: list[str] = []
+        capture = False
+        for raw_line in review_text.splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+            lowered = line.lower()
+            if re.search(r"\btop\b.*\bfix", lowered):
+                capture = True
+                continue
+            if capture and re.match(r"^(?:[-*]\s+|\d+\.\s+)", line):
+                top_fixes.append(re.sub(r"^(?:[-*]\s+|\d+\.\s+)", "", line))
+                if len(top_fixes) >= 2:
+                    break
+            elif capture and top_fixes:
+                break
+        if top_fixes:
+            return "；".join(top_fixes)
+        for raw_line in review_text.splitlines():
+            line = raw_line.strip()
+            if line:
+                return line[:240]
+        return ""
+
+    def _extract_pdf_text(self, pdf_path: Path) -> str:
+        try:
+            doc = fitz.open(pdf_path)
+            try:
+                chunks: list[str] = []
+                for page_index in range(min(len(doc), 12)):
+                    page = doc.load_page(page_index)
+                    text = page.get_text("text")
+                    text = re.sub(r"\s+\n", "\n", text)
+                    text = re.sub(r"\n{3,}", "\n\n", text)
+                    text = text.strip()
+                    if text:
+                        chunks.append(f"[Page {page_index + 1}]\n{text}")
+                return "\n\n".join(chunks)
+            finally:
+                doc.close()
+        except Exception:
+            return ""
 
     def _commit_note(self, relative_output: Path, commit_message: str, log: LogFn) -> str:
         repo = self.runtime.config.obsidian_sync_repo

@@ -59,12 +59,15 @@ class Runtime:
         cwd: Path | None = None,
         timeout: float = 120.0,
     ) -> CommandResult:
+        full_env = os.environ.copy()
+        if env:
+            full_env.update(env)
         try:
             proc = subprocess.run(
                 args,
                 text=True,
                 capture_output=True,
-                env=env,
+                env=full_env,
                 cwd=str(cwd) if cwd else None,
                 timeout=timeout,
             )

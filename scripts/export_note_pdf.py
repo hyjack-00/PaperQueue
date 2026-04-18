@@ -1,22 +1,50 @@
 from __future__ import annotations
 
 import sys
+import re
 from pathlib import Path
 
 from reportlab.lib.enums import TA_LEFT
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.cidfonts import UnicodeCIDFont
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Image, Paragraph, SimpleDocTemplate, Spacer
+
+
+def _register_cjk_font() -> str:
+    try:
+        font_name = "STSong-Light"
+        pdfmetrics.registerFont(UnicodeCIDFont(font_name))
+        return font_name
+    except Exception:
+        pass
+    candidates = [
+        Path("/home/agent-user/.fonts/NotoSansCJKsc-Regular.otf"),
+        Path("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"),
+        Path("/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc"),
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            font_name = "PaperQueueCJK"
+            try:
+                pdfmetrics.registerFont(TTFont(font_name, str(candidate)))
+                return font_name
+            except Exception:
+                continue
+    return "Helvetica"
 
 
 def build_pdf(markdown_path: Path, output_path: Path) -> None:
     styles = getSampleStyleSheet()
-    title_style = ParagraphStyle('Title', parent=styles['Title'], alignment=TA_LEFT)
-    h1 = ParagraphStyle('H1', parent=styles['Heading1'], spaceAfter=12)
-    h2 = ParagraphStyle('H2', parent=styles['Heading2'], spaceAfter=10)
-    body = ParagraphStyle('Body', parent=styles['BodyText'], leading=16, spaceAfter=6)
-    bullet = ParagraphStyle('Bullet', parent=styles['BodyText'], leftIndent=12, bulletIndent=0, leading=16, spaceAfter=4)
+    font_name = _register_cjk_font()
+    title_style = ParagraphStyle('Title', parent=styles['Title'], alignment=TA_LEFT, fontName=font_name, wordWrap='CJK')
+    h1 = ParagraphStyle('H1', parent=styles['Heading1'], spaceAfter=12, fontName=font_name, wordWrap='CJK')
+    h2 = ParagraphStyle('H2', parent=styles['Heading2'], spaceAfter=10, fontName=font_name, wordWrap='CJK')
+    body = ParagraphStyle('Body', parent=styles['BodyText'], leading=16, spaceAfter=6, fontName=font_name, wordWrap='CJK')
+    bullet = ParagraphStyle('Bullet', parent=styles['BodyText'], leftIndent=12, bulletIndent=0, leading=16, spaceAfter=4, fontName=font_name, wordWrap='CJK')
 
     lines = markdown_path.read_text(encoding='utf-8').splitlines()
     story = []
@@ -55,6 +83,23 @@ def build_pdf(markdown_path: Path, output_path: Path) -> None:
                 img._restrictSize(max_width, max_height)
                 story.append(img)
                 story.append(Spacer(1, 0.2 * cm))
+            continue
+        figure_img = re.match(r'<img src="([^"]+)">', line)
+        if figure_img:
+            img_path = (markdown_path.parent / figure_img.group(1)).resolve()
+            if img_path.exists():
+                img = Image(str(img_path))
+                max_width = 16 * cm
+                max_height = 20 * cm
+                img._restrictSize(max_width, max_height)
+                story.append(img)
+                story.append(Spacer(1, 0.15 * cm))
+            continue
+        figure_caption = re.match(r"<figcaption>(.*?)</figcaption>", line)
+        if figure_caption:
+            story.append(Paragraph(figure_caption.group(1), body))
+            continue
+        if line in {"<figure class=\"paper-figure\">", "</figure>"}:
             continue
         if line.startswith('* '):
             story.append(Paragraph(line[2:], bullet, bulletText='•'))

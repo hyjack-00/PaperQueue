@@ -39,7 +39,8 @@ def score_coverage(text: str, checks: list[str]) -> float:
     lowered = text.lower()
     hits = 0
     for check in checks:
-        if check.lower() in lowered:
+        alternatives = [alt.strip() for alt in check.split(" or ")]
+        if any(alt.lower() in lowered for alt in alternatives):
             hits += 1
     return hits / max(1, len(checks))
 

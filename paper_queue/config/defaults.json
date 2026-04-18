@@ -22,12 +22,16 @@
   },
   "prompts": {
     "metadata": "metadata_v1.txt",
+    "metadata_agent": "metadata_agent_v1.txt",
+    "notes_preflight": "notes_preflight_v1.txt",
+    "figure_placement": "figure_placement_v1.txt",
     "notes": "notes_v1.txt",
     "structure_analysis": "structure_analysis_v1.txt",
     "readability_review": "readability_review_v1.txt",
     "benchmark_paragraph_points": "benchmark_paragraph_points_v1.txt",
     "benchmark_coverage_review": "benchmark_coverage_review_v1.txt",
     "benchmark_placement_review": "benchmark_placement_review_v1.txt",
-    "benchmark_length_review": "benchmark_length_review_v1.txt"
+    "benchmark_length_review": "benchmark_length_review_v1.txt",
+    "routing": "routing_v1.txt"
   }
 }
