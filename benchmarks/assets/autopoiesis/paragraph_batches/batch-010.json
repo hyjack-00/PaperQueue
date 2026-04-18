@@ -1,0 +1,203 @@
+[
+  {
+    "paragraph_id": "p13-0109",
+    "translation": "Traces.Forthehomogeneousandheterogeneousclusterevaluations,weuseworkloadtracessubsampled from ShareGPT [39] and LongBench [40].For the elastic cloud cluster evaluation, we use cluster membership traces derived from the M",
+    "info_points": [
+      "Traces.Forthehomogeneousandheterogeneousclusterevaluations,weuseworkloadtracessubsampled from ShareGPT [39] and LongBench [40].For the elastic cloud cluster evaluation, we use cluster membership traces derived from the Microsoft Azure Functions (MAF) dataset [41], combined with ShareGPT workload tra"
+    ],
+    "keywords": [
+      "Traces",
+      "Forthehomogeneousandheterogeneousclusterevaluations",
+      "weuseworkloadtracessubsampled",
+      "from",
+      "ShareGPT",
+      "LongBench",
+      "elastic",
+      "cloud"
+    ],
+    "source_text": "Traces.Forthehomogeneousandheterogeneousclusterevaluations,weuseworkloadtracessubsampled from ShareGPT [39] and LongBench [40].For the elastic cloud cluster evaluation, we use cluster membership traces derived from the Microsoft Azure Functions (MAF) dataset [41], combined with ShareGPT workload traces for request generation.All traces are augmented with synthetic workload fluctuation patterns, following standardpracticeinLLMservingevaluation[1,2],tostress-testpolicyadaptationundershiftingruntime conditions (trace information in Appendix H)."
+  },
+  {
+    "paragraph_id": "p13-0110",
+    "translation": "Models and metrics.We deploy Llama3.1-70B as the served model on homogeneous and elastic cloud clusters, and additionally deploy Llama3.1-8B and Llama2-13B on the heterogeneous cluster.For evaluation, we report trace com",
+    "info_points": [
+      "Models and metrics.We deploy Llama3.1-70B as the served model on homogeneous and elastic cloud clusters, and additionally deploy Llama3.1-8B and Llama2-13B on the heterogeneous cluster.For evaluation, we report trace completion time, consisting of scheduling, reconfiguration, and serving time as def"
+    ],
+    "keywords": [
+      "Models",
+      "metrics",
+      "deploy",
+      "Llama3",
+      "served",
+      "model",
+      "homogeneous",
+      "elastic"
+    ],
+    "source_text": "Models and metrics.We deploy Llama3.1-70B as the served model on homogeneous and elastic cloud clusters, and additionally deploy Llama3.1-8B and Llama2-13B on the heterogeneous cluster.For evaluation, we report trace completion time, consisting of scheduling, reconfiguration, and serving time as defined in our execution model (Equation 13)."
+  },
+  {
+    "paragraph_id": "p13-0111",
+    "translation": "SynthesisLLM.TheLLM-drivenprogramsynthesisworkflow(§5)ispoweredbyGLM-4.7-Flash[42].Our framework is model-agnostic and can be driven by any capable LLM.",
+    "info_points": [
+      "SynthesisLLM.TheLLM-drivenprogramsynthesisworkflow(§5)ispoweredbyGLM-4.7-Flash[42].Our framework is model-agnostic and can be driven by any capable LLM."
+    ],
+    "keywords": [
+      "SynthesisLLM",
+      "TheLLM-drivenprogramsynthesisworkflow",
+      "ispoweredbyGLM-4",
+      "Flash",
+      "framework",
+      "model-agnostic",
+      "driven",
+      "capable"
+    ],
+    "source_text": "SynthesisLLM.TheLLM-drivenprogramsynthesisworkflow(§5)ispoweredbyGLM-4.7-Flash[42].Our framework is model-agnostic and can be driven by any capable LLM."
+  },
+  {
+    "paragraph_id": "p13-0112",
+    "translation": "7.1 End-to-end Evaluation",
+    "info_points": [
+      "7.1 End-to-end Evaluation"
+    ],
+    "keywords": [
+      "End-to-end",
+      "Evaluation"
+    ],
+    "source_text": "7.1 End-to-end Evaluation"
+  },
+  {
+    "paragraph_id": "p13-0113",
+    "translation": "EvaluationonhomogeneousclusterwithDistServe.Figure7(left)comparesAUTOPOIESISwithDistServeon ahomogeneousclusterundertworepresentativetraces.Overall,AUTOPOIESISachievesupto31%and on average27% reduction intotal execution ",
+    "info_points": [
+      "EvaluationonhomogeneousclusterwithDistServe.Figure7(left)comparesAUTOPOIESISwithDistServeon ahomogeneousclusterundertworepresentativetraces.Overall,AUTOPOIESISachievesupto31%and on average27% reduction intotal execution time.During volatile workload periodsthat require frequent plan adaptation,AUTOP"
+    ],
+    "keywords": [
+      "EvaluationonhomogeneousclusterwithDistServe",
+      "Figure7",
+      "left",
+      "comparesAUTOPOIESISwithDistServeon",
+      "ahomogeneousclusterundertworepresentativetraces",
+      "Overall",
+      "AUTOPOIESISachievesupto31",
+      "average27"
+    ],
+    "source_text": "EvaluationonhomogeneousclusterwithDistServe.Figure7(left)comparesAUTOPOIESISwithDistServeon ahomogeneousclusterundertworepresentativetraces.Overall,AUTOPOIESISachievesupto31%and on average27% reduction intotal execution time.During volatile workload periodsthat require frequent plan adaptation,AUTOPOIESISreduces scheduling and reconfiguration overhead by 65% to rapidly respond toworkloaddrifts(e.g.,the2ndand3rdscheduling&reconfigurationwindowsontheLongBenchtrace). Although per-period serving latency increases marginally by 2%, the net effect is a 25% reduction in end-to- end execution time for those periods.Conversely, during stable workload periods, where conditions do not necessitatefrequentrescheduling,AUTOPOIESISinvests10%moretimeinschedulingandreconfiguration to search for a superior serving plan (e.g., the 4th scheduling & reconfiguration window on the LongBench trace).Thisreducesservinglatencyby22%andtheperiod’send-to-endexecutiontimeby11%.Notably, thisbehavioralshiftoccursbecausetheservingpolicyisupdatedbeforethe4thwindowtoadapttothe stableregime.Together,theseresultsdemonstratethatAUTOPOIESISisworkload-adaptive:itminimizes reconfiguration overhead when workload volatility is high to maintain responsiveness, and invests more search effort when the workload is stable to discover superior plans.This adaptive behavior enablesAUTOPOIESISto consistently outperform DistServe, which applies a fixed scheduling policy regardless of runtime dynamics."
+  },
+  {
+    "paragraph_id": "p13-0114",
+    "translation": "Evaluation on heterogeneous cluster with HexGen.As shown inFigure 7 (middle),AUTOPOIESISachieves up to 33% and on average 30% reduction in end-to-end execution time compared to HexGen on a heterogeneous cluster.On hetero",
+    "info_points": [
+      "Evaluation on heterogeneous cluster with HexGen.As shown inFigure 7 (middle),AUTOPOIESISachieves up to 33% and on average 30% reduction in end-to-end execution time compared to HexGen on a heterogeneous cluster.On heterogeneous clusters, the scheduling search becomes a critical bottleneck—HexGen req"
+    ],
+    "keywords": [
+      "Evaluation",
+      "heterogeneous",
+      "cluster",
+      "with",
+      "HexGen",
+      "shown",
+      "inFigure",
+      "middle"
+    ],
+    "source_text": "Evaluation on heterogeneous cluster with HexGen.As shown inFigure 7 (middle),AUTOPOIESISachieves up to 33% and on average 30% reduction in end-to-end execution time compared to HexGen on a heterogeneous cluster.On heterogeneous clusters, the scheduling search becomes a critical bottleneck—HexGen requires over 300 s to complete policy search in most scenarios due to the combinatorial explosion of device-heterogeneous parallelism configurations.To address this, AUTOPOIESIS autonomously discovers scheduling principles tailored"
+  },
+  {
+    "paragraph_id": "p14-0115",
+    "translation": "Figure 8Convergence curve of the evolution process on volatile and stable workload periods in the heterogeneous cluster. We run the evolution multiple times with different random seeds.Scores are normalized by the initia",
+    "info_points": [
+      "Figure 8Convergence curve of the evolution process on volatile and stable workload periods in the heterogeneous cluster."
+    ],
+    "keywords": [
+      "Figure",
+      "Convergence",
+      "curve",
+      "evolution",
+      "process",
+      "volatile",
+      "stable",
+      "workload"
+    ],
+    "source_text": "Figure 8Convergence curve of the evolution process on volatile and stable workload periods in the heterogeneous cluster. We run the evolution multiple times with different random seeds.Scores are normalized by the initial score."
+  },
+  {
+    "paragraph_id": "p14-0116",
+    "translation": "todeviceheterogeneity,reducingpolicysearchtimewhileminimizingtheimpactonservinglatency.We present a detailed analysis of the evolved scheduling policies and their qualitative differences in §7.2.",
+    "info_points": [
+      "todeviceheterogeneity,reducingpolicysearchtimewhileminimizingtheimpactonservinglatency.We present a detailed analysis of the evolved scheduling policies and their qualitative differences in §7.2."
+    ],
+    "keywords": [
+      "todeviceheterogeneity",
+      "reducingpolicysearchtimewhileminimizingtheimpactonservinglatency",
+      "present",
+      "detailed",
+      "analysis",
+      "evolved",
+      "scheduling",
+      "policies"
+    ],
+    "source_text": "todeviceheterogeneity,reducingpolicysearchtimewhileminimizingtheimpactonservinglatency.We present a detailed analysis of the evolved scheduling policies and their qualitative differences in §7.2."
+  },
+  {
+    "paragraph_id": "p14-0117",
+    "translation": "EvaluationonelasticcloudclusterwithSpotServe.AsshowninFigure7(right),wecompareAUTOPOIESIS with SpotServe on an elastic cloud cluster.AUTOPOIESISachieves up to 53% and on average 44% reduction in total execution time.Unli",
+    "info_points": [
+      "EvaluationonelasticcloudclusterwithSpotServe.AsshowninFigure7(right),wecompareAUTOPOIESIS with SpotServe on an elastic cloud cluster.AUTOPOIESISachieves up to 53% and on average 44% reduction in total execution time.Unlike previous scenarios, the dominant runtime trade-off in elastic cloud clusters "
+    ],
+    "keywords": [
+      "EvaluationonelasticcloudclusterwithSpotServe",
+      "AsshowninFigure7",
+      "right",
+      "wecompareAUTOPOIESIS",
+      "with",
+      "SpotServe",
+      "elastic",
+      "cloud"
+    ],
+    "source_text": "EvaluationonelasticcloudclusterwithSpotServe.AsshowninFigure7(right),wecompareAUTOPOIESIS with SpotServe on an elastic cloud cluster.AUTOPOIESISachieves up to 53% and on average 44% reduction in total execution time.Unlike previous scenarios, the dominant runtime trade-off in elastic cloud clusters isbetweenreconfigurationtimeandservingperformance.Whentheclustercompositionremainsstable, AUTOPOIESISinvestsinmigratingtoanoptimalservingplan,acceptinghigherreconfigurationoverhead to minimize serving latency.When frequent instance preemptions and arrivals occur,AUTOPOIESISinstead migrates to an intermediate plan between the current and optimal configurations, reducing reconfiguration overhead at a marginal cost to serving performance.In contrast, SpotServe either reconfigures to the plan returned by its fixed search procedure or selects the configuration with the lowest monetary cost (i.e., using fewerinstances),failingtoexploitthisruntimetrade-off.TheseresultsfurtherconfirmthatAUTOPOIESIS consistently outperforms baselines that apply fixed scheduling policies regardless of runtime dynamics."
+  },
+  {
+    "paragraph_id": "p14-0118",
+    "translation": "7.2 Serving Policy Deep Dive",
+    "info_points": [
+      "7.2 Serving Policy Deep Dive"
+    ],
+    "keywords": [
+      "Serving",
+      "Policy",
+      "Deep",
+      "Dive"
+    ],
+    "source_text": "7.2 Serving Policy Deep Dive"
+  },
+  {
+    "paragraph_id": "p14-0119",
+    "translation": "Case study:Evolved serving policy in the heterogeneous case.We analyze the qualitative differences between theevolvedschedulingpolicydiscoveredbyAUTOPOIESISandHexGen’soriginalpolicyonheterogeneous clusters.The evolved po",
+    "info_points": [
+      "Case study:Evolved serving policy in the heterogeneous case.We analyze the qualitative differences between theevolvedschedulingpolicydiscoveredbyAUTOPOIESISandHexGen’soriginalpolicyonheterogeneous clusters.The evolved policy minimizes scheduling time while maintaining near-optimal serving performanc"
+    ],
+    "keywords": [
+      "Case",
+      "study",
+      "Evolved",
+      "serving",
+      "policy",
+      "heterogeneous",
+      "case",
+      "analyze"
+    ],
+    "source_text": "Case study:Evolved serving policy in the heterogeneous case.We analyze the qualitative differences between theevolvedschedulingpolicydiscoveredbyAUTOPOIESISandHexGen’soriginalpolicyonheterogeneous clusters.The evolved policy minimizes scheduling time while maintaining near-optimal serving performance through several scenario-specific scheduling principles:(i) Bounding tensor parallelism communication within intra-machine to prune low-performance candidates (learned from evolution experience that inter-machine tensor parallelism introduces significant communication bottlenecks on heterogeneous interconnects);(ii) adjusting the workload assignment granularity from uniform multiples to curated sweet spots, reducing the number of decision variables; (iii) adding a constraint that every model must have at least one active serving group to reject invalid candidates early; (iv) making GPU assignment heterogeneity-aware by prioritizing the most suitable GPU type for each model, e.g., H100 for Llama-3.1-70B (learned from evolution experience that compute-intensive large models benefit disproportionately from high-performance GPUs, while smaller models tolerateweakerhardwarewithminimalthroughputloss);and(v)settingaweightedsecondaryobjective that prioritizes latency reduction for the bottleneck model (learned from evolution experience that overall serving throughput is dominated by the slowest model’s latency in multi-model co-serving).All modifications are discovered autonomously throughAUTOPOIESIS’s LLM-driven program synthesis workflow.Note that all modifications reduce scheduling time by up to 92.2% while reaching near-optimal serving efficiency."
+  },
+  {
+    "paragraph_id": "p14-0120",
+    "translation": "7.3 Effectiveness of the Evolution Process",
+    "info_points": [
+      "7.3 Effectiveness of the Evolution Process"
+    ],
+    "keywords": [
+      "Effectiveness",
+      "Evolution",
+      "Process"
+    ],
+    "source_text": "7.3 Effectiveness of the Evolution Process"
+  }
+]

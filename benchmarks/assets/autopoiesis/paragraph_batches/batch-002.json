@@ -1,0 +1,207 @@
+[
+  {
+    "paragraph_id": "p03-0013",
+    "translation": "more vast than human engineers can navigate [20, 21].This mechanism has successfully synthesized novel, highly-tailored algorithms across diverse domains, from mathematical and scientific optimization [22, 23] to hardwar",
+    "info_points": [
+      "more vast than human engineers can navigate [20, 21].This mechanism has successfully synthesized novel, highly-tailored algorithms across diverse domains, from mathematical and scientific optimization [22, 23] to hardware-specific GPU kernel tuning [24, 25].In this work, we bring this synthesis capa"
+    ],
+    "keywords": [
+      "more",
+      "vast",
+      "than",
+      "human",
+      "engineers",
+      "navigate",
+      "This",
+      "mechanism"
+    ],
+    "source_text": "more vast than human engineers can navigate [20, 21].This mechanism has successfully synthesized novel, highly-tailored algorithms across diverse domains, from mathematical and scientific optimization [22, 23] to hardware-specific GPU kernel tuning [24, 25].In this work, we bring this synthesis capability to LLM serving, utilizing it to continuously explore and navigate the multi-dimensional trade-off space of runtime dynamics."
+  },
+  {
+    "paragraph_id": "p03-0014",
+    "translation": "Toexplorethis,weproposeAUTOPOIESIS,anovel,self-evolvingparadigmthatshiftsLLMservingfrom static, human-engineered policy design to continuous, LLM-driven policy evolution.Our contributions are summarized as:",
+    "info_points": [
+      "Toexplorethis,weproposeAUTOPOIESIS,anovel,self-evolvingparadigmthatshiftsLLMservingfrom static, human-engineered policy design to continuous, LLM-driven policy evolution.Our contributions are summarized as:"
+    ],
+    "keywords": [
+      "Toexplorethis",
+      "weproposeAUTOPOIESIS",
+      "anovel",
+      "self-evolvingparadigmthatshiftsLLMservingfrom",
+      "static",
+      "human-engineered",
+      "policy",
+      "design"
+    ],
+    "source_text": "Toexplorethis,weproposeAUTOPOIESIS,anovel,self-evolvingparadigmthatshiftsLLMservingfrom static, human-engineered policy design to continuous, LLM-driven policy evolution.Our contributions are summarized as:"
+  },
+  {
+    "paragraph_id": "p03-0015",
+    "translation": "Contribution 1:WeproposeanLLM-drivenprogramsynthesisworkflowforservingpolicyoptimization.The workflow combines an evolutionary algorithm that iteratively generates, mutates, and selects policy candidates; a highly calibr",
+    "info_points": [
+      "Contribution 1:WeproposeanLLM-drivenprogramsynthesisworkflowforservingpolicyoptimization.The workflow combines an evolutionary algorithm that iteratively generates, mutates, and selects policy candidates; a highly calibrated, lightweight evaluator that faithfully reproduces real-world runtime dynami"
+    ],
+    "keywords": [
+      "Contribution",
+      "WeproposeanLLM-drivenprogramsynthesisworkflowforservingpolicyoptimization",
+      "workflow",
+      "combines",
+      "evolutionary",
+      "algorithm",
+      "that",
+      "iteratively"
+    ],
+    "source_text": "Contribution 1:WeproposeanLLM-drivenprogramsynthesisworkflowforservingpolicyoptimization.The workflow combines an evolutionary algorithm that iteratively generates, mutates, and selects policy candidates; a highly calibrated, lightweight evaluator that faithfully reproduces real-world runtime dynamics for efficient candidateassessment;andasynthesisconfigurationthatorchestratestheevolutionarysynthesisprocess, including population management, mutation strategy, and feedback mechanism."
+  },
+  {
+    "paragraph_id": "p03-0016",
+    "translation": "Contribution 2: We design and implementAUTOPOIESIS, a self-evolving serving paradigm built upon a decou- pled two-plane architecture (i.e., data- and control-plane).The data plane executes the current serving policy to p",
+    "info_points": [
+      "Contribution 2: We design and implementAUTOPOIESIS, a self-evolving serving paradigm built upon a decou- pled two-plane architecture (i.e., data- and control-plane).The data plane executes the current serving policy to produce serving plans for live deployment, while the asynchronous control plane c"
+    ],
+    "keywords": [
+      "Contribution",
+      "design",
+      "implementAUTOPOIESIS",
+      "self-evolving",
+      "serving",
+      "paradigm",
+      "built",
+      "upon"
+    ],
+    "source_text": "Contribution 2: We design and implementAUTOPOIESIS, a self-evolving serving paradigm built upon a decou- pled two-plane architecture (i.e., data- and control-plane).The data plane executes the current serving policy to produce serving plans for live deployment, while the asynchronous control plane continuously leverages the LLM-driven program synthesis workflow to optimize the serving policy itself, rewriting the code as runtime conditions evolve."
+  },
+  {
+    "paragraph_id": "p03-0017",
+    "translation": "Contribution 3:WeconductacomprehensiveevaluationofAUTOPOIESISunderdiverseruntimedynamics, includingworkloadfluctuationsandspotinstancevariations.ExperimentalresultsdemonstratethatAU- TOPOIESISachieves up to 53% and on av",
+    "info_points": [
+      "Contribution 3:WeconductacomprehensiveevaluationofAUTOPOIESISunderdiverseruntimedynamics, includingworkloadfluctuationsandspotinstancevariations.ExperimentalresultsdemonstratethatAU- TOPOIESISachieves up to 53% and on average 34% improvement in system performance over state-of-the-art LLM serving sy"
+    ],
+    "keywords": [
+      "Contribution",
+      "WeconductacomprehensiveevaluationofAUTOPOIESISunderdiverseruntimedynamics",
+      "includingworkloadfluctuationsandspotinstancevariations",
+      "ExperimentalresultsdemonstratethatAU-",
+      "TOPOIESISachieves",
+      "average",
+      "improvement",
+      "system"
+    ],
+    "source_text": "Contribution 3:WeconductacomprehensiveevaluationofAUTOPOIESISunderdiverseruntimedynamics, includingworkloadfluctuationsandspotinstancevariations.ExperimentalresultsdemonstratethatAU- TOPOIESISachieves up to 53% and on average 34% improvement in system performance over state-of-the-art LLM serving systems."
+  },
+  {
+    "paragraph_id": "p03-0018",
+    "translation": "Contribution 4: We provide a detailed system analysis showing how evolved policies navigate runtime trade-offs across diverse serving scenarios and how optimal trade-off balances shift with workload and cluster condition",
+    "info_points": [
+      "Contribution 4: We provide a detailed system analysis showing how evolved policies navigate runtime trade-offs across diverse serving scenarios and how optimal trade-off balances shift with workload and cluster conditions, offering insights into the effectiveness and generalizability of our synthesi"
+    ],
+    "keywords": [
+      "Contribution",
+      "provide",
+      "detailed",
+      "system",
+      "analysis",
+      "showing",
+      "evolved",
+      "policies"
+    ],
+    "source_text": "Contribution 4: We provide a detailed system analysis showing how evolved policies navigate runtime trade-offs across diverse serving scenarios and how optimal trade-off balances shift with workload and cluster conditions, offering insights into the effectiveness and generalizability of our synthesis workflow for system optimization problems."
+  },
+  {
+    "paragraph_id": "p03-0019",
+    "translation": "2 Background and Related Work",
+    "info_points": [
+      "2 Background and Related Work"
+    ],
+    "keywords": [
+      "Background",
+      "Related",
+      "Work"
+    ],
+    "source_text": "2 Background and Related Work"
+  },
+  {
+    "paragraph_id": "p03-0020",
+    "translation": "2.1 LLM Serving Preliminaries",
+    "info_points": [
+      "2.1 LLM Serving Preliminaries"
+    ],
+    "keywords": [
+      "Serving",
+      "Preliminaries"
+    ],
+    "source_text": "2.1 LLM Serving Preliminaries"
+  },
+  {
+    "paragraph_id": "p03-0021",
+    "translation": "Serving production-scale LLM requests requires allocating substantial memory and computationally intensive workloads across large scale GPU clusters.Efficient management of this execution necessitates the continuous orch",
+    "info_points": [
+      "Serving production-scale LLM requests requires allocating substantial memory and computationally intensive workloads across large scale GPU clusters.Efficient management of this execution necessitates the continuous orchestration of several deeply intertwined components:"
+    ],
+    "keywords": [
+      "Serving",
+      "production-scale",
+      "requests",
+      "requires",
+      "allocating",
+      "substantial",
+      "memory",
+      "computationally"
+    ],
+    "source_text": "Serving production-scale LLM requests requires allocating substantial memory and computationally intensive workloads across large scale GPU clusters.Efficient management of this execution necessitates the continuous orchestration of several deeply intertwined components:"
+  },
+  {
+    "paragraph_id": "p03-0022",
+    "translation": "Servingplans.Aservingplanrepresentstheconcreteexecutionstateoftheclusteratanygivenmoment. Formally, it is composed of three primary dimensions:(i) Workload assignment, which determines the mapping of heterogeneous user r",
+    "info_points": [
+      "Formally, it is composed of three primary dimensions:(i) Workload assignment, which determines the mapping of heterogeneous user requests to specific models; systems such as Llumnix [2] and DistServe [6] optimize request assignment to mitigate load imbalance and enhance overall serving throughput.(i"
+    ],
+    "keywords": [
+      "Servingplans",
+      "Aservingplanrepresentstheconcreteexecutionstateoftheclusteratanygivenmoment",
+      "Formally",
+      "composed",
+      "three",
+      "primary",
+      "dimensions",
+      "Workload"
+    ],
+    "source_text": "Servingplans.Aservingplanrepresentstheconcreteexecutionstateoftheclusteratanygivenmoment. Formally, it is composed of three primary dimensions:(i) Workload assignment, which determines the mapping of heterogeneous user requests to specific models; systems such as Llumnix [2] and DistServe [6] optimize request assignment to mitigate load imbalance and enhance overall serving throughput.(ii) Resource allocation, whichdeterminestheprovisioningofphysicalhardwaretomodels;frameworkssuchasAlpaServe[4], Mooncake[18],andAegaeon[8]optimizehardwareprovisioningacrossconcurrentlyservedmodelsto maximize cluster utilization and system capacity.(iii) Parallelism strategy, which determines the partitioning ofmodelweightsandcomputationsacrossallocatedhardwarethroughtechniquessuchastensor[26], pipeline[27],data[4],sequence[28],andexpertparallelism[29];systemssuchasLoongServe[9]and Tenplex [10] optimize parallelism configurations to maximize hardware efficiency.Crucially, these dimensions cannot be determined in isolation; they must be tightly co-optimized."
+  },
+  {
+    "paragraph_id": "p03-0023",
+    "translation": "Servingpolicies.Whileaservingplanrepresentsastaticsnapshotofclusterexecution,aservingpolicy constitutestheactivealgorithmiclogicthatcontinuallyevaluatesandupdatesthisplan.Aservingpolicy comprises two primary components:(",
+    "info_points": [
+      "Servingpolicies.Whileaservingplanrepresentsastaticsnapshotofclusterexecution,aservingpolicy constitutestheactivealgorithmiclogicthatcontinuallyevaluatesandupdatesthisplan.Aservingpolicy comprises two primary components:(i) Scheduling algorithm, which serves as the core optimization engine of the sys"
+    ],
+    "keywords": [
+      "Servingpolicies",
+      "Whileaservingplanrepresentsastaticsnapshotofclusterexecution",
+      "aservingpolicy",
+      "constitutestheactivealgorithmiclogicthatcontinuallyevaluatesandupdatesthisplan",
+      "Aservingpolicy",
+      "comprises",
+      "primary",
+      "components"
+    ],
+    "source_text": "Servingpolicies.Whileaservingplanrepresentsastaticsnapshotofclusterexecution,aservingpolicy constitutestheactivealgorithmiclogicthatcontinuallyevaluatesandupdatesthisplan.Aservingpolicy comprises two primary components:(i) Scheduling algorithm, which serves as the core optimization engine of the system; it takes workload, model, and cluster information as input and generates an optimal serving planthatsatisfiesaspecifiedsystemobjective(e.g.,SLOattainment).FrameworkssuchasAlpaServe[4],"
+  },
+  {
+    "paragraph_id": "p04-0024",
+    "translation": "DistServe [6], Aegaeon [8], and SkyServe [13] deploy sophisticated scheduling algorithms to determine the optimal workload assignment and model deployment across complex hardware topologies.(ii) Rescheduling strategy, wh",
+    "info_points": [
+      "DistServe [6], Aegaeon [8], and SkyServe [13] deploy sophisticated scheduling algorithms to determine the optimal workload assignment and model deployment across complex hardware topologies.(ii) Rescheduling strategy, which serves as the temporal control mechanism that governs the dynamic nature of "
+    ],
+    "keywords": [
+      "DistServe",
+      "Aegaeon",
+      "SkyServe",
+      "deploy",
+      "sophisticated",
+      "scheduling",
+      "algorithms",
+      "determine"
+    ],
+    "source_text": "DistServe [6], Aegaeon [8], and SkyServe [13] deploy sophisticated scheduling algorithms to determine the optimal workload assignment and model deployment across complex hardware topologies.(ii) Rescheduling strategy, which serves as the temporal control mechanism that governs the dynamic nature of the system; it determines when (i.e., the trigger condition) and how (i.e., the target plan) the system should reconfigure toadapttoshiftingworkloadorclusterconditions.FrameworkssuchasLlumnix[2],ThunderServe[12], andSpotServe[11]employadaptivereschedulinglogictodynamicallymigraterequestandmodelstates andrapidlyadjustclusterboundariesinresponsetosuddenloadimbalancesandunexpectedhardware preemptions."
+  }
+]

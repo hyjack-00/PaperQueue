@@ -1,0 +1,212 @@
+[
+  {
+    "paragraph_id": "p31-0325",
+    "translation": "Cluster and workload information in §8.2.The cluster evolves over five timestamps (ts0–ts4) across three GPU types:H100-SXM(80 GB,NVLink900 GB/s,PCIe64 GB/s),H200-SXM(141 GB,NVLink900 GB/s,PCIe 64 GB/s), and A100-80GB (8",
+    "info_points": [
+      "Cluster and workload information in §8.2.The cluster evolves over five timestamps (ts0–ts4) across three GPU types:H100-SXM(80 GB,NVLink900 GB/s,PCIe64 GB/s),H200-SXM(141 GB,NVLink900 GB/s,PCIe 64 GB/s), and A100-80GB (80 GB, NVLink 600 GB/s, PCIe 32 GB/s).We present the detailed stable cluster info"
+    ],
+    "keywords": [
+      "Cluster",
+      "workload",
+      "information",
+      "cluster",
+      "evolves",
+      "over",
+      "five",
+      "timestamps"
+    ],
+    "source_text": "Cluster and workload information in §8.2.The cluster evolves over five timestamps (ts0–ts4) across three GPU types:H100-SXM(80 GB,NVLink900 GB/s,PCIe64 GB/s),H200-SXM(141 GB,NVLink900 GB/s,PCIe 64 GB/s), and A100-80GB (80 GB, NVLink 600 GB/s, PCIe 32 GB/s).We present the detailed stable cluster informationinTable12,andthevolatileclusterinformationinTable13.Theworkloadconsistsofthree Qwen2.5 models (7B, 14B, and 72B). Requests for all models have a 512-token prefill sequence length.The decoding length for the 7B model is 512-token and the batch size is 32; the decoding length for the 14B model is 2048-token and the batch size is 64; the decoding length for the 72B model is 4096-token and the batch size is 128."
+  },
+  {
+    "paragraph_id": "p31-0326",
+    "translation": "H.3 Trace Information for the Main Experiments Across the main experiments, we use phase labels to indicate the dominant token-shape characteristic of each workload segment.A prefill-heavy phase has relatively long input",
+    "info_points": [
+      "H.3 Trace Information for the Main Experiments Across the main experiments, we use phase labels to indicate the dominant token-shape characteristic of each workload segment.A prefill-heavy phase has relatively long input sequences and short output sequences; a decode-heavy phase has relatively short"
+    ],
+    "keywords": [
+      "Trace",
+      "Information",
+      "Main",
+      "Experiments",
+      "Across",
+      "main",
+      "experiments",
+      "phase"
+    ],
+    "source_text": "H.3 Trace Information for the Main Experiments Across the main experiments, we use phase labels to indicate the dominant token-shape characteristic of each workload segment.A prefill-heavy phase has relatively long input sequences and short output sequences; a decode-heavy phase has relatively short input sequences and long output sequences; a balanced-short phase has short inputs and short outputs; and a stable-mixed or stable-decode-heavy phase denotes a later stable period whose token-shape profile remains similar across consecutive timestamps."
+  },
+  {
+    "paragraph_id": "p31-0327",
+    "translation": "DistServe.The DistServe evaluation uses two traces sampled from ShareGPTand LongBench, respectively.We divide each trace into six workload phases, where each timestamp corresponds to the beginning of a workload phase.Eac",
+    "info_points": [
+      "DistServe.The DistServe evaluation uses two traces sampled from ShareGPTand LongBench, respectively.We divide each trace into six workload phases, where each timestamp corresponds to the beginning of a workload phase.EachofthesixShareGPTphasescontains5120requests,andeachLongBenchphasecontains1728 re"
+    ],
+    "keywords": [
+      "DistServe",
+      "DistServe",
+      "evaluation",
+      "uses",
+      "traces",
+      "sampled",
+      "from",
+      "ShareGPTand"
+    ],
+    "source_text": "DistServe.The DistServe evaluation uses two traces sampled from ShareGPTand LongBench, respectively.We divide each trace into six workload phases, where each timestamp corresponds to the beginning of a workload phase.EachofthesixShareGPTphasescontains5120requests,andeachLongBenchphasecontains1728 requests.Specifically,theShareGPTtracecontainsoneprefill-heavyphase,onedecode-heavyphase,one short balanced phase, and then three stable mixed phases.The LongBench trace contains two prefill-heavy phases, one decode-heavy transition phase, and then three stable decode-heavy phases.The phase-wise mean token-shape profiles are listed in Table 14."
+  },
+  {
+    "paragraph_id": "p31-0328",
+    "translation": "HexGen.The HexGen evaluation uses the same phase-wise token-shape profiles as DistServe.The difference is workload intensity:each workload phase in ShareGPTtrace contains 9216 requests, and each workload phase inLongBenc",
+    "info_points": [
+      "HexGen.The HexGen evaluation uses the same phase-wise token-shape profiles as DistServe.The difference is workload intensity:each workload phase in ShareGPTtrace contains 9216 requests, and each workload phase inLongBench contains3110 requests.Thus,theprefill anddecode lengthsin Table14 remainunchan"
+    ],
+    "keywords": [
+      "HexGen",
+      "HexGen",
+      "evaluation",
+      "uses",
+      "same",
+      "phase-wise",
+      "token-shape",
+      "profiles"
+    ],
+    "source_text": "HexGen.The HexGen evaluation uses the same phase-wise token-shape profiles as DistServe.The difference is workload intensity:each workload phase in ShareGPTtrace contains 9216 requests, and each workload phase inLongBench contains3110 requests.Thus,theprefill anddecode lengthsin Table14 remainunchanged, while the effective workload size is scaled up."
+  },
+  {
+    "paragraph_id": "p31-0329",
+    "translation": "SpotServe.This evaluation uses two MAF-derived traces, each combining hidden workload-pattern changes withatime-varyingelasticcluster-sizeschedule.BothtracesareextractedfromarealAzureFunctions applicationwindowandthenmap",
+    "info_points": [
+      "SpotServe.This evaluation uses two MAF-derived traces, each combining hidden workload-pattern changes withatime-varyingelasticcluster-sizeschedule.BothtracesareextractedfromarealAzureFunctions applicationwindowandthenmappedintoanelasticclusterschedulerangingfrom24to64GPUs.Inthe"
+    ],
+    "keywords": [
+      "SpotServe",
+      "This",
+      "evaluation",
+      "uses",
+      "MAF-derived",
+      "traces",
+      "each",
+      "combining"
+    ],
+    "source_text": "SpotServe.This evaluation uses two MAF-derived traces, each combining hidden workload-pattern changes withatime-varyingelasticcluster-sizeschedule.BothtracesareextractedfromarealAzureFunctions applicationwindowandthenmappedintoanelasticclusterschedulerangingfrom24to64GPUs.Inthe"
+  },
+  {
+    "paragraph_id": "p32-0330",
+    "translation": "Table 12Stable cluster transition in §8.2:GPU counts per type across five timestamps.Cluster transitions are marked with ⇒.",
+    "info_points": [
+      "Table 12Stable cluster transition in §8.2:GPU counts per type across five timestamps.Cluster transitions are marked with ⇒."
+    ],
+    "keywords": [
+      "Table",
+      "Stable",
+      "cluster",
+      "transition",
+      "counts",
+      "type",
+      "across",
+      "five"
+    ],
+    "source_text": "Table 12Stable cluster transition in §8.2:GPU counts per type across five timestamps.Cluster transitions are marked with ⇒."
+  },
+  {
+    "paragraph_id": "p32-0331",
+    "translation": "TS Transition A100-80GB H100-SXM H200-SXM Total GPUs ts0 H100+H200 – 16 16 32 ts1 ⇒H200 increased – 16 24 40 ts2 ⇒H100 increased – 24 24 48 ts3 ⇒A100 introduced, H100 and H200 reduced 16 16 8 40 ts4 ⇒A100 reduced, H100 a",
+    "info_points": [
+      "TS Transition A100-80GB H100-SXM H200-SXM Total GPUs ts0 H100+H200 – 16 16 32 ts1 ⇒H200 increased – 16 24 40 ts2 ⇒H100 increased – 24 24 48 ts3 ⇒A100 introduced, H100 and H200 reduced 16 16 8 40 ts4 ⇒A100 reduced, H100 and H200 increased 8 24 16 48 Table 13Volatile cluster transition in §8.2:GPU cou"
+    ],
+    "keywords": [
+      "Transition",
+      "A100-80GB",
+      "H100-SXM",
+      "H200-SXM",
+      "Total",
+      "GPUs",
+      "H100",
+      "H200"
+    ],
+    "source_text": "TS Transition A100-80GB H100-SXM H200-SXM Total GPUs ts0 H100+H200 – 16 16 32 ts1 ⇒H200 increased – 16 24 40 ts2 ⇒H100 increased – 24 24 48 ts3 ⇒A100 introduced, H100 and H200 reduced 16 16 8 40 ts4 ⇒A100 reduced, H100 and H200 increased 8 24 16 48 Table 13Volatile cluster transition in §8.2:GPU counts per type across five timestamps.Cluster transitions are marked with ⇒."
+  },
+  {
+    "paragraph_id": "p32-0332",
+    "translation": "TS Transition A100-80GB H100-SXM H200-SXM Total GPUs ts0 A100+H100+H200 8 16 16 40 ts1 ⇒A100 and H100 reduced, H200 increased – 8 24 32 ts2 ⇒A100 introduced, H100 increased, H200 redcued 16 24 8 48 ts3 ⇒H100 spiked 16 40",
+    "info_points": [
+      "TS Transition A100-80GB H100-SXM H200-SXM Total GPUs ts0 A100+H100+H200 8 16 16 40 ts1 ⇒A100 and H100 reduced, H200 increased – 8 24 32 ts2 ⇒A100 introduced, H100 increased, H200 redcued 16 24 8 48 ts3 ⇒H100 spiked 16 40 8 64 ts4 ⇒A100, H100 reduced, H200 increased 8 24 16 48 current construction, t"
+    ],
+    "keywords": [
+      "Transition",
+      "A100-80GB",
+      "H100-SXM",
+      "H200-SXM",
+      "Total",
+      "GPUs",
+      "A100",
+      "H100"
+    ],
+    "source_text": "TS Transition A100-80GB H100-SXM H200-SXM Total GPUs ts0 A100+H100+H200 8 16 16 40 ts1 ⇒A100 and H100 reduced, H200 increased – 8 24 32 ts2 ⇒A100 introduced, H100 increased, H200 redcued 16 24 8 48 ts3 ⇒H100 spiked 16 40 8 64 ts4 ⇒A100, H100 reduced, H200 increased 8 24 16 48 current construction, the two traces share the same planner-visible cluster schedule.Table 15 lists the hidden workload phases, and Table 16 lists the shared cluster-size schedule."
+  },
+  {
+    "paragraph_id": "p32-0333",
+    "translation": "I Discussion and Limitation",
+    "info_points": [
+      "I Discussion and Limitation"
+    ],
+    "keywords": [
+      "Discussion",
+      "Limitation"
+    ],
+    "source_text": "I Discussion and Limitation"
+  },
+  {
+    "paragraph_id": "p32-0334",
+    "translation": "LLM API stability and cost.The evolutionary process relies on LLM API calls for candidate mutation, making itsensitivetoAPIavailabilityandlatency.UnstableAPIendpointscanstallindividualevolutioncycles, prolonging the time",
+    "info_points": [
+      "LLM API stability and cost.The evolutionary process relies on LLM API calls for candidate mutation, making itsensitivetoAPIavailabilityandlatency.UnstableAPIendpointscanstallindividualevolutioncycles, prolonging the time before an improved policy is deployed.Additionally, LLM inference introduces no"
+    ],
+    "keywords": [
+      "stability",
+      "cost",
+      "evolutionary",
+      "process",
+      "relies",
+      "calls",
+      "candidate",
+      "mutation"
+    ],
+    "source_text": "LLM API stability and cost.The evolutionary process relies on LLM API calls for candidate mutation, making itsensitivetoAPIavailabilityandlatency.UnstableAPIendpointscanstallindividualevolutioncycles, prolonging the time before an improved policy is deployed.Additionally, LLM inference introduces non-trivial monetary cost—commercial APIs such as Claude charge considerable per-token fees that may be prohibitive forcontinuousevolutioninproduction.Tomitigatethis,AUTOPOIESISisdesignedtobemodel-agnostic: Our current deployment uses open-source models, making operational cost substantially more manageable while maintaining competitive synthesis quality.This also demonstrates that our approach does not rely on frontier-class closed-source LLMs to be effective."
+  },
+  {
+    "paragraph_id": "p32-0335",
+    "translation": "LLM capability and hallucination.The quality of evolved policies is inherently bounded by the code-generation capability of the underlying LLM. Stronger models generally produce more effective mutations and converge fast",
+    "info_points": [
+      "Moreover,LLMhallucinationscangenerate syntactically valid but semantically incorrect policies.Our multi-level timeout hierarchy (§6) and automated evaluation(§5.3)serveassafeguardsbydiscardingcandidatesthatcrash,diverge,ordegradefitness,but hallucination rates at production scale remain a factor tha"
+    ],
+    "keywords": [
+      "capability",
+      "hallucination",
+      "quality",
+      "evolved",
+      "policies",
+      "inherently",
+      "bounded",
+      "code-generation"
+    ],
+    "source_text": "LLM capability and hallucination.The quality of evolved policies is inherently bounded by the code-generation capability of the underlying LLM. Stronger models generally produce more effective mutations and converge faster,whileweakermodelsmayrequiremoreiterations. Moreover,LLMhallucinationscangenerate syntactically valid but semantically incorrect policies.Our multi-level timeout hierarchy (§6) and automated evaluation(§5.3)serveassafeguardsbydiscardingcandidatesthatcrash,diverge,ordegradefitness,but hallucination rates at production scale remain a factor that influences evolution efficiency."
+  },
+  {
+    "paragraph_id": "p32-0336",
+    "translation": "Snapshotwindowconfiguration.Thelengthoftheruntimetracesnapshotpresentsatrade-off:Anoverly longwindowaggregatesinformationacrossmultipleworkloadregimes,dilutingthesignalofthecurrent operating state and potentially produci",
+    "info_points": [
+      "Conversely, an overly short window may be dominated by transient fluctuations, causing the evolved policy to overfit to momentary noise rather than sustained trends.In our current implementation, the window size is a configurable parameter; adaptive window sizing based on detected workload volatilit"
+    ],
+    "keywords": [
+      "Snapshotwindowconfiguration",
+      "Thelengthoftheruntimetracesnapshotpresentsatrade-off",
+      "Anoverly",
+      "longwindowaggregatesinformationacrossmultipleworkloadregimes",
+      "dilutingthesignalofthecurrent",
+      "operating",
+      "state",
+      "potentially"
+    ],
+    "source_text": "Snapshotwindowconfiguration.Thelengthoftheruntimetracesnapshotpresentsatrade-off:Anoverly longwindowaggregatesinformationacrossmultipleworkloadregimes,dilutingthesignalofthecurrent operating state and potentially producing policies optimized for an averaged rather than present condition. Conversely, an overly short window may be dominated by transient fluctuations, causing the evolved policy to overfit to momentary noise rather than sustained trends.In our current implementation, the window size is a configurable parameter; adaptive window sizing based on detected workload volatility is a promising direction for future work."
+  }
+]

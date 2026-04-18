@@ -1,0 +1,204 @@
+[
+  {
+    "paragraph_id": "p25-0253",
+    "translation": "Configuration Scope Parameter Name Configured Value Primary Model Claude Opus 4.6 Sampling Weights 0.7 Secondary Model Claude Sonnet 4.6 Sampling Weights 0.3 Temperature 0.7 Max Tokens 16384 Max Code Length 50000 Max Ite",
+    "info_points": [
+      "Configuration Scope Parameter Name Configured Value Primary Model Claude Opus 4.6 Sampling Weights 0.7 Secondary Model Claude Sonnet 4.6 Sampling Weights 0.3 Temperature 0.7 Max Tokens 16384 Max Code Length 50000 Max Iterations 100 Population Size 50 Number of Islands 3 Elite Selection Ratio 0.2"
+    ],
+    "keywords": [
+      "Configuration",
+      "Scope",
+      "Parameter",
+      "Name",
+      "Configured",
+      "Value",
+      "Primary",
+      "Model"
+    ],
+    "source_text": "Configuration Scope Parameter Name Configured Value Primary Model Claude Opus 4.6 Sampling Weights 0.7 Secondary Model Claude Sonnet 4.6 Sampling Weights 0.3 Temperature 0.7 Max Tokens 16384 Max Code Length 50000 Max Iterations 100 Population Size 50 Number of Islands 3 Elite Selection Ratio 0.2"
+  },
+  {
+    "paragraph_id": "p25-0254",
+    "translation": "E System Prompts",
+    "info_points": [
+      "E System Prompts"
+    ],
+    "keywords": [
+      "System",
+      "Prompts"
+    ],
+    "source_text": "E System Prompts"
+  },
+  {
+    "paragraph_id": "p25-0255",
+    "translation": "In this section, we present examples of system prompts we used in AUTOPOIESIS.Across evolutionary iterations, the following prompts are used to guide the LLM to fine-tune the generated program in the next evolutionary it",
+    "info_points": [
+      "In this section, we present examples of system prompts we used in AUTOPOIESIS.Across evolutionary iterations, the following prompts are used to guide the LLM to fine-tune the generated program in the next evolutionary iteration."
+    ],
+    "keywords": [
+      "this",
+      "section",
+      "present",
+      "examples",
+      "system",
+      "prompts",
+      "used",
+      "AUTOPOIESIS"
+    ],
+    "source_text": "In this section, we present examples of system prompts we used in AUTOPOIESIS.Across evolutionary iterations, the following prompts are used to guide the LLM to fine-tune the generated program in the next evolutionary iteration."
+  },
+  {
+    "paragraph_id": "p25-0256",
+    "translation": "Search–serving trade-off guidance:For a given workload and heterogeneous cluster, fine-grained exploration ofthecandidatesearchspacegenerallyyieldshigher-qualityschedulingdecisionsandlowerservingla- tency.Incontrast,coar",
+    "info_points": [
+      "Search–serving trade-off guidance:For a given workload and heterogeneous cluster, fine-grained exploration ofthecandidatesearchspacegenerallyyieldshigher-qualityschedulingdecisionsandlowerservingla- tency.Incontrast,coarse-grainedexplorationtendstoproducesuboptimalschedulingoutcomesandin- creasedser"
+    ],
+    "keywords": [
+      "Search",
+      "serving",
+      "trade-off",
+      "guidance",
+      "given",
+      "workload",
+      "heterogeneous",
+      "cluster"
+    ],
+    "source_text": "Search–serving trade-off guidance:For a given workload and heterogeneous cluster, fine-grained exploration ofthecandidatesearchspacegenerallyyieldshigher-qualityschedulingdecisionsandlowerservingla- tency.Incontrast,coarse-grainedexplorationtendstoproducesuboptimalschedulingoutcomesandin- creasedservinglatency.Accordingly,promptsshouldbecarefullydesignedtoguidetheLLMinbalancing"
+  },
+  {
+    "paragraph_id": "p26-0257",
+    "translation": "searchgranularityagainstschedulingquality.Ourdetailedpromptmessageforthisguidanceisshownin prompt message episode 1.",
+    "info_points": [
+      "searchgranularityagainstschedulingquality.Ourdetailedpromptmessageforthisguidanceisshownin prompt message episode 1."
+    ],
+    "keywords": [
+      "searchgranularityagainstschedulingquality",
+      "Ourdetailedpromptmessageforthisguidanceisshownin",
+      "prompt",
+      "message",
+      "episode"
+    ],
+    "source_text": "searchgranularityagainstschedulingquality.Ourdetailedpromptmessageforthisguidanceisshownin prompt message episode 1."
+  },
+  {
+    "paragraph_id": "p26-0258",
+    "translation": "Reconfiguration and serving trade-off guidance:More comprehensive reconfiguration generally results in lower serving latency but incurs higher reconfiguration costs.Conversely, less extensive reconfiguration tends to red",
+    "info_points": [
+      "Reconfiguration and serving trade-off guidance:More comprehensive reconfiguration generally results in lower serving latency but incurs higher reconfiguration costs.Conversely, less extensive reconfiguration tends to reducereconfigurationcostsattheexpenseofincreasedservinglatency.Therefore,weguideth"
+    ],
+    "keywords": [
+      "Reconfiguration",
+      "serving",
+      "trade-off",
+      "guidance",
+      "More",
+      "comprehensive",
+      "reconfiguration",
+      "generally"
+    ],
+    "source_text": "Reconfiguration and serving trade-off guidance:More comprehensive reconfiguration generally results in lower serving latency but incurs higher reconfiguration costs.Conversely, less extensive reconfiguration tends to reducereconfigurationcostsattheexpenseofincreasedservinglatency.Therefore,weguidetheLLMto balancethetrade-offbetweenreconfigurationcostandservinglatency.Thedetailedpromptmessageis presented in prompt message episode 2."
+  },
+  {
+    "paragraph_id": "p26-0259",
+    "translation": "Search Granularity vs.Scheduling Efficiency max_batch_per_replica controls how finely the ILP searches over batch sizes for each model.It represents a funda- mental search granularity vs.scheduling efficiency trade-off —",
+    "info_points": [
+      "Search Granularity vs.Scheduling Efficiency max_batch_per_replica controls how finely the ILP searches over batch sizes for each model.It represents a funda- mental search granularity vs.scheduling efficiency trade-off — there is no universally correct value; the right choice depends on the model’s "
+    ],
+    "keywords": [
+      "Search",
+      "Granularity",
+      "Scheduling",
+      "Efficiency",
+      "max_batch_per_replica",
+      "controls",
+      "finely",
+      "searches"
+    ],
+    "source_text": "Search Granularity vs.Scheduling Efficiency max_batch_per_replica controls how finely the ILP searches over batch sizes for each model.It represents a funda- mental search granularity vs.scheduling efficiency trade-off — there is no universally correct value; the right choice depends on the model’s memory footprint and workload characteristics."
+  },
+  {
+    "paragraph_id": "p26-0260",
+    "translation": "Larger cap →fine-grained search, lower scheduling efficiency:",
+    "info_points": [
+      "Larger cap →fine-grained search, lower scheduling efficiency:"
+    ],
+    "keywords": [
+      "Larger",
+      "fine-grained",
+      "search",
+      "lower",
+      "scheduling",
+      "efficiency"
+    ],
+    "source_text": "Larger cap →fine-grained search, lower scheduling efficiency:"
+  },
+  {
+    "paragraph_id": "p26-0261",
+    "translation": "•More batch-size candidates →larger ILP →slower solve time.",
+    "info_points": [
+      "•More batch-size candidates →larger ILP →slower solve time."
+    ],
+    "keywords": [
+      "More",
+      "batch-size",
+      "candidates",
+      "larger",
+      "slower",
+      "solve",
+      "time"
+    ],
+    "source_text": "•More batch-size candidates →larger ILP →slower solve time."
+  },
+  {
+    "paragraph_id": "p26-0262",
+    "translation": "•The scheduler can find placements that match the workload’s total_batch more precisely (e.g., a replica batch of 96 vs. only 64), potentially reducing latency.",
+    "info_points": [
+      "•The scheduler can find placements that match the workload’s total_batch more precisely (e.g., a replica batch of 96 vs."
+    ],
+    "keywords": [
+      "scheduler",
+      "find",
+      "placements",
+      "that",
+      "match",
+      "workload",
+      "total_batch",
+      "more"
+    ],
+    "source_text": "•The scheduler can find placements that match the workload’s total_batch more precisely (e.g., a replica batch of 96 vs. only 64), potentially reducing latency."
+  },
+  {
+    "paragraph_id": "p26-0263",
+    "translation": "•Each extra candidate adds integer and binary variables, making the solver (e.g., CBC) work harder.",
+    "info_points": [
+      "•Each extra candidate adds integer and binary variables, making the solver (e.g., CBC) work harder."
+    ],
+    "keywords": [
+      "Each",
+      "extra",
+      "candidate",
+      "adds",
+      "integer",
+      "binary",
+      "variables",
+      "making"
+    ],
+    "source_text": "•Each extra candidate adds integer and binary variables, making the solver (e.g., CBC) work harder."
+  },
+  {
+    "paragraph_id": "p26-0264",
+    "translation": "Smaller cap →coarse-grained search, higher scheduling efficiency:",
+    "info_points": [
+      "Smaller cap →coarse-grained search, higher scheduling efficiency:"
+    ],
+    "keywords": [
+      "Smaller",
+      "coarse-grained",
+      "search",
+      "higher",
+      "scheduling",
+      "efficiency"
+    ],
+    "source_text": "Smaller cap →coarse-grained search, higher scheduling efficiency:"
+  }
+]

@@ -1,0 +1,195 @@
+[
+  {
+    "paragraph_id": "p27-0277",
+    "translation": "•Loading cost:∼0.25 s (high TP, fast PCIe).",
+    "info_points": [
+      "•Loading cost:∼0.25 s (high TP, fast PCIe)."
+    ],
+    "keywords": [
+      "Loading",
+      "cost",
+      "high",
+      "fast",
+      "PCIe"
+    ],
+    "source_text": "•Loading cost:∼0.25 s (high TP, fast PCIe)."
+  },
+  {
+    "paragraph_id": "p27-0278",
+    "translation": "•Termination cost:∼0.25 s (high TP from previous config).",
+    "info_points": [
+      "•Termination cost:∼0.25 s (high TP from previous config)."
+    ],
+    "keywords": [
+      "Termination",
+      "cost",
+      "high",
+      "from",
+      "previous",
+      "config"
+    ],
+    "source_text": "•Termination cost:∼0.25 s (high TP from previous config)."
+  },
+  {
+    "paragraph_id": "p27-0279",
+    "translation": "•Serving latency gain:(2000 −800) ms = 1200 ms = 1.2 s.",
+    "info_points": [
+      "•Serving latency gain:(2000 −800) ms = 1200 ms = 1.2 s."
+    ],
+    "keywords": [
+      "Serving",
+      "latency",
+      "gain"
+    ],
+    "source_text": "•Serving latency gain:(2000 −800) ms = 1200 ms = 1.2 s."
+  },
+  {
+    "paragraph_id": "p27-0280",
+    "translation": "•Net gain:1.2 −0.5 = +0.7 s saved →.RESCHEDULE (profitable) Example B — Reschedule does NOT pay off:",
+    "info_points": [
+      "•Net gain:1.2 −0.5 = +0.7 s saved →.RESCHEDULE (profitable) Example B — Reschedule does NOT pay off:"
+    ],
+    "keywords": [
+      "gain",
+      "saved",
+      "RESCHEDULE",
+      "profitable",
+      "Example",
+      "Reschedule",
+      "does"
+    ],
+    "source_text": "•Net gain:1.2 −0.5 = +0.7 s saved →.RESCHEDULE (profitable) Example B — Reschedule does NOT pay off:"
+  },
+  {
+    "paragraph_id": "p27-0281",
+    "translation": "At ts1, you can improve serving latency from 2500 ms to 2100 ms (saving 400 ms = 0.4 s) by moving a large model to a different GPU type/TP configuration (the following values serve as examples, and you should refer to th",
+    "info_points": [
+      "At ts1, you can improve serving latency from 2500 ms to 2100 ms (saving 400 ms = 0.4 s) by moving a large model to a different GPU type/TP configuration (the following values serve as examples, and you should refer to the simulators for accurate values):"
+    ],
+    "keywords": [
+      "improve",
+      "serving",
+      "latency",
+      "from",
+      "saving",
+      "moving",
+      "large",
+      "model"
+    ],
+    "source_text": "At ts1, you can improve serving latency from 2500 ms to 2100 ms (saving 400 ms = 0.4 s) by moving a large model to a different GPU type/TP configuration (the following values serve as examples, and you should refer to the simulators for accurate values):"
+  },
+  {
+    "paragraph_id": "p27-0282",
+    "translation": "•Net gain:0.4 −0.76 = −0.36 s →.STAY (reconfiguration costs more than it saves).",
+    "info_points": [
+      "•Net gain:0.4 −0.76 = −0.36 s →.STAY (reconfiguration costs more than it saves)."
+    ],
+    "keywords": [
+      "gain",
+      "STAY",
+      "reconfiguration",
+      "costs",
+      "more",
+      "than",
+      "saves"
+    ],
+    "source_text": "•Net gain:0.4 −0.76 = −0.36 s →.STAY (reconfiguration costs more than it saves)."
+  },
+  {
+    "paragraph_id": "p27-0283",
+    "translation": "Example C — Small-model reconfiguration is cheap:",
+    "info_points": [
+      "Example C — Small-model reconfiguration is cheap:"
+    ],
+    "keywords": [
+      "Example",
+      "Small-model",
+      "reconfiguration",
+      "cheap"
+    ],
+    "source_text": "Example C — Small-model reconfiguration is cheap:"
+  },
+  {
+    "paragraph_id": "p27-0284",
+    "translation": "Moving a small model (13GB) from one GPU type to another (the following values serve as examples, and you should refer to the simulators for accurate values):",
+    "info_points": [
+      "Moving a small model (13GB) from one GPU type to another (the following values serve as examples, and you should refer to the simulators for accurate values):"
+    ],
+    "keywords": [
+      "Moving",
+      "small",
+      "model",
+      "from",
+      "type",
+      "another",
+      "following",
+      "values"
+    ],
+    "source_text": "Moving a small model (13GB) from one GPU type to another (the following values serve as examples, and you should refer to the simulators for accurate values):"
+  },
+  {
+    "paragraph_id": "p27-0285",
+    "translation": "If this frees GPUs for larger models and saves 2 s of latency, net gain = +1.39 s →profitable.",
+    "info_points": [
+      "If this frees GPUs for larger models and saves 2 s of latency, net gain = +1.39 s →profitable."
+    ],
+    "keywords": [
+      "this",
+      "frees",
+      "GPUs",
+      "larger",
+      "models",
+      "saves",
+      "latency",
+      "gain"
+    ],
+    "source_text": "If this frees GPUs for larger models and saves 2 s of latency, net gain = +1.39 s →profitable."
+  },
+  {
+    "paragraph_id": "p27-0286",
+    "translation": "Example D — Staying put is sometimes optimal:",
+    "info_points": [
+      "Example D — Staying put is sometimes optimal:"
+    ],
+    "keywords": [
+      "Example",
+      "Staying",
+      "sometimes",
+      "optimal"
+    ],
+    "source_text": "Example D — Staying put is sometimes optimal:"
+  },
+  {
+    "paragraph_id": "p27-0287",
+    "translation": "If ts0→ts1traffic change is mild (same models, 10–20% batch size variation), the optimal plan barely differs.In this case:",
+    "info_points": [
+      "If ts0→ts1traffic change is mild (same models, 10–20% batch size variation), the optimal plan barely differs.In this case:"
+    ],
+    "keywords": [
+      "ts1traffic",
+      "change",
+      "mild",
+      "same",
+      "models",
+      "batch",
+      "size",
+      "variation"
+    ],
+    "source_text": "If ts0→ts1traffic change is mild (same models, 10–20% batch size variation), the optimal plan barely differs.In this case:"
+  },
+  {
+    "paragraph_id": "p27-0288",
+    "translation": "•Expected latency gain from rescheduling:∼100 ms = 0.1 s.",
+    "info_points": [
+      "•Expected latency gain from rescheduling:∼100 ms = 0.1 s."
+    ],
+    "keywords": [
+      "Expected",
+      "latency",
+      "gain",
+      "from",
+      "rescheduling"
+    ],
+    "source_text": "•Expected latency gain from rescheduling:∼100 ms = 0.1 s."
+  }
+]

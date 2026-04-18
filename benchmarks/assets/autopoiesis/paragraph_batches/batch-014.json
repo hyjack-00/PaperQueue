@@ -1,0 +1,211 @@
+[
+  {
+    "paragraph_id": "p18-0157",
+    "translation": "References",
+    "info_points": [
+      "References"
+    ],
+    "keywords": [
+      "References"
+    ],
+    "source_text": "References"
+  },
+  {
+    "paragraph_id": "p18-0158",
+    "translation": "[1]Yuxin Wang, Yuhan Chen, Zeyu Li, Xueze Kang, Yuchu Fang, Yeju Zhou, Yang Zheng, Zhenheng Tang, Xin He, Rui Guo, et al.Burstgpt:A real-world workload dataset to optimize llm serving systems.In Proceedings of the 31st A",
+    "info_points": [
+      "[1]Yuxin Wang, Yuhan Chen, Zeyu Li, Xueze Kang, Yuchu Fang, Yeju Zhou, Yang Zheng, Zhenheng Tang, Xin He, Rui Guo, et al.Burstgpt:A real-world workload dataset to optimize llm serving systems.In Proceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V."
+    ],
+    "keywords": [
+      "Yuxin",
+      "Wang",
+      "Yuhan",
+      "Chen",
+      "Zeyu",
+      "Xueze",
+      "Kang",
+      "Yuchu"
+    ],
+    "source_text": "[1]Yuxin Wang, Yuhan Chen, Zeyu Li, Xueze Kang, Yuchu Fang, Yeju Zhou, Yang Zheng, Zhenheng Tang, Xin He, Rui Guo, et al.Burstgpt:A real-world workload dataset to optimize llm serving systems.In Proceedings of the 31st ACM SIGKDD Conference on Knowledge Discovery and Data Mining V. 2, pages 5831–5841, 2025."
+  },
+  {
+    "paragraph_id": "p18-0159",
+    "translation": "[2]Biao Sun, Ziming Huang, Hanyu Zhao, Wencong Xiao, Xinyi Zhang, Yong Li, and Wei Lin.Llumnix:Dynamic schedul- ing for large language model serving.In 18th USENIX symposium on operating systems design and implementation",
+    "info_points": [
+      "[2]Biao Sun, Ziming Huang, Hanyu Zhao, Wencong Xiao, Xinyi Zhang, Yong Li, and Wei Lin.Llumnix:Dynamic schedul- ing for large language model serving.In 18th USENIX symposium on operating systems design and implementation (OSDI 24), pages 173–191, 2024."
+    ],
+    "keywords": [
+      "Biao",
+      "Ziming",
+      "Huang",
+      "Hanyu",
+      "Zhao",
+      "Wencong",
+      "Xiao",
+      "Xinyi"
+    ],
+    "source_text": "[2]Biao Sun, Ziming Huang, Hanyu Zhao, Wencong Xiao, Xinyi Zhang, Yong Li, and Wei Lin.Llumnix:Dynamic schedul- ing for large language model serving.In 18th USENIX symposium on operating systems design and implementation (OSDI 24), pages 173–191, 2024."
+  },
+  {
+    "paragraph_id": "p18-0160",
+    "translation": "[3]Amey Agrawal, Nitin Kedia, Ashish Panwar, Jayashree Mohan, Nipun Kwatra, Bhargav Gulavani, Alexey Tumanov, and Ramachandran Ramjee.Taming {Throughput-Latency} tradeoff in {LLM} inference with {Sarathi-Serve}.In 18th U",
+    "info_points": [
+      "[3]Amey Agrawal, Nitin Kedia, Ashish Panwar, Jayashree Mohan, Nipun Kwatra, Bhargav Gulavani, Alexey Tumanov, and Ramachandran Ramjee.Taming {Throughput-Latency} tradeoff in {LLM} inference with {Sarathi-Serve}.In 18th USENIX symposium on operating systems design and implementation (OSDI 24), pages "
+    ],
+    "keywords": [
+      "Amey",
+      "Agrawal",
+      "Nitin",
+      "Kedia",
+      "Ashish",
+      "Panwar",
+      "Jayashree",
+      "Mohan"
+    ],
+    "source_text": "[3]Amey Agrawal, Nitin Kedia, Ashish Panwar, Jayashree Mohan, Nipun Kwatra, Bhargav Gulavani, Alexey Tumanov, and Ramachandran Ramjee.Taming {Throughput-Latency} tradeoff in {LLM} inference with {Sarathi-Serve}.In 18th USENIX symposium on operating systems design and implementation (OSDI 24), pages 117–134, 2024."
+  },
+  {
+    "paragraph_id": "p18-0161",
+    "translation": "[4]Zhuohan Li, Lianmin Zheng, Yinmin Zhong, Vincent Liu, Ying Sheng, Xin Jin, Yanping Huang, Zhifeng Chen, Hao Zhang, Joseph E Gonzalez, et al.{AlpaServe}:Statistical multiplexing with model parallelism for deep learning",
+    "info_points": [
+      "[4]Zhuohan Li, Lianmin Zheng, Yinmin Zhong, Vincent Liu, Ying Sheng, Xin Jin, Yanping Huang, Zhifeng Chen, Hao Zhang, Joseph E Gonzalez, et al.{AlpaServe}:Statistical multiplexing with model parallelism for deep learning"
+    ],
+    "keywords": [
+      "Zhuohan",
+      "Lianmin",
+      "Zheng",
+      "Yinmin",
+      "Zhong",
+      "Vincent",
+      "Ying",
+      "Sheng"
+    ],
+    "source_text": "[4]Zhuohan Li, Lianmin Zheng, Yinmin Zhong, Vincent Liu, Ying Sheng, Xin Jin, Yanping Huang, Zhifeng Chen, Hao Zhang, Joseph E Gonzalez, et al.{AlpaServe}:Statistical multiplexing with model parallelism for deep learning"
+  },
+  {
+    "paragraph_id": "p19-0162",
+    "translation": "serving.In 17th USENIX Symposium on Operating Systems Design and Implementation (OSDI 23), pages 663–679, 2023.",
+    "info_points": [
+      "serving.In 17th USENIX Symposium on Operating Systems Design and Implementation (OSDI 23), pages 663–679, 2023."
+    ],
+    "keywords": [
+      "serving",
+      "USENIX",
+      "Symposium",
+      "Operating",
+      "Systems",
+      "Design",
+      "Implementation",
+      "OSDI"
+    ],
+    "source_text": "serving.In 17th USENIX Symposium on Operating Systems Design and Implementation (OSDI 23), pages 663–679, 2023."
+  },
+  {
+    "paragraph_id": "p19-0163",
+    "translation": "[5]YingSheng,ShiyiCao,DachengLi,BanghuaZhu,ZhuohanLi,DanyangZhuo,JosephEGonzalez,andIon Stoica.Fairness in serving large language models.In 18th USENIX Symposium on Operating Systems Design and Implementation (OSDI 24), ",
+    "info_points": [
+      "[5]YingSheng,ShiyiCao,DachengLi,BanghuaZhu,ZhuohanLi,DanyangZhuo,JosephEGonzalez,andIon Stoica.Fairness in serving large language models.In 18th USENIX Symposium on Operating Systems Design and Implementation (OSDI 24), pages 965–988, 2024."
+    ],
+    "keywords": [
+      "YingSheng",
+      "ShiyiCao",
+      "DachengLi",
+      "BanghuaZhu",
+      "ZhuohanLi",
+      "DanyangZhuo",
+      "JosephEGonzalez",
+      "andIon"
+    ],
+    "source_text": "[5]YingSheng,ShiyiCao,DachengLi,BanghuaZhu,ZhuohanLi,DanyangZhuo,JosephEGonzalez,andIon Stoica.Fairness in serving large language models.In 18th USENIX Symposium on Operating Systems Design and Implementation (OSDI 24), pages 965–988, 2024."
+  },
+  {
+    "paragraph_id": "p19-0164",
+    "translation": "[6]Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu, Yibo Zhu, Xuanzhe Liu, Xin Jin, and Hao Zhang.{DistServe}: Disaggregatingprefillanddecodingforgoodput-optimizedlargelanguagemodelserving. In18thUSENIX Symposium on Ope",
+    "info_points": [
+      "[6]Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu, Yibo Zhu, Xuanzhe Liu, Xin Jin, and Hao Zhang.{DistServe}: Disaggregatingprefillanddecodingforgoodput-optimizedlargelanguagemodelserving."
+    ],
+    "keywords": [
+      "Yinmin",
+      "Zhong",
+      "Shengyu",
+      "Junda",
+      "Chen",
+      "Jianbo",
+      "Yibo",
+      "Xuanzhe"
+    ],
+    "source_text": "[6]Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu, Yibo Zhu, Xuanzhe Liu, Xin Jin, and Hao Zhang.{DistServe}: Disaggregatingprefillanddecodingforgoodput-optimizedlargelanguagemodelserving. In18thUSENIX Symposium on Operating Systems Design and Implementation (OSDI 24), pages 193–210, 2024."
+  },
+  {
+    "paragraph_id": "p19-0165",
+    "translation": "[7]YaoFu,LeyangXue,YeqiHuang,Andrei-OctavianBrabete,DmitriiUstiugov,YuvrajPatel,andLuoMai. {ServerlessLLM}:{Low-Latency}serverlessinferenceforlargelanguagemodels. In18thUSENIXSymposium on Operating Systems Design and Imp",
+    "info_points": [
+      "[7]YaoFu,LeyangXue,YeqiHuang,Andrei-OctavianBrabete,DmitriiUstiugov,YuvrajPatel,andLuoMai."
+    ],
+    "keywords": [
+      "YaoFu",
+      "LeyangXue",
+      "YeqiHuang",
+      "Andrei-OctavianBrabete",
+      "DmitriiUstiugov",
+      "YuvrajPatel",
+      "andLuoMai",
+      "ServerlessLLM"
+    ],
+    "source_text": "[7]YaoFu,LeyangXue,YeqiHuang,Andrei-OctavianBrabete,DmitriiUstiugov,YuvrajPatel,andLuoMai. {ServerlessLLM}:{Low-Latency}serverlessinferenceforlargelanguagemodels. In18thUSENIXSymposium on Operating Systems Design and Implementation (OSDI 24), pages 135–153, 2024."
+  },
+  {
+    "paragraph_id": "p19-0166",
+    "translation": "[8]Yuxing Xiang, Xue Li, Kun Qian, Yufan Yang, Diwen Zhu, Wenyuan Yu, Ennan Zhai, Xuanzhe Liu, Xin Jin, and Jingren Zhou.Aegaeon:Effective gpu pooling for concurrent llm serving on the market.In Proceedings of the ACM SI",
+    "info_points": [
+      "[8]Yuxing Xiang, Xue Li, Kun Qian, Yufan Yang, Diwen Zhu, Wenyuan Yu, Ennan Zhai, Xuanzhe Liu, Xin Jin, and Jingren Zhou.Aegaeon:Effective gpu pooling for concurrent llm serving on the market.In Proceedings of the ACM SIGOPS 31st Symposium on Operating Systems Principles, pages 1030–1045, 2025."
+    ],
+    "keywords": [
+      "Yuxing",
+      "Xiang",
+      "Qian",
+      "Yufan",
+      "Yang",
+      "Diwen",
+      "Wenyuan",
+      "Ennan"
+    ],
+    "source_text": "[8]Yuxing Xiang, Xue Li, Kun Qian, Yufan Yang, Diwen Zhu, Wenyuan Yu, Ennan Zhai, Xuanzhe Liu, Xin Jin, and Jingren Zhou.Aegaeon:Effective gpu pooling for concurrent llm serving on the market.In Proceedings of the ACM SIGOPS 31st Symposium on Operating Systems Principles, pages 1030–1045, 2025."
+  },
+  {
+    "paragraph_id": "p19-0167",
+    "translation": "[9]Bingyang Wu,Shengyu Liu,Yinmin Zhong,Peng Sun,Xuanzhe Liu,and Xin Jin.Loongserve:Efficiently serving long-contextlargelanguagemodelswithelasticsequenceparallelism.InProceedingsoftheACMSIGOPS30th Symposium on Operating",
+    "info_points": [
+      "[9]Bingyang Wu,Shengyu Liu,Yinmin Zhong,Peng Sun,Xuanzhe Liu,and Xin Jin.Loongserve:Efficiently serving long-contextlargelanguagemodelswithelasticsequenceparallelism.InProceedingsoftheACMSIGOPS30th Symposium on Operating Systems Principles, pages 640–654, 2024."
+    ],
+    "keywords": [
+      "Bingyang",
+      "Shengyu",
+      "Yinmin",
+      "Zhong",
+      "Peng",
+      "Xuanzhe",
+      "Loongserve",
+      "Efficiently"
+    ],
+    "source_text": "[9]Bingyang Wu,Shengyu Liu,Yinmin Zhong,Peng Sun,Xuanzhe Liu,and Xin Jin.Loongserve:Efficiently serving long-contextlargelanguagemodelswithelasticsequenceparallelism.InProceedingsoftheACMSIGOPS30th Symposium on Operating Systems Principles, pages 640–654, 2024."
+  },
+  {
+    "paragraph_id": "p19-0168",
+    "translation": "[10]Marcel Wagenländer, Guo Li, Bo Zhao, Luo Mai, and Peter Pietzuch.Tenplex:Dynamic parallelism for deep learning using parallelizable tensor collections.In Proceedings of the ACM SIGOPS 30th Symposium on Operating Syst",
+    "info_points": [
+      "[10]Marcel Wagenländer, Guo Li, Bo Zhao, Luo Mai, and Peter Pietzuch.Tenplex:Dynamic parallelism for deep learning using parallelizable tensor collections.In Proceedings of the ACM SIGOPS 30th Symposium on Operating Systems Principles, pages 195–210, 2024."
+    ],
+    "keywords": [
+      "Marcel",
+      "Wagenl",
+      "nder",
+      "Zhao",
+      "Peter",
+      "Pietzuch",
+      "Tenplex",
+      "Dynamic"
+    ],
+    "source_text": "[10]Marcel Wagenländer, Guo Li, Bo Zhao, Luo Mai, and Peter Pietzuch.Tenplex:Dynamic parallelism for deep learning using parallelizable tensor collections.In Proceedings of the ACM SIGOPS 30th Symposium on Operating Systems Principles, pages 195–210, 2024."
+  }
+]

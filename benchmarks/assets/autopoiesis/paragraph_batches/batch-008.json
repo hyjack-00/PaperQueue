@@ -1,0 +1,194 @@
+[
+  {
+    "paragraph_id": "p10-0085",
+    "translation": "5.4 Synthesis Configuration",
+    "info_points": [
+      "5.4 Synthesis Configuration"
+    ],
+    "keywords": [
+      "Synthesis",
+      "Configuration"
+    ],
+    "source_text": "5.4 Synthesis Configuration"
+  },
+  {
+    "paragraph_id": "p10-0086",
+    "translation": "Thesynthesisconfigurationdefinestheoperationalparametersoftheevolutionaryprocess,andemploys trade-off-aware mutation to steer policy generation toward effective navigation of the runtime trade-off space.",
+    "info_points": [
+      "Thesynthesisconfigurationdefinestheoperationalparametersoftheevolutionaryprocess,andemploys trade-off-aware mutation to steer policy generation toward effective navigation of the runtime trade-off space."
+    ],
+    "keywords": [
+      "Thesynthesisconfigurationdefinestheoperationalparametersoftheevolutionaryprocess",
+      "andemploys",
+      "trade-off-aware",
+      "mutation",
+      "steer",
+      "policy",
+      "generation",
+      "toward"
+    ],
+    "source_text": "Thesynthesisconfigurationdefinestheoperationalparametersoftheevolutionaryprocess,andemploys trade-off-aware mutation to steer policy generation toward effective navigation of the runtime trade-off space."
+  },
+  {
+    "paragraph_id": "p10-0087",
+    "translation": "Initialization.The synthesis configuration specifies the complete set of parameters governing the evolution- aryprocess,includingtheevolutionaryalgorithmhyperparameters(e.g.,maximumiterations,population size,numberofisla",
+    "info_points": [
+      "Initialization.The synthesis configuration specifies the complete set of parameters governing the evolution- aryprocess,includingtheevolutionaryalgorithmhyperparameters(e.g.,maximumiterations,population size,numberofislands)andLLMmutationsettings(e.g.,modelidentity,samplingweight,andtempera- ture).T"
+    ],
+    "keywords": [
+      "Initialization",
+      "synthesis",
+      "configuration",
+      "specifies",
+      "complete",
+      "parameters",
+      "governing",
+      "evolution-"
+    ],
+    "source_text": "Initialization.The synthesis configuration specifies the complete set of parameters governing the evolution- aryprocess,includingtheevolutionaryalgorithmhyperparameters(e.g.,maximumiterations,population size,numberofislands)andLLMmutationsettings(e.g.,modelidentity,samplingweight,andtempera- ture).The population is initialized with a small set of seed policies,each implementing theschedule and should_reschedule function pair with a distinct algorithmic approach (e.g., greedy scheduling with periodic rescheduling, ILP-based optimization with threshold-based triggers), providing the LLM with a diverse starting"
+  },
+  {
+    "paragraph_id": "p11-0088",
+    "translation": "vocabularyofdesignpatternsfromwhichtomutate.Weprovideadetailedinitializationconfiguration in Appendix D.",
+    "info_points": [
+      "vocabularyofdesignpatternsfromwhichtomutate.Weprovideadetailedinitializationconfiguration in Appendix D."
+    ],
+    "keywords": [
+      "vocabularyofdesignpatternsfromwhichtomutate",
+      "Weprovideadetailedinitializationconfiguration",
+      "Appendix"
+    ],
+    "source_text": "vocabularyofdesignpatternsfromwhichtomutate.Weprovideadetailedinitializationconfiguration in Appendix D."
+  },
+  {
+    "paragraph_id": "p11-0089",
+    "translation": "Trade-off-awaremutation.The key to effective policy synthesis lies in making each LLM mutation informed by the runtime trade-offs it must navigate.To this end, our trade-off-aware mutation applies diff-based code modific",
+    "info_points": [
+      "Trade-off-awaremutation.The key to effective policy synthesis lies in making each LLM mutation informed by the runtime trade-offs it must navigate.To this end, our trade-off-aware mutation applies diff-based code modifications [21] to high-performing candidates, integrating two complementary sources"
+    ],
+    "keywords": [
+      "Trade-off-awaremutation",
+      "effective",
+      "policy",
+      "synthesis",
+      "lies",
+      "making",
+      "each",
+      "mutation"
+    ],
+    "source_text": "Trade-off-awaremutation.The key to effective policy synthesis lies in making each LLM mutation informed by the runtime trade-offs it must navigate.To this end, our trade-off-aware mutation applies diff-based code modifications [21] to high-performing candidates, integrating two complementary sources of guidance into the mutation process:"
+  },
+  {
+    "paragraph_id": "p11-0090",
+    "translation": "•Formalstructureofruntimetrade-offs. Thistrade-offstructureprovidestheLLMwithapersistent understandingoftheoptimizationlandscape.Thesystempromptencodes(i)theexecutionmodel structure (Equation 13) so the LLM understands h",
+    "info_points": [
+      "Thistrade-offstructureprovidestheLLMwithapersistent understandingoftheoptimizationlandscape.Thesystempromptencodes(i)theexecutionmodel structure (Equation 13) so the LLM understands how each cost component contributes to the end-to-end trace completion time, along with (ii) concrete trade-off charac"
+    ],
+    "keywords": [
+      "Formalstructureofruntimetrade-offs",
+      "Thistrade-offstructureprovidestheLLMwithapersistent",
+      "understandingoftheoptimizationlandscape",
+      "Thesystempromptencodes",
+      "theexecutionmodel",
+      "structure",
+      "Equation",
+      "understands"
+    ],
+    "source_text": "•Formalstructureofruntimetrade-offs. Thistrade-offstructureprovidestheLLMwithapersistent understandingoftheoptimizationlandscape.Thesystempromptencodes(i)theexecutionmodel structure (Equation 13) so the LLM understands how each cost component contributes to the end-to-end trace completion time, along with (ii) concrete trade-off characterizations (§3) so the LLM can calibrate thecouplingbetweentrade-offaxesandreasonabouthowamodificationalongoneaxisshiftsthe optimal point on the others (detailed system prompt example in Appendix E)."
+  },
+  {
+    "paragraph_id": "p11-0091",
+    "translation": "•Per-iterationdynamicfeedback.Themutationpromptisaugmentedateachiterationwithdynamic information that grounds the LLM in the current evolutionary state.(i) The artifact feedback from the evaluator (§5.3) exposes the cost",
+    "info_points": [
+      "•Per-iterationdynamicfeedback.Themutationpromptisaugmentedateachiterationwithdynamic information that grounds the LLM in the current evolutionary state.(i) The artifact feedback from the evaluator (§5.3) exposes the cost breakdown of both the parent and its children candidates, allowing theLLMtocomp"
+    ],
+    "keywords": [
+      "Per-iterationdynamicfeedback",
+      "Themutationpromptisaugmentedateachiterationwithdynamic",
+      "information",
+      "that",
+      "grounds",
+      "current",
+      "evolutionary",
+      "state"
+    ],
+    "source_text": "•Per-iterationdynamicfeedback.Themutationpromptisaugmentedateachiterationwithdynamic information that grounds the LLM in the current evolutionary state.(i) The artifact feedback from the evaluator (§5.3) exposes the cost breakdown of both the parent and its children candidates, allowing theLLMtocomparetheircoststructures,pinpointwhichcodemodificationsledtoimprovementor regression, and steer subsequent mutations accordingly.(ii) The population context (obtained fromStep 4) supplies the best-so-far fitness score and a summary of recently explored strategies, directing the LLM away from redundant mutations and toward underrepresented regions of the trade-off space."
+  },
+  {
+    "paragraph_id": "p11-0092",
+    "translation": "By unifying these sources, each mutation is simultaneously informed by what the trade-off landscape is and where the current policy stands within it, enabling the LLM to produce trade-off-aware modifications instead of r",
+    "info_points": [
+      "By unifying these sources, each mutation is simultaneously informed by what the trade-off landscape is and where the current policy stands within it, enabling the LLM to produce trade-off-aware modifications instead of random variations."
+    ],
+    "keywords": [
+      "unifying",
+      "these",
+      "sources",
+      "each",
+      "mutation",
+      "simultaneously",
+      "informed",
+      "what"
+    ],
+    "source_text": "By unifying these sources, each mutation is simultaneously informed by what the trade-off landscape is and where the current policy stands within it, enabling the LLM to produce trade-off-aware modifications instead of random variations."
+  },
+  {
+    "paragraph_id": "p11-0093",
+    "translation": "6 Implementation",
+    "info_points": [
+      "6 Implementation"
+    ],
+    "keywords": [
+      "Implementation"
+    ],
+    "source_text": "6 Implementation"
+  },
+  {
+    "paragraph_id": "p11-0094",
+    "translation": "This section details the implementation ofAUTOPOIESIS’s two-plane system architecture (mentioned in §4), focusingontheoptimizationsthatenabletheevolutionaryprocesstooperateefficiently(§6.1)andthe deployment mechanisms th",
+    "info_points": [
+      "This section details the implementation ofAUTOPOIESIS’s two-plane system architecture (mentioned in §4), focusingontheoptimizationsthatenabletheevolutionaryprocesstooperateefficiently(§6.1)andthe deployment mechanisms that integrate the self-evolving loop into live serving (§6.2)."
+    ],
+    "keywords": [
+      "This",
+      "section",
+      "details",
+      "implementation",
+      "ofAUTOPOIESIS",
+      "two-plane",
+      "system",
+      "architecture"
+    ],
+    "source_text": "This section details the implementation ofAUTOPOIESIS’s two-plane system architecture (mentioned in §4), focusingontheoptimizationsthatenabletheevolutionaryprocesstooperateefficiently(§6.1)andthe deployment mechanisms that integrate the self-evolving loop into live serving (§6.2)."
+  },
+  {
+    "paragraph_id": "p11-0095",
+    "translation": "6.1 Evolution Optimization",
+    "info_points": [
+      "6.1 Evolution Optimization"
+    ],
+    "keywords": [
+      "Evolution",
+      "Optimization"
+    ],
+    "source_text": "6.1 Evolution Optimization"
+  },
+  {
+    "paragraph_id": "p11-0096",
+    "translation": "Warm-startre-evolution.Consecutiveruntimetracesnapshotsoftenreflectgraduallyshiftingconditions, meaningthepreviouslyevolvedpolicyisastrongstartingpointforthenextevolutioncycle.Ratherthan restarting from scratch,AUTOPOIES",
+    "info_points": [
+      "Warm-startre-evolution.Consecutiveruntimetracesnapshotsoftenreflectgraduallyshiftingconditions, meaningthepreviouslyevolvedpolicyisastrongstartingpointforthenextevolutioncycle.Ratherthan restarting from scratch,AUTOPOIESISimplements a warm-start re-evolution mechanism analogous to local- search-base"
+    ],
+    "keywords": [
+      "Warm-startre-evolution",
+      "Consecutiveruntimetracesnapshotsoftenreflectgraduallyshiftingconditions",
+      "meaningthepreviouslyevolvedpolicyisastrongstartingpointforthenextevolutioncycle",
+      "Ratherthan",
+      "restarting",
+      "from",
+      "scratch",
+      "AUTOPOIESISimplements"
+    ],
+    "source_text": "Warm-startre-evolution.Consecutiveruntimetracesnapshotsoftenreflectgraduallyshiftingconditions, meaningthepreviouslyevolvedpolicyisastrongstartingpointforthenextevolutioncycle.Ratherthan restarting from scratch,AUTOPOIESISimplements a warm-start re-evolution mechanism analogous to local- search-based rescheduling in online optimization [2]:When a new snapshot triggers cycle ei(Figure 3), the control plane initializes the population with the top-performing candidates from ei-1 along with their mutations. Thisbothacceleratesconvergence,astheLLMappliestargetedrefinementsratherthanre-exploringthe trade-off space from scratch, and enables the system to consume more recent snapshots, keeping the deployed policy closely aligned with the latest runtime conditions."
+  }
+]

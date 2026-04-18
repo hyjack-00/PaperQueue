@@ -1,0 +1,200 @@
+[
+  {
+    "paragraph_id": "p11-0097",
+    "translation": "Multi-level timeout hierarchy.LLM-generated candidate policies may contain expensive or divergent computation that would otherwise stall the evolutionary process.To maintain robustness,AUTOPOIESISemploys a multi- level t",
+    "info_points": [
+      "Multi-level timeout hierarchy.LLM-generated candidate policies may contain expensive or divergent computation that would otherwise stall the evolutionary process.To maintain robustness,AUTOPOIESISemploys a multi- level timeout hierarchy.An evolution-level timeout bounds the total wall-clock time of "
+    ],
+    "keywords": [
+      "Multi-level",
+      "timeout",
+      "hierarchy",
+      "LLM-generated",
+      "candidate",
+      "policies",
+      "contain",
+      "expensive"
+    ],
+    "source_text": "Multi-level timeout hierarchy.LLM-generated candidate policies may contain expensive or divergent computation that would otherwise stall the evolutionary process.To maintain robustness,AUTOPOIESISemploys a multi- level timeout hierarchy.An evolution-level timeout bounds the total wall-clock time of each evolution cycle, ensuring the control plane delivers an updated policy within a predictable latency.A candidate-level timeout bounds the execution time of each candidate’s scheduling algorithm, terminating candidates whose schedule function enters unbounded computation.This ensures degenerate candidates are discarded without stalling the evolutionary process."
+  },
+  {
+    "paragraph_id": "p11-0098",
+    "translation": "6.2 Deployment and Online Serving",
+    "info_points": [
+      "6.2 Deployment and Online Serving"
+    ],
+    "keywords": [
+      "Deployment",
+      "Online",
+      "Serving"
+    ],
+    "source_text": "6.2 Deployment and Online Serving"
+  },
+  {
+    "paragraph_id": "p11-0099",
+    "translation": "Asynchronouspolicyhot-swap.Thedecoupledtwo-planearchitecturerequiresadeploymentmechanism thattransfersanevolvedpolicyfromthecontrolplanetothedataplanewithoutdisruptingliveserving.",
+    "info_points": [
+      "Asynchronouspolicyhot-swap.Thedecoupledtwo-planearchitecturerequiresadeploymentmechanism thattransfersanevolvedpolicyfromthecontrolplanetothedataplanewithoutdisruptingliveserving."
+    ],
+    "keywords": [
+      "Asynchronouspolicyhot-swap",
+      "Thedecoupledtwo-planearchitecturerequiresadeploymentmechanism",
+      "thattransfersanevolvedpolicyfromthecontrolplanetothedataplanewithoutdisruptingliveserving"
+    ],
+    "source_text": "Asynchronouspolicyhot-swap.Thedecoupledtwo-planearchitecturerequiresadeploymentmechanism thattransfersanevolvedpolicyfromthecontrolplanetothedataplanewithoutdisruptingliveserving."
+  },
+  {
+    "paragraph_id": "p12-0100",
+    "translation": "Figure 6Illustration of policy hot-swap (left) and trace snapshotting (right).D, C represent data and control planes; A, B represent different policies.si, ei, and tirepresent the i-th snapshot, evolution, and monitoring",
+    "info_points": [
+      "Figure 6Illustration of policy hot-swap (left) and trace snapshotting (right).D, C represent data and control planes; A, B represent different policies.si, ei, and tirepresent the i-th snapshot, evolution, and monitoring time point."
+    ],
+    "keywords": [
+      "Figure",
+      "Illustration",
+      "policy",
+      "hot-swap",
+      "left",
+      "trace",
+      "snapshotting",
+      "right"
+    ],
+    "source_text": "Figure 6Illustration of policy hot-swap (left) and trace snapshotting (right).D, C represent data and control planes; A, B represent different policies.si, ei, and tirepresent the i-th snapshot, evolution, and monitoring time point."
+  },
+  {
+    "paragraph_id": "p12-0101",
+    "translation": "Consequently, AUTOPOIESISimplements an asynchronous policy hot-swap mechanism, as shown in Figure 6 (left).Since the serving policy is a pair of pure functions (schedule and should_reschedule), swapping the policy reduce",
+    "info_points": [
+      "Consequently, AUTOPOIESISimplements an asynchronous policy hot-swap mechanism, as shown in Figure 6 (left).Since the serving policy is a pair of pure functions (schedule and should_reschedule), swapping the policy reduces to a lightweight code replacement with negligible overhead.When the control pl"
+    ],
+    "keywords": [
+      "Consequently",
+      "AUTOPOIESISimplements",
+      "asynchronous",
+      "policy",
+      "hot-swap",
+      "mechanism",
+      "shown",
+      "Figure"
+    ],
+    "source_text": "Consequently, AUTOPOIESISimplements an asynchronous policy hot-swap mechanism, as shown in Figure 6 (left).Since the serving policy is a pair of pure functions (schedule and should_reschedule), swapping the policy reduces to a lightweight code replacement with negligible overhead.When the control plane produces a superior policy, it writes the new code to a shared staging area, and the data plane asynchronously loads the replacement at its next monitoring time step.The new policy takes effect immediately:Subsequent invocations of should_reschedule and schedule immediately execute the evolved code without disrupting any in-flight serving plan."
+  },
+  {
+    "paragraph_id": "p12-0102",
+    "translation": "Runtimetracesnapshotting.Thedataplanemustefficientlycaptureruntimeconditionsandtransmitthem tothecontrolplanewithoutintroducingoverheadonliverequestprocessing.AUTOPOIESISimplementsa sliding-windowsnapshottingmechanismtha",
+    "info_points": [
+      "Runtimetracesnapshotting.Thedataplanemustefficientlycaptureruntimeconditionsandtransmitthem tothecontrolplanewithoutintroducingoverheadonliverequestprocessing.AUTOPOIESISimplementsa sliding-windowsnapshottingmechanismthatoperatesintwostages.Intherecordingstage,thedataplane continuously logs workload"
+    ],
+    "keywords": [
+      "Runtimetracesnapshotting",
+      "Thedataplanemustefficientlycaptureruntimeconditionsandtransmitthem",
+      "tothecontrolplanewithoutintroducingoverheadonliverequestprocessing",
+      "AUTOPOIESISimplementsa",
+      "sliding-windowsnapshottingmechanismthatoperatesintwostages",
+      "Intherecordingstage",
+      "thedataplane",
+      "continuously"
+    ],
+    "source_text": "Runtimetracesnapshotting.Thedataplanemustefficientlycaptureruntimeconditionsandtransmitthem tothecontrolplanewithoutintroducingoverheadonliverequestprocessing.AUTOPOIESISimplementsa sliding-windowsnapshottingmechanismthatoperatesintwostages.Intherecordingstage,thedataplane continuously logs workload and cluster conditions at periodic monitoring time steps, appending each time point to a fixed-size circular buffer.In the transmission stage, when the control plane signals for a new snapshot (i.e.,uponcompletionofthecurrentevolutionprocess),thedataplaneextractsacontiguouswindowof recent time points from this buffer and transmits it via a dedicated background thread, decoupled from live request processing.The window size is configurable and determines the temporal horizonover which the control plane optimizes, and consecutive snapshots may overlap in their time-point coverage, allowing the control plane to observe workload trends that span across evolution cycles.The illustration of the mechanism is shown in Figure 6 (right)."
+  },
+  {
+    "paragraph_id": "p12-0103",
+    "translation": "7 System Evaluation",
+    "info_points": [
+      "7 System Evaluation"
+    ],
+    "keywords": [
+      "System",
+      "Evaluation"
+    ],
+    "source_text": "7 System Evaluation"
+  },
+  {
+    "paragraph_id": "p12-0104",
+    "translation": "This evaluation answers three essential questions:",
+    "info_points": [
+      "This evaluation answers three essential questions:"
+    ],
+    "keywords": [
+      "This",
+      "evaluation",
+      "answers",
+      "three",
+      "essential",
+      "questions"
+    ],
+    "source_text": "This evaluation answers three essential questions:"
+  },
+  {
+    "paragraph_id": "p12-0105",
+    "translation": "•Q1:What is the end-to-end performance of Autopoiesis compared to state-of-the-art serving systems under diverse runtime dynamics?(§7.1) •Q2:How does the self-evolving process reshape serving policies throughout deployme",
+    "info_points": [
+      "•Q1:What is the end-to-end performance of Autopoiesis compared to state-of-the-art serving systems under diverse runtime dynamics?(§7.1) •Q2:How does the self-evolving process reshape serving policies throughout deployment?(§7.2) •Q3:How effective is the LLM-driven program synthesis workflow in disc"
+    ],
+    "keywords": [
+      "What",
+      "end-to-end",
+      "performance",
+      "Autopoiesis",
+      "compared",
+      "state-of-the-art",
+      "serving",
+      "systems"
+    ],
+    "source_text": "•Q1:What is the end-to-end performance of Autopoiesis compared to state-of-the-art serving systems under diverse runtime dynamics?(§7.1) •Q2:How does the self-evolving process reshape serving policies throughout deployment?(§7.2) •Q3:How effective is the LLM-driven program synthesis workflow in discovering high-performing policies? (§7.3) Environments.We consider three cluster configurations:(i) Homogeneous cluster:32 NVIDIA H100-80G GPUs across 4 nodes (8 GPUs/node), NVLink at 300 GB/s intra-node, InfiniBand at 50 GB/s inter-node.Workload fluctuationistheprimarysourceofruntimedynamics.(ii)Heterogeneouscluster:64GPUsspanningfour types (20×A100-40G, 20×A100-80G, 8×H100-80G, 16×H20-96G), NVLink at 300 GB/s intra-node, 20 Gb/s inter-node.Workload fluctuation under hardware heterogeneity is the primary source of runtime dynamics. (iii) Elastic cloud cluster:Up to 64 A100-80G GPUs across 8 nodes, with GPU availability fluctuating between 24 to 64 GPUs due to spot instance preemption and replenishment.NVLink at 300 GB/s intra-node, 20 Gb/s inter-node.Elastic cluster size is the primary source of runtime dynamics."
+  },
+  {
+    "paragraph_id": "p12-0106",
+    "translation": "Baselines.Three state-of-the-art LLM serving systems are considered, each targeting one category of runtime dynamics:(i) DistServe [6], a disaggregated LLM serving framework that implements resource and parallelism sched",
+    "info_points": [
+      "Baselines.Three state-of-the-art LLM serving systems are considered, each targeting one category of runtime dynamics:(i) DistServe [6], a disaggregated LLM serving framework that implements resource and parallelism schedulingtohandleworkloadfluctuations,evaluatedonthehomogeneouscluster;(ii)HexGen[38"
+    ],
+    "keywords": [
+      "Baselines",
+      "Three",
+      "state-of-the-art",
+      "serving",
+      "systems",
+      "considered",
+      "each",
+      "targeting"
+    ],
+    "source_text": "Baselines.Three state-of-the-art LLM serving systems are considered, each targeting one category of runtime dynamics:(i) DistServe [6], a disaggregated LLM serving framework that implements resource and parallelism schedulingtohandleworkloadfluctuations,evaluatedonthehomogeneouscluster;(ii)HexGen[38],a heterogeneous LLM serving framework that generates deployment plans to adapt to diverse workload and hardware heterogeneity, evaluated on the heterogeneous cluster; (iii) SpotServe [11], an elastic LLM serving"
+  },
+  {
+    "paragraph_id": "p13-0107",
+    "translation": "Figure 7End-to-end system execution time comparison betweenAUTOPOIESISand DistServe (left), HexGen (middle), SpotServe (right) on homogeneous, heterogeneous, and elastic cloud clusters with different testing traces.",
+    "info_points": [
+      "Figure 7End-to-end system execution time comparison betweenAUTOPOIESISand DistServe (left), HexGen (middle), SpotServe (right) on homogeneous, heterogeneous, and elastic cloud clusters with different testing traces."
+    ],
+    "keywords": [
+      "Figure",
+      "End-to-end",
+      "system",
+      "execution",
+      "time",
+      "comparison",
+      "betweenAUTOPOIESISand",
+      "DistServe"
+    ],
+    "source_text": "Figure 7End-to-end system execution time comparison betweenAUTOPOIESISand DistServe (left), HexGen (middle), SpotServe (right) on homogeneous, heterogeneous, and elastic cloud clusters with different testing traces."
+  },
+  {
+    "paragraph_id": "p13-0108",
+    "translation": "framework that handles cluster dynamics through adaptive parallelism reconfiguration and stateful inference recovery, was evaluated on the elastic cloud cluster.",
+    "info_points": [
+      "framework that handles cluster dynamics through adaptive parallelism reconfiguration and stateful inference recovery, was evaluated on the elastic cloud cluster."
+    ],
+    "keywords": [
+      "framework",
+      "that",
+      "handles",
+      "cluster",
+      "dynamics",
+      "through",
+      "adaptive",
+      "parallelism"
+    ],
+    "source_text": "framework that handles cluster dynamics through adaptive parallelism reconfiguration and stateful inference recovery, was evaluated on the elastic cloud cluster."
+  }
+]

@@ -1,0 +1,211 @@
+[
+  {
+    "paragraph_id": "p01-0001",
+    "translation": "AUTOPOIESIS:A Self-Evolving System Paradigm for LLM Serving Under Runtime Dynamics Youhe Jiang1∗, Ran Yan1∗, You Peng1, Wenshuang Li1, Taiyi Wang2, Fangcheng Fu3†, Binhang Yuan1† 1HKUST,2PowersenseTechnologyLimited,3Shan",
+    "info_points": [
+      "AUTOPOIESIS:A Self-Evolving System Paradigm for LLM Serving Under Runtime Dynamics Youhe Jiang1∗, Ran Yan1∗, You Peng1, Wenshuang Li1, Taiyi Wang2, Fangcheng Fu3†, Binhang Yuan1† 1HKUST,2PowersenseTechnologyLimited,3ShanghaiJiaoTongUniversity ∗Equal contribution,†Corresponding author"
+    ],
+    "keywords": [
+      "AUTOPOIESIS",
+      "Self-Evolving",
+      "System",
+      "Paradigm",
+      "Serving",
+      "Under",
+      "Runtime",
+      "Dynamics"
+    ],
+    "source_text": "AUTOPOIESIS:A Self-Evolving System Paradigm for LLM Serving Under Runtime Dynamics Youhe Jiang1∗, Ran Yan1∗, You Peng1, Wenshuang Li1, Taiyi Wang2, Fangcheng Fu3†, Binhang Yuan1† 1HKUST,2PowersenseTechnologyLimited,3ShanghaiJiaoTongUniversity ∗Equal contribution,†Corresponding author"
+  },
+  {
+    "paragraph_id": "p01-0002",
+    "translation": "Abstract Modern Large Language Model (LLM) serving operates in highly volatile environments characterized by severe runtime dynamics, such as workload fluctuations and elastic cluster autoscaling.Traditional serving syst",
+    "info_points": [
+      "Abstract Modern Large Language Model (LLM) serving operates in highly volatile environments characterized by severe runtime dynamics, such as workload fluctuations and elastic cluster autoscaling.Traditional serving systems rely on static, human-engineered serving policies (e.g., scheduling algorith"
+    ],
+    "keywords": [
+      "Abstract",
+      "Modern",
+      "Large",
+      "Language",
+      "Model",
+      "serving",
+      "operates",
+      "highly"
+    ],
+    "source_text": "Abstract Modern Large Language Model (LLM) serving operates in highly volatile environments characterized by severe runtime dynamics, such as workload fluctuations and elastic cluster autoscaling.Traditional serving systems rely on static, human-engineered serving policies (e.g., scheduling algorithms and rescheduling strategies) to manage these dynamics.However, these policies must navigate deeply intertwinedruntimetrade-offs(e.g.,schedulingoverheadvs.executionefficiency,rescheduling frequencyvs.reconfigurationoverhead),whoseoptimalbalanceisworkload-specificandshifts continuously as runtime conditions evolve, rendering any fixed policy fundamentally unable to adapt. We proposeAUTOPOIESIS, a novel online self-evolving system that shifts LLM serving from static policy deploymenttocontinuousonlinepolicyevolution.First,AUTOPOIESISintroducesanLLM-driven program synthesis workflow to evolve serving policies with respect to real-time observed dynamics, where the evolved policies reflect the optimal decision in navigating the complex, multi-dimensional trade-off space.Second,AUTOPOIESISenables this synthesis process to operate continuously during serving, observing real-world system behavior, and rewriting the policy code as runtime trade-offs shift, thereby transforming policy design from a one-time offline endeavor into an ongoing system component, enabling autonomous adaptation to evolving runtime conditions.Together, we establish a new paradigm:Serving policies are no longer static artifacts designed by humans before deployment, but living code that LLMs continuously evolve throughout deployment to navigate runtime trade-offs beyond human design.We evaluateAUTOPOIESISacross diverse runtime dynamics and show up to 53% and on average 34% improvements over state-of-the-art LL"
+  },
+  {
+    "paragraph_id": "p01-0003",
+    "translation": "1 Introduction",
+    "info_points": [
+      "1 Introduction"
+    ],
+    "keywords": [
+      "Introduction"
+    ],
+    "source_text": "1 Introduction"
+  },
+  {
+    "paragraph_id": "p01-0004",
+    "translation": "The rapid proliferation of Large Language Model (LLM) serving has exposed an essential operational challenge: production serving paradigm is inherently dynamic.User request patterns fluctuate unpredictably across time, w",
+    "info_points": [
+      "The rapid proliferation of Large Language Model (LLM) serving has exposed an essential operational challenge: production serving paradigm is inherently dynamic.User request patterns fluctuate unpredictably across time, withburstyarrivals,varyingpromptlengths,anddiverseoutputgenerationdemands[1–6].Cl"
+    ],
+    "keywords": [
+      "rapid",
+      "proliferation",
+      "Large",
+      "Language",
+      "Model",
+      "serving",
+      "exposed",
+      "essential"
+    ],
+    "source_text": "The rapid proliferation of Large Language Model (LLM) serving has exposed an essential operational challenge: production serving paradigm is inherently dynamic.User request patterns fluctuate unpredictably across time, withburstyarrivals,varyingpromptlengths,anddiverseoutputgenerationdemands[1–6].Cluster-level resourceschangeasautoscalingmechanismsaddorremovecomputenodesinresponsetoload[7–10], whilespotinstancefluctuationsalterclustermembershipandhardwarefailuresintermittentlytakenodes offline [11–13].These dynamics are ubiquitous in modern LLM serving [14, 15], where any serving system must handle via continuous deployment."
+  },
+  {
+    "paragraph_id": "p01-0005",
+    "translation": "Toaccommodatesuchdynamics,servingsystemsemployservingpolicies(e.g.,schedulingalgorithmsand rescheduling strategies) that produce different serving plans (including workload assignment, resource alloca- tion, and parallel",
+    "info_points": [
+      "Toaccommodatesuchdynamics,servingsystemsemployservingpolicies(e.g.,schedulingalgorithmsand rescheduling strategies) that produce different serving plans (including workload assignment, resource alloca- tion, and parallelism strategy), in response to dynamic status.However, implementing an effective "
+    ],
+    "keywords": [
+      "Toaccommodatesuchdynamics",
+      "servingsystemsemployservingpolicies",
+      "schedulingalgorithmsand",
+      "rescheduling",
+      "strategies",
+      "that",
+      "produce",
+      "different"
+    ],
+    "source_text": "Toaccommodatesuchdynamics,servingsystemsemployservingpolicies(e.g.,schedulingalgorithmsand rescheduling strategies) that produce different serving plans (including workload assignment, resource alloca- tion, and parallelism strategy), in response to dynamic status.However, implementing an effective serving"
+  },
+  {
+    "paragraph_id": "p02-0006",
+    "translation": "Figure1Impact of workload dynamics on serving policy performance across five phases:Steady (Phases 1, 3, 5) and bursty(Phases2,4).PolicyAusesthoroughschedulingwithaggressivereconfiguration,excellingunderstabilitybut coll",
+    "info_points": [
+      "Figure1Impact of workload dynamics on serving policy performance across five phases:Steady (Phases 1, 3, 5) and bursty(Phases2,4).PolicyAusesthoroughschedulingwithaggressivereconfiguration,excellingunderstabilitybut collapsing under bursts.Policy B uses reactive scheduling with lightweight reconfigu"
+    ],
+    "keywords": [
+      "Figure1Impact",
+      "workload",
+      "dynamics",
+      "serving",
+      "policy",
+      "performance",
+      "across",
+      "five"
+    ],
+    "source_text": "Figure1Impact of workload dynamics on serving policy performance across five phases:Steady (Phases 1, 3, 5) and bursty(Phases2,4).PolicyAusesthoroughschedulingwithaggressivereconfiguration,excellingunderstabilitybut collapsing under bursts.Policy B uses reactive scheduling with lightweight reconfiguration, thriving during bursts but underperforming in steady state.Policy C continuously adapts to shifting conditions, navigating optimal trade-offs and maintaining high throughput across all phases."
+  },
+  {
+    "paragraph_id": "p02-0007",
+    "translation": "policy requires navigating deeply intertwinedtrade-offs—when runtime status shifts, the serving policy must decide whether to reschedule, how thoroughly to replan, and how aggressively to reconfigure:(i) Rescheduling mor",
+    "info_points": [
+      "policy requires navigating deeply intertwinedtrade-offs—when runtime status shifts, the serving policy must decide whether to reschedule, how thoroughly to replan, and how aggressively to reconfigure:(i) Rescheduling morefrequentlykeepsplansfreshbutaccumulatesoverheadthatmayoutweighthebenefit[2,3,8]"
+    ],
+    "keywords": [
+      "policy",
+      "requires",
+      "navigating",
+      "deeply",
+      "intertwinedtrade-offs",
+      "when",
+      "runtime",
+      "status"
+    ],
+    "source_text": "policy requires navigating deeply intertwinedtrade-offs—when runtime status shifts, the serving policy must decide whether to reschedule, how thoroughly to replan, and how aggressively to reconfigure:(i) Rescheduling morefrequentlykeepsplansfreshbutaccumulatesoverheadthatmayoutweighthebenefit[2,3,8].(ii) Investing more computation in scheduling yields better plans but extends the window of serving under a stale plan[2,12,16].(iii)Reconfiguringtoanewplanimprovesthroughputbutincurstransientdegradation proportional to the magnitude of the change [11, 12, 17].These trade-offs are tightly coupled, which results in a multi-dimensional trade-off space whose optimal operating point is workload-specific and shifts continuously as runtime conditions evolve."
+  },
+  {
+    "paragraph_id": "p02-0008",
+    "translation": "Existing LLM serving systems [2, 6, 9, 18] employ static, human-engineered serving policies1.While these systems generate different serving plans in response to runtime dynamics, the policies that produce those plans rem",
+    "info_points": [
+      "Existing LLM serving systems [2, 6, 9, 18] employ static, human-engineered serving policies1.While these systems generate different serving plans in response to runtime dynamics, the policies that produce those plans remain fixed, failing to account for the runtime trade-offs outlined above.As we de"
+    ],
+    "keywords": [
+      "Existing",
+      "serving",
+      "systems",
+      "employ",
+      "static",
+      "human-engineered",
+      "serving",
+      "policies1"
+    ],
+    "source_text": "Existing LLM serving systems [2, 6, 9, 18] employ static, human-engineered serving policies1.While these systems generate different serving plans in response to runtime dynamics, the policies that produce those plans remain fixed, failing to account for the runtime trade-offs outlined above.As we demonstrate in Figure 1, this leads to significant performance degradation.We argue that this gap is inherent to the current system paradigm, due to two fundamentallimitations:(i) Human-engineered policies struggle to discover trade-off balances precisely tailored to specific runtime conditions, as the multi-dimensional trade-off space is large and deeply intertwined for human intuition to navigate.(ii) The policies remain fixed throughout deployment, so even a well-tuned policy becomes suboptimal as conditions shift.Offline precomputation of policies for all possible runtime scenarios is not sufficient either, as the space of possible workload patterns, cluster configurations, andtheirtemporalinteractionsisimpossibletoenumerateinadvance.Static,human-engineeredpolicies cannot navigate a trade-off space that is both complex and dynamic to solve once."
+  },
+  {
+    "paragraph_id": "p02-0009",
+    "translation": "To navigate runtime dynamics, we identify two key requirements for an effective LLM serving paradigm:",
+    "info_points": [
+      "To navigate runtime dynamics, we identify two key requirements for an effective LLM serving paradigm:"
+    ],
+    "keywords": [
+      "navigate",
+      "runtime",
+      "dynamics",
+      "identify",
+      "requirements",
+      "effective",
+      "serving",
+      "paradigm"
+    ],
+    "source_text": "To navigate runtime dynamics, we identify two key requirements for an effective LLM serving paradigm:"
+  },
+  {
+    "paragraph_id": "p02-0010",
+    "translation": "Requirement 1:Automated trade-off exploration.The system must be capable of exploring the multi-dimensional trade-off space and discovering policies precisely tailored to the current workload and cluster conditions, rath",
+    "info_points": [
+      "Requirement 1:Automated trade-off exploration.The system must be capable of exploring the multi-dimensional trade-off space and discovering policies precisely tailored to the current workload and cluster conditions, rather than relying on human intuition to manually balance the intertwined trade-off"
+    ],
+    "keywords": [
+      "Requirement",
+      "Automated",
+      "trade-off",
+      "exploration",
+      "system",
+      "must",
+      "capable",
+      "exploring"
+    ],
+    "source_text": "Requirement 1:Automated trade-off exploration.The system must be capable of exploring the multi-dimensional trade-off space and discovering policies precisely tailored to the current workload and cluster conditions, rather than relying on human intuition to manually balance the intertwined trade-offs of scheduling thoroughness, reconfigurationaggressiveness,andreschedulingfrequency.Thisdirectlyaddresseslimitation(i),asthe required trade-off balances are unattainable through human engineering."
+  },
+  {
+    "paragraph_id": "p02-0011",
+    "translation": "Requirement 2:Continuous online evolution.The system must continuously observe real-world system behavior and rewrite the policy code as runtime trade-offs shift.Rather than treating policy optimization as a one-time off",
+    "info_points": [
+      "Requirement 2:Continuous online evolution.The system must continuously observe real-world system behavior and rewrite the policy code as runtime trade-offs shift.Rather than treating policy optimization as a one-time offlineeffort,thesystemshouldintegratethepolicyexplorationprocessasanalways-oncompo"
+    ],
+    "keywords": [
+      "Requirement",
+      "Continuous",
+      "online",
+      "evolution",
+      "system",
+      "must",
+      "continuously",
+      "observe"
+    ],
+    "source_text": "Requirement 2:Continuous online evolution.The system must continuously observe real-world system behavior and rewrite the policy code as runtime trade-offs shift.Rather than treating policy optimization as a one-time offlineeffort,thesystemshouldintegratethepolicyexplorationprocessasanalways-oncomponentof theservingsystem,tracking shiftsinworkloadandcluster conditionsandadaptingthe policyaccordingly throughoutdeployment.Thisdirectlyaddresseslimitation(ii),asthepolicynolongerremainsstaticbut evolves alongside the runtime conditions it governs."
+  },
+  {
+    "paragraph_id": "p02-0012",
+    "translation": "LLM-driven program synthesis offers a compelling opportunity to fulfill both requirements simultaneously. Recent advances have demonstrated that combining the code-generation capabilities of LLMs with the iterative refin",
+    "info_points": [
+      "Recent advances have demonstrated that combining the code-generation capabilities of LLMs with the iterative refinement of evolutionary algorithms enables automatic discovery of optimal solutions in design spaces far 1For example, DistServe [6] replicates a pre-computed optimal parallelism configura"
+    ],
+    "keywords": [
+      "LLM-driven",
+      "program",
+      "synthesis",
+      "offers",
+      "compelling",
+      "opportunity",
+      "fulfill",
+      "both"
+    ],
+    "source_text": "LLM-driven program synthesis offers a compelling opportunity to fulfill both requirements simultaneously. Recent advances have demonstrated that combining the code-generation capabilities of LLMs with the iterative refinement of evolutionary algorithms enables automatic discovery of optimal solutions in design spaces far 1For example, DistServe [6] replicates a pre-computed optimal parallelism configuration to scale throughput, exploiting the fact that all GPUs share identical capacity in a homogeneous cluster.HexGen [19] constrains each tensor-parallel group to use GPUs within a single node, since cross-node communication bandwidth is typically limited in heterogeneous clusters."
+  }
+]

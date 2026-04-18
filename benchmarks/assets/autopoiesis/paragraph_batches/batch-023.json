@@ -1,0 +1,215 @@
+[
+  {
+    "paragraph_id": "p26-0265",
+    "translation": "•Fewer candidates →smaller ILP →faster solve time.",
+    "info_points": [
+      "•Fewer candidates →smaller ILP →faster solve time."
+    ],
+    "keywords": [
+      "Fewer",
+      "candidates",
+      "smaller",
+      "faster",
+      "solve",
+      "time"
+    ],
+    "source_text": "•Fewer candidates →smaller ILP →faster solve time."
+  },
+  {
+    "paragraph_id": "p26-0266",
+    "translation": "•The scheduler selects from a coarser set of batch sizes and may slightly over- or under-shoot the ideal per-replica load.",
+    "info_points": [
+      "•The scheduler selects from a coarser set of batch sizes and may slightly over- or under-shoot the ideal per-replica load."
+    ],
+    "keywords": [
+      "scheduler",
+      "selects",
+      "from",
+      "coarser",
+      "batch",
+      "sizes",
+      "slightly",
+      "over-"
+    ],
+    "source_text": "•The scheduler selects from a coarser set of batch sizes and may slightly over- or under-shoot the ideal per-replica load."
+  },
+  {
+    "paragraph_id": "p26-0267",
+    "translation": "•For models where latency is relatively insensitive to batch size in the relevant range, the quality loss is negligible while the speed gain is significant.",
+    "info_points": [
+      "•For models where latency is relatively insensitive to batch size in the relevant range, the quality loss is negligible while the speed gain is significant."
+    ],
+    "keywords": [
+      "models",
+      "where",
+      "latency",
+      "relatively",
+      "insensitive",
+      "batch",
+      "size",
+      "relevant"
+    ],
+    "source_text": "•For models where latency is relatively insensitive to batch size in the relevant range, the quality loss is negligible while the speed gain is significant."
+  },
+  {
+    "paragraph_id": "p26-0268",
+    "translation": "Key Insight:Some models need fine-grained search, others do not.",
+    "info_points": [
+      "Key Insight:Some models need fine-grained search, others do not."
+    ],
+    "keywords": [
+      "Insight",
+      "Some",
+      "models",
+      "need",
+      "fine-grained",
+      "search",
+      "others"
+    ],
+    "source_text": "Key Insight:Some models need fine-grained search, others do not."
+  },
+  {
+    "paragraph_id": "p26-0269",
+    "translation": "•Models with large total_batch and flat latency-vs-batch curves benefit from finer granularity, enabling better packing.",
+    "info_points": [
+      "•Models with large total_batch and flat latency-vs-batch curves benefit from finer granularity, enabling better packing."
+    ],
+    "keywords": [
+      "Models",
+      "with",
+      "large",
+      "total_batch",
+      "flat",
+      "latency-vs-batch",
+      "curves",
+      "benefit"
+    ],
+    "source_text": "•Models with large total_batch and flat latency-vs-batch curves benefit from finer granularity, enabling better packing."
+  },
+  {
+    "paragraph_id": "p26-0270",
+    "translation": "•Memory-constrainedmodelshavefewfeasiblebatchsizesregardlessofthecap—increasingitintroduces infeasible (OOM) candidates, adding overhead without benefit.",
+    "info_points": [
+      "•Memory-constrainedmodelshavefewfeasiblebatchsizesregardlessofthecap—increasingitintroduces infeasible (OOM) candidates, adding overhead without benefit."
+    ],
+    "keywords": [
+      "Memory-constrainedmodelshavefewfeasiblebatchsizesregardlessofthecap",
+      "increasingitintroduces",
+      "infeasible",
+      "candidates",
+      "adding",
+      "overhead",
+      "without",
+      "benefit"
+    ],
+    "source_text": "•Memory-constrainedmodelshavefewfeasiblebatchsizesregardlessofthecap—increasingitintroduces infeasible (OOM) candidates, adding overhead without benefit."
+  },
+  {
+    "paragraph_id": "p26-0271",
+    "translation": "•Models with steep latency-vs-batch curves benefit from a moderate cap that captures the efficient region without exploring far into OOM.",
+    "info_points": [
+      "•Models with steep latency-vs-batch curves benefit from a moderate cap that captures the efficient region without exploring far into OOM."
+    ],
+    "keywords": [
+      "Models",
+      "with",
+      "steep",
+      "latency-vs-batch",
+      "curves",
+      "benefit",
+      "from",
+      "moderate"
+    ],
+    "source_text": "•Models with steep latency-vs-batch curves benefit from a moderate cap that captures the efficient region without exploring far into OOM."
+  },
+  {
+    "paragraph_id": "p26-0272",
+    "translation": "Additional Insight:Raising the cap for small models can reduce the number of required replicas, thereby freeing GPUs for larger models.For example, if a small model has total_batch=256 and the cap is set to 256, only one",
+    "info_points": [
+      "Additional Insight:Raising the cap for small models can reduce the number of required replicas, thereby freeing GPUs for larger models.For example, if a small model has total_batch=256 and the cap is set to 256, only one replica is required (versus 8 replicas at cap = 32), freeing 7 GPUs that can be"
+    ],
+    "keywords": [
+      "Additional",
+      "Insight",
+      "Raising",
+      "small",
+      "models",
+      "reduce",
+      "number",
+      "required"
+    ],
+    "source_text": "Additional Insight:Raising the cap for small models can reduce the number of required replicas, thereby freeing GPUs for larger models.For example, if a small model has total_batch=256 and the cap is set to 256, only one replica is required (versus 8 replicas at cap = 32), freeing 7 GPUs that can be allocated to larger models to reduce latency."
+  },
+  {
+    "paragraph_id": "p26-0273",
+    "translation": "ImplementationGuidance:Theinitialprogramusesauniformcap(definedinworkloads.py,whichisfixed), providing a safe and conservative baseline.LLM-evolved programs should instead choose per-model caps within their EVOLVE-BLOCKS",
+    "info_points": [
+      "ImplementationGuidance:Theinitialprogramusesauniformcap(definedinworkloads.py,whichisfixed), providing a safe and conservative baseline.LLM-evolved programs should instead choose per-model caps within their EVOLVE-BLOCKS based on model characteristics (e.g., weight size, memory footprint, and typica"
+    ],
+    "keywords": [
+      "ImplementationGuidance",
+      "Theinitialprogramusesauniformcap",
+      "definedinworkloads",
+      "whichisfixed",
+      "providing",
+      "safe",
+      "conservative",
+      "baseline"
+    ],
+    "source_text": "ImplementationGuidance:Theinitialprogramusesauniformcap(definedinworkloads.py,whichisfixed), providing a safe and conservative baseline.LLM-evolved programs should instead choose per-model caps within their EVOLVE-BLOCKS based on model characteristics (e.g., weight size, memory footprint, and typical batch sizes).These caps can be different across timestamps.Inspect workloads.py to understand the total_batch range for each model across timestamps."
+  },
+  {
+    "paragraph_id": "p26-0274",
+    "translation": "The Reconfiguration Trade-off — When to Reschedule e2e = ilp solve time + serving latency + reconfig cost (16)",
+    "info_points": [
+      "The Reconfiguration Trade-off — When to Reschedule e2e = ilp solve time + serving latency + reconfig cost (16)"
+    ],
+    "keywords": [
+      "Reconfiguration",
+      "Trade-off",
+      "When",
+      "Reschedule",
+      "solve",
+      "time",
+      "serving",
+      "latency"
+    ],
+    "source_text": "The Reconfiguration Trade-off — When to Reschedule e2e = ilp solve time + serving latency + reconfig cost (16)"
+  },
+  {
+    "paragraph_id": "p27-0275",
+    "translation": "A new schedule that saves ∆seconds of serving and scheduling latency is only worthwhile if:",
+    "info_points": [
+      "A new schedule that saves ∆seconds of serving and scheduling latency is only worthwhile if:"
+    ],
+    "keywords": [
+      "schedule",
+      "that",
+      "saves",
+      "seconds",
+      "serving",
+      "scheduling",
+      "latency",
+      "only"
+    ],
+    "source_text": "A new schedule that saves ∆seconds of serving and scheduling latency is only worthwhile if:"
+  },
+  {
+    "paragraph_id": "p27-0276",
+    "translation": "Suppose at ts0you have a large model on fast GPUs with serving latency 2000 ms.At ts1, traffic shifts, and you can reduce serving latency to 800 ms by moving to different GPUs (the following values serve as examples, and",
+    "info_points": [
+      "Suppose at ts0you have a large model on fast GPUs with serving latency 2000 ms.At ts1, traffic shifts, and you can reduce serving latency to 800 ms by moving to different GPUs (the following values serve as examples, and you should refer to the simulators for accurate values):"
+    ],
+    "keywords": [
+      "Suppose",
+      "ts0you",
+      "have",
+      "large",
+      "model",
+      "fast",
+      "GPUs",
+      "with"
+    ],
+    "source_text": "Suppose at ts0you have a large model on fast GPUs with serving latency 2000 ms.At ts1, traffic shifts, and you can reduce serving latency to 800 ms by moving to different GPUs (the following values serve as examples, and you should refer to the simulators for accurate values):"
+  }
+]

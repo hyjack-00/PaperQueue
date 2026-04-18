@@ -1,0 +1,56 @@
+{
+  "id": "autopoiesis",
+  "title": "Autopoiesis: A Self-Evolving System Paradigm for LLM Serving Under Runtime Dynamics",
+  "paper_url": "https://arxiv.org/abs/2604.07144",
+  "swiftscholar_url": "https://www.swiftscholar.net/zh/paper/69df40435127ff45a9deea5f",
+  "short_id": "2026-arXiv-Autopoiesis",
+  "expected_archive_topic": "System Performance",
+  "expected_headings": [
+    "## TL;DR",
+    "## 论文基本信息",
+    "## 1. 整体概括",
+    "## 2. 背景与动机",
+    "## 3. 方法与系统设计",
+    "## 4. 实验设置",
+    "## 5. 结果与分析",
+    "## 6. 总结与思考"
+  ],
+  "coverage_checks": [
+    "runtime dynamics",
+    "static policy limitation",
+    "self-evolving system",
+    "two-plane architecture",
+    "program synthesis workflow",
+    "runtime trade-off",
+    "online serving or hot-swap",
+    "evaluation setup",
+    "53% or 34%",
+    "convergence or warm-start"
+  ],
+  "figure_expectations": [
+    {
+      "keyword": "motivation",
+      "section": "## 2. 背景与动机"
+    },
+    {
+      "keyword": "overview",
+      "section": "## 3. 方法与系统设计"
+    },
+    {
+      "keyword": "workflow",
+      "section": "## 3. 方法与系统设计"
+    },
+    {
+      "keyword": "execution",
+      "section": "## 3. 方法与系统设计"
+    },
+    {
+      "keyword": "evaluation",
+      "section": "## 5. 结果与分析"
+    },
+    {
+      "keyword": "convergence",
+      "section": "## 5. 结果与分析"
+    }
+  ]
+}

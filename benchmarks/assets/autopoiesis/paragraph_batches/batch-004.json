@@ -1,0 +1,206 @@
+[
+  {
+    "paragraph_id": "p06-0037",
+    "translation": "s% s& s' s( s) … Deploy optimized policy (§6.2) Figure3OverviewofAUTOPOIESIS’stwo-planesystemarchitecture.Thedataplaneexecutestheservingpolicyand transmitssnapshottedruntimetracetothecontrolplane,whilethecontrolplanecont",
+    "info_points": [
+      "s% s& s' s( s) … Deploy optimized policy (§6.2) Figure3OverviewofAUTOPOIESIS’stwo-planesystemarchitecture.Thedataplaneexecutestheservingpolicyand transmitssnapshottedruntimetracetothecontrolplane,whilethecontrolplanecontinuouslyevolvesthepolicyand deploys it to the data plane when a superior policy "
+    ],
+    "keywords": [
+      "Deploy",
+      "optimized",
+      "policy",
+      "Figure3OverviewofAUTOPOIESIS",
+      "stwo-planesystemarchitecture",
+      "Thedataplaneexecutestheservingpolicyand",
+      "transmitssnapshottedruntimetracetothecontrolplane",
+      "whilethecontrolplanecontinuouslyevolvesthepolicyand"
+    ],
+    "source_text": "s% s& s' s( s) … Deploy optimized policy (§6.2) Figure3OverviewofAUTOPOIESIS’stwo-planesystemarchitecture.Thedataplaneexecutestheservingpolicyand transmitssnapshottedruntimetracetothecontrolplane,whilethecontrolplanecontinuouslyevolvesthepolicyand deploys it to the data plane when a superior policy is found, forming a self-evolving loop."
+  },
+  {
+    "paragraph_id": "p06-0038",
+    "translation": "traffic bursts, degrading end-to-end throughput by 40% due to severe queuing delays.Conversely, Policy D, tuned for the optimal trade-off during burst periods, seamlessly absorbs spikes but yields suboptimal plans during",
+    "info_points": [
+      "traffic bursts, degrading end-to-end throughput by 40% due to severe queuing delays.Conversely, Policy D, tuned for the optimal trade-off during burst periods, seamlessly absorbs spikes but yields suboptimal plans duringsteadyperiods,leavinghardwareunderutilizedandreducingthroughputby35%.Nosinglesta"
+    ],
+    "keywords": [
+      "traffic",
+      "bursts",
+      "degrading",
+      "end-to-end",
+      "throughput",
+      "severe",
+      "queuing",
+      "delays"
+    ],
+    "source_text": "traffic bursts, degrading end-to-end throughput by 40% due to severe queuing delays.Conversely, Policy D, tuned for the optimal trade-off during burst periods, seamlessly absorbs spikes but yields suboptimal plans duringsteadyperiods,leavinghardwareunderutilizedandreducingthroughputby35%.Nosinglestatic policy sustains optimal performance when runtime conditions shift."
+  },
+  {
+    "paragraph_id": "p06-0039",
+    "translation": "Analysis.Static policy optimization is insufficient under runtime dynamics.Even if Motivation 1 is addressed, where the system can discover an optimal policy for the given conditions, the above characterization shows tha",
+    "info_points": [
+      "Analysis.Static policy optimization is insufficient under runtime dynamics.Even if Motivation 1 is addressed, where the system can discover an optimal policy for the given conditions, the above characterization shows thatsuchapolicybecomessuboptimalthemomentruntimetrade-offsshift.Therootcauseisthats"
+    ],
+    "keywords": [
+      "Analysis",
+      "Static",
+      "policy",
+      "optimization",
+      "insufficient",
+      "under",
+      "runtime",
+      "dynamics"
+    ],
+    "source_text": "Analysis.Static policy optimization is insufficient under runtime dynamics.Even if Motivation 1 is addressed, where the system can discover an optimal policy for the given conditions, the above characterization shows thatsuchapolicybecomessuboptimalthemomentruntimetrade-offsshift.Therootcauseisthatstatic, offline policy design presupposes a stationary operating environment with a fixed optimal balance point.Once conditionschange(e.g.,transitioningfromsteady-statetobursttraffic),thehardcodedtrade-offbalance hardly matches the new optimum.Crucially, such fluctuations are not isolated anomalies but the continuous, standard operating reality of production LLM serving, rendering any one-time policy optimization insufficient."
+  },
+  {
+    "paragraph_id": "p06-0040",
+    "translation": "Motivation 2:Continuous online evolution (§1, Requirement 2).Since the optimal trade-off balance shifts continuously with runtime dynamics, the policy synthesis process itself must operate continuously during serving rat",
+    "info_points": [
+      "Motivation 2:Continuous online evolution (§1, Requirement 2).Since the optimal trade-off balance shifts continuously with runtime dynamics, the policy synthesis process itself must operate continuously during serving rather than as a one-time offline effort.This motivates the design of a self-evolvi"
+    ],
+    "keywords": [
+      "Motivation",
+      "Continuous",
+      "online",
+      "evolution",
+      "Requirement",
+      "Since",
+      "optimal",
+      "trade-off"
+    ],
+    "source_text": "Motivation 2:Continuous online evolution (§1, Requirement 2).Since the optimal trade-off balance shifts continuously with runtime dynamics, the policy synthesis process itself must operate continuously during serving rather than as a one-time offline effort.This motivates the design of a self-evolving serving paradigm that integrates LLM-driven policy synthesis as an always-on component, observing real-world system behavior and rewriting the policy code as runtime conditions evolve."
+  },
+  {
+    "paragraph_id": "p06-0041",
+    "translation": "4 AUTOPOIESISOverview",
+    "info_points": [
+      "4 AUTOPOIESISOverview"
+    ],
+    "keywords": [
+      "AUTOPOIESISOverview"
+    ],
+    "source_text": "4 AUTOPOIESISOverview"
+  },
+  {
+    "paragraph_id": "p06-0042",
+    "translation": "To navigate the deeply intertwined and continuously shifting runtime trade-offs of modern serving environ- ments,AUTOPOIESISemploysatwo-planesystemarchitecturethatdecouplespolicyexecutionfrompolicy evolution.By separatin",
+    "info_points": [
+      "To navigate the deeply intertwined and continuously shifting runtime trade-offs of modern serving environ- ments,AUTOPOIESISemploysatwo-planesystemarchitecturethatdecouplespolicyexecutionfrompolicy evolution.By separating these two concerns, the architecture ensures that runtime trade-offs are thoro"
+    ],
+    "keywords": [
+      "navigate",
+      "deeply",
+      "intertwined",
+      "continuously",
+      "shifting",
+      "runtime",
+      "trade-offs",
+      "modern"
+    ],
+    "source_text": "To navigate the deeply intertwined and continuously shifting runtime trade-offs of modern serving environ- ments,AUTOPOIESISemploysatwo-planesystemarchitecturethatdecouplespolicyexecutionfrompolicy evolution.By separating these two concerns, the architecture ensures that runtime trade-offs are thoroughly explored and that trade-off shifts are properly handled without disrupting live serving."
+  },
+  {
+    "paragraph_id": "p06-0043",
+    "translation": "Two-plane system architecture.The architecture comprises two decoupled planes for a closed loop of adaptation:",
+    "info_points": [
+      "Two-plane system architecture.The architecture comprises two decoupled planes for a closed loop of adaptation:"
+    ],
+    "keywords": [
+      "Two-plane",
+      "system",
+      "architecture",
+      "architecture",
+      "comprises",
+      "decoupled",
+      "planes",
+      "closed"
+    ],
+    "source_text": "Two-plane system architecture.The architecture comprises two decoupled planes for a closed loop of adaptation:"
+  },
+  {
+    "paragraph_id": "p06-0044",
+    "translation": "•The data plane (policy execution):This plane handles live request traffic by executing the active serving policy.Basedonreal-timeworkloadandclusterconditions,itcontinuouslygeneratesandupdates serving plans, including wo",
+    "info_points": [
+      "•The data plane (policy execution):This plane handles live request traffic by executing the active serving policy.Basedonreal-timeworkloadandclusterconditions,itcontinuouslygeneratesandupdates serving plans, including workload assignment, resource allocation, and parallelism strategies.To capture th"
+    ],
+    "keywords": [
+      "data",
+      "plane",
+      "policy",
+      "execution",
+      "This",
+      "plane",
+      "handles",
+      "live"
+    ],
+    "source_text": "•The data plane (policy execution):This plane handles live request traffic by executing the active serving policy.Basedonreal-timeworkloadandclusterconditions,itcontinuouslygeneratesandupdates serving plans, including workload assignment, resource allocation, and parallelism strategies.To capture the runtime trade-off shifts discussed in §3, the data plane periodically takes a snapshot of the recent runtime trace (i.e., a sliding window of request arrival patterns and cluster resource availability) and transmits it to the control plane."
+  },
+  {
+    "paragraph_id": "p06-0045",
+    "translation": "•The control plane (policy evolution):This plane operates asynchronously to optimize the serving policy without interrupting live serving.Upon receiving each snapshot, it launches the LLM-driven program synthesis workflo",
+    "info_points": [
+      "•The control plane (policy evolution):This plane operates asynchronously to optimize the serving policy without interrupting live serving.Upon receiving each snapshot, it launches the LLM-driven program synthesis workflow to evolve the serving policy (i.e., rewrite the policy code).The workflow expl"
+    ],
+    "keywords": [
+      "control",
+      "plane",
+      "policy",
+      "evolution",
+      "This",
+      "plane",
+      "operates",
+      "asynchronously"
+    ],
+    "source_text": "•The control plane (policy evolution):This plane operates asynchronously to optimize the serving policy without interrupting live serving.Upon receiving each snapshot, it launches the LLM-driven program synthesis workflow to evolve the serving policy (i.e., rewrite the policy code).The workflow explores the multi-dimensional trade-off space (e.g., scheduling thoroughness vs. serving performance) relative to the snapshotted runtime trace to derive an optimized policy.Once a superior policy is found, the control plane deploys it to the data plane."
+  },
+  {
+    "paragraph_id": "p07-0046",
+    "translation": "Theself-evolvingloop.AsshowninFigure3,thesetwoplanestransformLLMservingintoaself-evolving process.This architecture ensures that the system does not merely react to dynamics by altering its plan, but proactively adapts i",
+    "info_points": [
+      "Theself-evolvingloop.AsshowninFigure3,thesetwoplanestransformLLMservingintoaself-evolving process.This architecture ensures that the system does not merely react to dynamics by altering its plan, but proactively adapts its policy to maintain optimal serving performance as the runtime trade-offs shif"
+    ],
+    "keywords": [
+      "Theself-evolvingloop",
+      "AsshowninFigure3",
+      "thesetwoplanestransformLLMservingintoaself-evolving",
+      "process",
+      "This",
+      "architecture",
+      "ensures",
+      "that"
+    ],
+    "source_text": "Theself-evolvingloop.AsshowninFigure3,thesetwoplanestransformLLMservingintoaself-evolving process.This architecture ensures that the system does not merely react to dynamics by altering its plan, but proactively adapts its policy to maintain optimal serving performance as the runtime trade-offs shift.We detail the LLM-driven program synthesis workflow that powers this exploration in §5 and the implementation of AUTOPOIESISin §6."
+  },
+  {
+    "paragraph_id": "p07-0047",
+    "translation": "5 LLM-Driven Program Synthesis",
+    "info_points": [
+      "5 LLM-Driven Program Synthesis"
+    ],
+    "keywords": [
+      "LLM-Driven",
+      "Program",
+      "Synthesis"
+    ],
+    "source_text": "5 LLM-Driven Program Synthesis"
+  },
+  {
+    "paragraph_id": "p07-0048",
+    "translation": "This section presents the LLM-driven program synthesis workflow that powersAUTOPOIESIS’s control plane. We begin by formalizing the runtime trade-off navigation problem that the workflow must solve (§5.1), then providean",
+    "info_points": [
+      "This section presents the LLM-driven program synthesis workflow that powersAUTOPOIESIS’s control plane."
+    ],
+    "keywords": [
+      "This",
+      "section",
+      "presents",
+      "LLM-driven",
+      "program",
+      "synthesis",
+      "workflow",
+      "that"
+    ],
+    "source_text": "This section presents the LLM-driven program synthesis workflow that powersAUTOPOIESIS’s control plane. We begin by formalizing the runtime trade-off navigation problem that the workflow must solve (§5.1), then provideanoverviewofthesynthesisworkflow(§5.2),followedbyadetaileddescriptionoftheevaluator (§5.3) and the synthesis configuration (§5.4)."
+  }
+]

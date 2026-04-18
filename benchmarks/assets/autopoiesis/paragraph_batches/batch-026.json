@@ -1,0 +1,216 @@
+[
+  {
+    "paragraph_id": "p28-0301",
+    "translation": "•Per-variable Big-M bounds.For model type z, GPU type g, tensor-paralel degree t, and batch size b, the standard indicator constraint linking nz,g,t,band yz,g,t,bis:nz,g,t,b≤M ·yz,g,t,b, where Mis a sufficiently large co",
+    "info_points": [
+      "•Per-variable Big-M bounds.For model type z, GPU type g, tensor-paralel degree t, and batch size b, the standard indicator constraint linking nz,g,t,band yz,g,t,bis:nz,g,t,b≤M ·yz,g,t,b, where Mis a sufficiently large constant; a naive formulation uses a single global bound M= maxg∈G κg, which is ov"
+    ],
+    "keywords": [
+      "Per-variable",
+      "Big-M",
+      "bounds",
+      "model",
+      "type",
+      "type",
+      "tensor-paralel",
+      "degree"
+    ],
+    "source_text": "•Per-variable Big-M bounds.For model type z, GPU type g, tensor-paralel degree t, and batch size b, the standard indicator constraint linking nz,g,t,band yz,g,t,bis:nz,g,t,b≤M ·yz,g,t,b, where Mis a sufficiently large constant; a naive formulation uses a single global bound M= maxg∈G κg, which is overly loose for most variables."
+  },
+  {
+    "paragraph_id": "p29-0302",
+    "translation": "Instead, the LLM defines a variable-specific bound for each possible tuple (z, g, t, b):",
+    "info_points": [
+      "Instead, the LLM defines a variable-specific bound for each possible tuple (z, g, t, b):"
+    ],
+    "keywords": [
+      "Instead",
+      "defines",
+      "variable-specific",
+      "bound",
+      "each",
+      "possible",
+      "tuple"
+    ],
+    "source_text": "Instead, the LLM defines a variable-specific bound for each possible tuple (z, g, t, b):"
+  },
+  {
+    "paragraph_id": "p29-0303",
+    "translation": "The indicator constraint becomes: nz,g,t,b≤Mz,g,t,b · yz,g,t,b (20) t \u0005 bounds the number of replicas by available GPU capacity, \u0006 λz b \u0007 bounds the number of replicas required to cover the workload.The term per-variable",
+    "info_points": [
+      "The indicator constraint becomes: nz,g,t,b≤Mz,g,t,b · yz,g,t,b (20) t \u0005 bounds the number of replicas by available GPU capacity, \u0006 λz b \u0007 bounds the number of replicas required to cover the workload.The term per-variable emphasizes that each decision variable nz,g,t,b has its own tight upper bound, "
+    ],
+    "keywords": [
+      "indicator",
+      "constraint",
+      "becomes",
+      "bounds",
+      "number",
+      "replicas",
+      "available",
+      "capacity"
+    ],
+    "source_text": "The indicator constraint becomes: nz,g,t,b≤Mz,g,t,b · yz,g,t,b (20) t \u0005 bounds the number of replicas by available GPU capacity, \u0006 λz b \u0007 bounds the number of replicas required to cover the workload.The term per-variable emphasizes that each decision variable nz,g,t,b has its own tight upper bound, instead of sharing a single global constant.This significantly tightens the LP relaxation:when yz,g,t,btakes fractional values, the feasible range of nz,g,t,bis correspondingly restricted.As a result, the solver obtains stronger bounds and can prune the branch-and-bound search tree more effectively."
+  },
+  {
+    "paragraph_id": "p29-0304",
+    "translation": "•Weighted objective.The primary objective is to minimize the global makespan:",
+    "info_points": [
+      "•Weighted objective.The primary objective is to minimize the global makespan:"
+    ],
+    "keywords": [
+      "Weighted",
+      "objective",
+      "primary",
+      "objective",
+      "minimize",
+      "global",
+      "makespan"
+    ],
+    "source_text": "•Weighted objective.The primary objective is to minimize the global makespan:"
+  },
+  {
+    "paragraph_id": "p29-0305",
+    "translation": "minTbalanced, s.t.Tbalanced≥Lz, ∀z∈M (21) Lz≥Λz,g,t,b · yz,g,t,b, ∀g∈G,t ∈Tg,b ∈Bz (22) Lzcaptures the completion latency of model Mz, determined by its slowest active replica group.While minimizing Tbalancedensures fair",
+    "info_points": [
+      "minTbalanced, s.t.Tbalanced≥Lz, ∀z∈M (21) Lz≥Λz,g,t,b · yz,g,t,b, ∀g∈G,t ∈Tg,b ∈Bz (22) Lzcaptures the completion latency of model Mz, determined by its slowest active replica group.While minimizing Tbalancedensures fairness across models, multiple solutions may achieve the same optimal makespan but"
+    ],
+    "keywords": [
+      "minTbalanced",
+      "Tbalanced",
+      "Lzcaptures",
+      "completion",
+      "latency",
+      "model",
+      "determined",
+      "slowest"
+    ],
+    "source_text": "minTbalanced, s.t.Tbalanced≥Lz, ∀z∈M (21) Lz≥Λz,g,t,b · yz,g,t,b, ∀g∈G,t ∈Tg,b ∈Bz (22) Lzcaptures the completion latency of model Mz, determined by its slowest active replica group.While minimizing Tbalancedensures fairness across models, multiple solutions may achieve the same optimal makespan but differ in individual model latencies.To guide the solver toward better practical solutions, the LLM introduces a weighted objective (zindexes models in increasing order of size, i.e., a larger z corresponds to a larger LLM):"
+  },
+  {
+    "paragraph_id": "p29-0306",
+    "translation": "Table 7Tuned CBC solver parameters for ILP acceleration Enable parallel solving across multiple CPU threads, leveraging multiple CPU cores for faster computation.",
+    "info_points": [
+      "Table 7Tuned CBC solver parameters for ILP acceleration Enable parallel solving across multiple CPU threads, leveraging multiple CPU cores for faster computation."
+    ],
+    "keywords": [
+      "Table",
+      "Tuned",
+      "solver",
+      "parameters",
+      "acceleration",
+      "Enable",
+      "parallel",
+      "solving"
+    ],
+    "source_text": "Table 7Tuned CBC solver parameters for ILP acceleration Enable parallel solving across multiple CPU threads, leveraging multiple CPU cores for faster computation."
+  },
+  {
+    "paragraph_id": "p29-0307",
+    "translation": "RATIOGAP 0.003 Stop the solver when the solution is within 0.3% of the optimal value.",
+    "info_points": [
+      "RATIOGAP 0.003 Stop the solver when the solution is within 0.3% of the optimal value."
+    ],
+    "keywords": [
+      "RATIOGAP",
+      "Stop",
+      "solver",
+      "when",
+      "solution",
+      "within",
+      "optimal",
+      "value"
+    ],
+    "source_text": "RATIOGAP 0.003 Stop the solver when the solution is within 0.3% of the optimal value."
+  },
+  {
+    "paragraph_id": "p29-0308",
+    "translation": "Tuned branching parameter to guide variable selection during branch-and-bound.",
+    "info_points": [
+      "Tuned branching parameter to guide variable selection during branch-and-bound."
+    ],
+    "keywords": [
+      "Tuned",
+      "branching",
+      "parameter",
+      "guide",
+      "variable",
+      "selection",
+      "during",
+      "branch-and-bound"
+    ],
+    "source_text": "Tuned branching parameter to guide variable selection during branch-and-bound."
+  },
+  {
+    "paragraph_id": "p29-0309",
+    "translation": "Number of presolve passes to simplify constraints and variables before solving.",
+    "info_points": [
+      "Number of presolve passes to simplify constraints and variables before solving."
+    ],
+    "keywords": [
+      "Number",
+      "presolve",
+      "passes",
+      "simplify",
+      "constraints",
+      "variables",
+      "before",
+      "solving"
+    ],
+    "source_text": "Number of presolve passes to simplify constraints and variables before solving."
+  },
+  {
+    "paragraph_id": "p29-0310",
+    "translation": "Number of cutting passes to generate additional valid inequalities for tighter bounds.",
+    "info_points": [
+      "Number of cutting passes to generate additional valid inequalities for tighter bounds."
+    ],
+    "keywords": [
+      "Number",
+      "cutting",
+      "passes",
+      "generate",
+      "additional",
+      "valid",
+      "inequalities",
+      "tighter"
+    ],
+    "source_text": "Number of cutting passes to generate additional valid inequalities for tighter bounds."
+  },
+  {
+    "paragraph_id": "p29-0311",
+    "translation": "This strategy assigns larger weights to larger LLMs, encouraging the solver to reduce their latency when possible.Compared to an unweighted and very small secondary term, this stronger formulation provides a clearer opti",
+    "info_points": [
+      "This strategy assigns larger weights to larger LLMs, encouraging the solver to reduce their latency when possible.Compared to an unweighted and very small secondary term, this stronger formulation provides a clearer optimization signal, helping the solver distinguish between solutions with identical"
+    ],
+    "keywords": [
+      "This",
+      "strategy",
+      "assigns",
+      "larger",
+      "weights",
+      "larger",
+      "LLMs",
+      "encouraging"
+    ],
+    "source_text": "This strategy assigns larger weights to larger LLMs, encouraging the solver to reduce their latency when possible.Compared to an unweighted and very small secondary term, this stronger formulation provides a clearer optimization signal, helping the solver distinguish between solutions with identical makespan and converge faster to high-quality solutions."
+  },
+  {
+    "paragraph_id": "p29-0312",
+    "translation": "Optimization on ILP solver.The ILP solver, i.e., CBC solver, was carefully tuned by the LLM. We summarize the details in Table 7.These settings directly accelerate ILP convergence while maintaining solution quality withi",
+    "info_points": [
+      "We summarize the details in Table 7.These settings directly accelerate ILP convergence while maintaining solution quality within a negligible 0.3% optimality gap."
+    ],
+    "keywords": [
+      "Optimization",
+      "solver",
+      "solver",
+      "solver",
+      "carefully",
+      "tuned",
+      "summarize",
+      "details"
+    ],
+    "source_text": "Optimization on ILP solver.The ILP solver, i.e., CBC solver, was carefully tuned by the LLM. We summarize the details in Table 7.These settings directly accelerate ILP convergence while maintaining solution quality within a negligible 0.3% optimality gap."
+  }
+]

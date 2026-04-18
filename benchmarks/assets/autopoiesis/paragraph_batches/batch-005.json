@@ -1,0 +1,202 @@
+[
+  {
+    "paragraph_id": "p07-0049",
+    "translation": "5.1 Problem Formulation",
+    "info_points": [
+      "5.1 Problem Formulation"
+    ],
+    "keywords": [
+      "Problem",
+      "Formulation"
+    ],
+    "source_text": "5.1 Problem Formulation"
+  },
+  {
+    "paragraph_id": "p07-0050",
+    "translation": "Objective.Given a runtime trace that captures evolving workload and cluster conditions (i.e., the snapshotted runtime trace mentioned in §4),AUTOPOIESISseeks to evolve a serving policy that minimizes the end-to-end trace",
+    "info_points": [
+      "Objective.Given a runtime trace that captures evolving workload and cluster conditions (i.e., the snapshotted runtime trace mentioned in §4),AUTOPOIESISseeks to evolve a serving policy that minimizes the end-to-end trace completion time Ttotal."
+    ],
+    "keywords": [
+      "Objective",
+      "Given",
+      "runtime",
+      "trace",
+      "that",
+      "captures",
+      "evolving",
+      "workload"
+    ],
+    "source_text": "Objective.Given a runtime trace that captures evolving workload and cluster conditions (i.e., the snapshotted runtime trace mentioned in §4),AUTOPOIESISseeks to evolve a serving policy that minimizes the end-to-end trace completion time Ttotal."
+  },
+  {
+    "paragraph_id": "p07-0051",
+    "translation": "Continuousexecutionconstraint.AsisstandardinonlineLLMserving[2,11,12],thesystemoperates continuously:It does not pause during scheduling or reconfiguration.When a rescheduling event is triggered, the scheduler computes a",
+    "info_points": [
+      "Continuousexecutionconstraint.AsisstandardinonlineLLMserving[2,11,12],thesystemoperates continuously:It does not pause during scheduling or reconfiguration.When a rescheduling event is triggered, the scheduler computes a new serving plan while the cluster continues serving under the previous (now st"
+    ],
+    "keywords": [
+      "Continuousexecutionconstraint",
+      "AsisstandardinonlineLLMserving",
+      "thesystemoperates",
+      "continuously",
+      "does",
+      "pause",
+      "during",
+      "scheduling"
+    ],
+    "source_text": "Continuousexecutionconstraint.AsisstandardinonlineLLMserving[2,11,12],thesystemoperates continuously:It does not pause during scheduling or reconfiguration.When a rescheduling event is triggered, the scheduler computes a new serving plan while the cluster continues serving under the previous (now stale) plan.Once the new plan is ready, the cluster reconfigures to it; during reconfiguration, the overlapping portion of the serving plan continues serving, while the non-overlapping portion is being transitioned, resulting in degradedthroughputproportionaltothereconfigurationmagnitude.Thisconstraintisthecauseofthe threeruntimetrade-offsidentifiedin§1:Asservingneverpauses,everyschedulingdecisionandevery reconfiguration action has a direct, concurrent impact on serving performance, coupling these costs into the trade-off space that must be navigated."
+  },
+  {
+    "paragraph_id": "p07-0052",
+    "translation": "Serving policy formulation.Under the continuous execution constraint, navigating the runtime trade-off space reduces to two decisions:When to reschedule and how to reschedule.We formalize these as a pair of co-evolved fu",
+    "info_points": [
+      "Serving policy formulation.Under the continuous execution constraint, navigating the runtime trade-off space reduces to two decisions:When to reschedule and how to reschedule.We formalize these as a pair of co-evolved functions that together constitute the serving policy:"
+    ],
+    "keywords": [
+      "Serving",
+      "policy",
+      "formulation",
+      "Under",
+      "continuous",
+      "execution",
+      "constraint",
+      "navigating"
+    ],
+    "source_text": "Serving policy formulation.Under the continuous execution constraint, navigating the runtime trade-off space reduces to two decisions:When to reschedule and how to reschedule.We formalize these as a pair of co-evolved functions that together constitute the serving policy:"
+  },
+  {
+    "paragraph_id": "p07-0053",
+    "translation": "•should_reschedule(ctx) →{0, 1}, the rescheduling strategy that determines whether current condi- tions have shifted sufficiently to justify rescheduling.This controls the rescheduling frequency N within the given trace ",
+    "info_points": [
+      "•should_reschedule(ctx) →{0, 1}, the rescheduling strategy that determines whether current condi- tions have shifted sufficiently to justify rescheduling.This controls the rescheduling frequency N within the given trace (Trade-off (i))."
+    ],
+    "keywords": [
+      "should_reschedule",
+      "rescheduling",
+      "strategy",
+      "that",
+      "determines",
+      "whether",
+      "current",
+      "condi-"
+    ],
+    "source_text": "•should_reschedule(ctx) →{0, 1}, the rescheduling strategy that determines whether current condi- tions have shifted sufficiently to justify rescheduling.This controls the rescheduling frequency N within the given trace (Trade-off (i))."
+  },
+  {
+    "paragraph_id": "p07-0054",
+    "translation": "•schedule(ctx) →plan, the scheduling algorithm that produces a new serving plan, which controls both the scheduling overhead (Trade-off (ii)) and the reconfiguration magnitude of each new plan relative to the old plan.(T",
+    "info_points": [
+      "•schedule(ctx) →plan, the scheduling algorithm that produces a new serving plan, which controls both the scheduling overhead (Trade-off (ii)) and the reconfiguration magnitude of each new plan relative to the old plan.(Trade-off (iii))."
+    ],
+    "keywords": [
+      "schedule",
+      "plan",
+      "scheduling",
+      "algorithm",
+      "that",
+      "produces",
+      "serving",
+      "plan"
+    ],
+    "source_text": "•schedule(ctx) →plan, the scheduling algorithm that produces a new serving plan, which controls both the scheduling overhead (Trade-off (ii)) and the reconfiguration magnitude of each new plan relative to the old plan.(Trade-off (iii))."
+  },
+  {
+    "paragraph_id": "p07-0055",
+    "translation": "Both functions receive a shared context ctx, a state observation captured at each monitoring point during thetrace.Eachobservationcontainstheworkloadandclusterconditionsatthatmoment,alongwiththe currently deployed plan (",
+    "info_points": [
+      "Both functions receive a shared context ctx, a state observation captured at each monitoring point during thetrace.Eachobservationcontainstheworkloadandclusterconditionsatthatmoment,alongwiththe currently deployed plan (or ∅at cold start).For instance, when request arrival rates surge at a particula"
+    ],
+    "keywords": [
+      "Both",
+      "functions",
+      "receive",
+      "shared",
+      "context",
+      "state",
+      "observation",
+      "captured"
+    ],
+    "source_text": "Both functions receive a shared context ctx, a state observation captured at each monitoring point during thetrace.Eachobservationcontainstheworkloadandclusterconditionsatthatmoment,alongwiththe currently deployed plan (or ∅at cold start).For instance, when request arrival rates surge at a particular point in the trace, should_reschedule evaluates through its internal logic whether the shift is significant enough to incur a rescheduling event; if rescheduling is triggered, schedule determines the new serving plan.These two functions jointly dictate every scheduling and reconfiguration decision throughout the trace, and their behavior directly determines the end-to-end trace completion time Ttotalas defined by the following execution model."
+  },
+  {
+    "paragraph_id": "p07-0056",
+    "translation": "Execution model.We now formalize the cost structure that arises when these two functions execute under the continuous execution constraint.We illustrate the intervals and phases of the execution model in Figure 4. The fi",
+    "info_points": [
+      "Execution model.We now formalize the cost structure that arises when these two functions execute under the continuous execution constraint.We illustrate the intervals and phases of the execution model in Figure 4."
+    ],
+    "keywords": [
+      "Execution",
+      "model",
+      "formalize",
+      "cost",
+      "structure",
+      "that",
+      "arises",
+      "when"
+    ],
+    "source_text": "Execution model.We now formalize the cost structure that arises when these two functions execute under the continuous execution constraint.We illustrate the intervals and phases of the execution model in Figure 4. The first rescheduling interval is a cold start:schedule computes plan1, incurring scheduling cost tsched(1) (including the model initialization cost), and the system then serves under it, incurring serving cost tserve(1). Eachsubsequentintervali≥2,triggeredwhenshould_reschedulereturnstrueatamonitoringpoint, follows a three-phase pattern:"
+  },
+  {
+    "paragraph_id": "p08-0057",
+    "translation": "Sch. Re. Serv. Sch. Re. Serv. Sch. Serv.",
+    "info_points": [
+      "Sch."
+    ],
+    "keywords": [
+      "Serv",
+      "Serv",
+      "Serv"
+    ],
+    "source_text": "Sch. Re. Serv. Sch. Re. Serv. Sch. Serv."
+  },
+  {
+    "paragraph_id": "p08-0058",
+    "translation": "Serving under plan,-.Transitioning to plan, Serving under plan,",
+    "info_points": [
+      "Serving under plan,-.Transitioning to plan, Serving under plan,"
+    ],
+    "keywords": [
+      "Serving",
+      "under",
+      "plan",
+      "Transitioning",
+      "plan",
+      "Serving",
+      "under",
+      "plan"
+    ],
+    "source_text": "Serving under plan,-.Transitioning to plan, Serving under plan,"
+  },
+  {
+    "paragraph_id": "p08-0059",
+    "translation": "3 Scheduling Reconfig. Serving",
+    "info_points": [
+      "3 Scheduling Reconfig."
+    ],
+    "keywords": [
+      "Scheduling",
+      "Reconfig",
+      "Serving"
+    ],
+    "source_text": "3 Scheduling Reconfig. Serving"
+  },
+  {
+    "paragraph_id": "p08-0060",
+    "translation": "Figure 4Execution model illustration.1 ⃝Rescheduling intervals composing Ttotal:The first interval is a cold start, while subsequent intervals are triggered by should_reschedule and each contains three phases.2 ⃝Detailed",
+    "info_points": [
+      "Figure 4Execution model illustration.1 ⃝Rescheduling intervals composing Ttotal:The first interval is a cold start, while subsequent intervals are triggered by should_reschedule and each contains three phases.2 ⃝Detailed view of an interval (i ≥2) with three phases:Scheduling, reconfiguration, and s"
+    ],
+    "keywords": [
+      "Figure",
+      "Execution",
+      "model",
+      "illustration",
+      "Rescheduling",
+      "intervals",
+      "composing",
+      "Ttotal"
+    ],
+    "source_text": "Figure 4Execution model illustration.1 ⃝Rescheduling intervals composing Ttotal:The first interval is a cold start, while subsequent intervals are triggered by should_reschedule and each contains three phases.2 ⃝Detailed view of an interval (i ≥2) with three phases:Scheduling, reconfiguration, and serving.3 ⃝Example runtime efficiency profile:Efficiency is degraded during scheduling and reconfiguration, and maximized during serving."
+  }
+]

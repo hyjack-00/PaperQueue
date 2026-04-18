@@ -1,0 +1,205 @@
+[
+  {
+    "paragraph_id": "p14-0121",
+    "translation": "Convergence analysis.As shown in Figure 8, we evaluate the convergence behavior ofAUTOPOIESIS’s evolution process under different workload characteristics in the heterogeneous cluster setup.Under volatile and stable work",
+    "info_points": [
+      "Convergence analysis.As shown in Figure 8, we evaluate the convergence behavior ofAUTOPOIESIS’s evolution process under different workload characteristics in the heterogeneous cluster setup.Under volatile and stable workloadperiods,theevolutionconvergeswithinapproximately80and60iterations(lessthan10"
+    ],
+    "keywords": [
+      "Convergence",
+      "analysis",
+      "shown",
+      "Figure",
+      "evaluate",
+      "convergence",
+      "behavior",
+      "ofAUTOPOIESIS"
+    ],
+    "source_text": "Convergence analysis.As shown in Figure 8, we evaluate the convergence behavior ofAUTOPOIESIS’s evolution process under different workload characteristics in the heterogeneous cluster setup.Under volatile and stable workloadperiods,theevolutionconvergeswithinapproximately80and60iterations(lessthan10and8 minutes), respectively.Both settings reach a stable plateau, confirming that the evolutionary process reliably discovers high-quality policies regardless of workload characteristics.We note that the evaluation stage of the evolutionary search is inherently parallelizable, as population candidates are evaluated independently; with 10 parallel evaluation threads, the evolution process can be accelerated by up to 8×."
+  },
+  {
+    "paragraph_id": "p15-0122",
+    "translation": "Figure9Normalized evolution time across four different runtime snapshots,comparing cold-start evolution (Evolve) against warm-start re-evolution (Evolve warm-start).",
+    "info_points": [
+      "Figure9Normalized evolution time across four different runtime snapshots,comparing cold-start evolution (Evolve) against warm-start re-evolution (Evolve warm-start)."
+    ],
+    "keywords": [
+      "Figure9Normalized",
+      "evolution",
+      "time",
+      "across",
+      "four",
+      "different",
+      "runtime",
+      "snapshots"
+    ],
+    "source_text": "Figure9Normalized evolution time across four different runtime snapshots,comparing cold-start evolution (Evolve) against warm-start re-evolution (Evolve warm-start)."
+  },
+  {
+    "paragraph_id": "p15-0123",
+    "translation": "Table 2End-to-end comparison under workload fluctuation.",
+    "info_points": [
+      "Table 2End-to-end comparison under workload fluctuation."
+    ],
+    "keywords": [
+      "Table",
+      "End-to-end",
+      "comparison",
+      "under",
+      "workload",
+      "fluctuation"
+    ],
+    "source_text": "Table 2End-to-end comparison under workload fluctuation."
+  },
+  {
+    "paragraph_id": "p15-0124",
+    "translation": "Trace Policy N Σtstale Σtreconfig Σtserve Overall Thpt Greedy 10 65.1s 244.8s 422.1s 95,723 t/s ILP 1 104.7s 0.0s 686.5s 88,558 t/s Ours 9 17.5s 217.6s 416.3s 107,578 t/s Greedy 10 27.2s 38.0s 120.5s 436,353 t/s ILP 1 34",
+    "info_points": [
+      "Trace Policy N Σtstale Σtreconfig Σtserve Overall Thpt Greedy 10 65.1s 244.8s 422.1s 95,723 t/s ILP 1 104.7s 0.0s 686.5s 88,558 t/s Ours 9 17.5s 217.6s 416.3s 107,578 t/s Greedy 10 27.2s 38.0s 120.5s 436,353 t/s ILP 1 34.3s 0.0s 113.3s 548,851 t/s Ours 2 4.3s 4.2s 115.8s 651,222 t/s Warm-startimpact"
+    ],
+    "keywords": [
+      "Trace",
+      "Policy",
+      "tstale",
+      "treconfig",
+      "tserve",
+      "Overall",
+      "Thpt",
+      "Greedy"
+    ],
+    "source_text": "Trace Policy N Σtstale Σtreconfig Σtserve Overall Thpt Greedy 10 65.1s 244.8s 422.1s 95,723 t/s ILP 1 104.7s 0.0s 686.5s 88,558 t/s Ours 9 17.5s 217.6s 416.3s 107,578 t/s Greedy 10 27.2s 38.0s 120.5s 436,353 t/s ILP 1 34.3s 0.0s 113.3s 548,851 t/s Ours 2 4.3s 4.2s 115.8s 651,222 t/s Warm-startimpactonevolutionprocess.AsshowninFigure9,warm-startre-evolutioneffectivelyreduces evolutiontimeinthemajorityofsnapshots,byupto83%andonaverage79%.Thisconfirmsthatwhen consecutive snapshots reflect gradually shifting conditions, previously evolved policies serve as strong initial- ization points, enabling the LLM to apply targeted refinements rather than re-exploring the trade-off space fromscratch.However,whenruntimeconditionsshiftsubstantiallysuchthatthepriorpopulationoffers noreusablestructure,thewarm-startedsearchconvergesnofasterthanacoldstart.Overall,warm-start re-evolution enablesAUTOPOIESISto allocateits evolutionary budgetmore efficiently,avoidingredundant exploration when runtime conditions are relatively stable."
+  },
+  {
+    "paragraph_id": "p15-0125",
+    "translation": "8 System Analysis and Discussion",
+    "info_points": [
+      "8 System Analysis and Discussion"
+    ],
+    "keywords": [
+      "System",
+      "Analysis",
+      "Discussion"
+    ],
+    "source_text": "8 System Analysis and Discussion"
+  },
+  {
+    "paragraph_id": "p15-0126",
+    "translation": "Thissectioncomplements§7withcontrolledcasestudies.Eachstudyisolatesaspecificworkloadregime (e.g.,volatileorstable)andcomparestheevolvedpolicyagainststaticbaselinesatoppositeextremesof the trade-off space (e.g., greedy vs",
+    "info_points": [
+      "Thissectioncomplements§7withcontrolledcasestudies.Eachstudyisolatesaspecificworkloadregime (e.g.,volatileorstable)andcomparestheevolvedpolicyagainststaticbaselinesatoppositeextremesof the trade-off space (e.g., greedy vs.ILP), revealing how our LLM-driven synthesis workflow (§5) navigates runtime tr"
+    ],
+    "keywords": [
+      "Thissectioncomplements",
+      "withcontrolledcasestudies",
+      "Eachstudyisolatesaspecificworkloadregime",
+      "volatileorstable",
+      "andcomparestheevolvedpolicyagainststaticbaselinesatoppositeextremesof",
+      "trade-off",
+      "space",
+      "greedy"
+    ],
+    "source_text": "Thissectioncomplements§7withcontrolledcasestudies.Eachstudyisolatesaspecificworkloadregime (e.g.,volatileorstable)andcomparestheevolvedpolicyagainststaticbaselinesatoppositeextremesof the trade-off space (e.g., greedy vs.ILP), revealing how our LLM-driven synthesis workflow (§5) navigates runtime trade-offs."
+  },
+  {
+    "paragraph_id": "p15-0127",
+    "translation": "8.1 Workload Fluctuation",
+    "info_points": [
+      "8.1 Workload Fluctuation"
+    ],
+    "keywords": [
+      "Workload",
+      "Fluctuation"
+    ],
+    "source_text": "8.1 Workload Fluctuation"
+  },
+  {
+    "paragraph_id": "p15-0128",
+    "translation": "Setup.We consider an LLM serving deployment at the Swiss AI Center [34], where a heterogeneous GPU cluster serves multiple LLMs under dynamic workloads.The serving policy must manage scheduling, reconfiguration, and serv",
+    "info_points": [
+      "Setup.We consider an LLM serving deployment at the Swiss AI Center [34], where a heterogeneous GPU cluster serves multiple LLMs under dynamic workloads.The serving policy must manage scheduling, reconfiguration, and serving trade-offs, and determine the rescheduling frequency to minimize overall sys"
+    ],
+    "keywords": [
+      "Setup",
+      "consider",
+      "serving",
+      "deployment",
+      "Swiss",
+      "Center",
+      "where",
+      "heterogeneous"
+    ],
+    "source_text": "Setup.We consider an LLM serving deployment at the Swiss AI Center [34], where a heterogeneous GPU cluster serves multiple LLMs under dynamic workloads.The serving policy must manage scheduling, reconfiguration, and serving trade-offs, and determine the rescheduling frequency to minimize overall system execution time as workload conditions shift."
+  },
+  {
+    "paragraph_id": "p15-0129",
+    "translation": "Traces.We subsample two workload traces from Swiss AI Center [34] with distinct fluctuation patterns:A volatile trace with frequently changing characteristics and a stable trace with seldom changing characteristics. Deta",
+    "info_points": [
+      "Traces.We subsample two workload traces from Swiss AI Center [34] with distinct fluctuation patterns:A volatile trace with frequently changing characteristics and a stable trace with seldom changing characteristics."
+    ],
+    "keywords": [
+      "Traces",
+      "subsample",
+      "workload",
+      "traces",
+      "from",
+      "Swiss",
+      "Center",
+      "with"
+    ],
+    "source_text": "Traces.We subsample two workload traces from Swiss AI Center [34] with distinct fluctuation patterns:A volatile trace with frequently changing characteristics and a stable trace with seldom changing characteristics. DetailedschedulingproblemformulationandworkloadtraceinformationareshowninAppendixCand Appendix H."
+  },
+  {
+    "paragraph_id": "p15-0130",
+    "translation": "Baselines.We compare our evolved policy against two static baselines that represent opposite extremes of the trade-off space:A greedy-based policy optimized for scheduling speed, and an ILP-based policy optimized for pla",
+    "info_points": [
+      "Baselines.We compare our evolved policy against two static baselines that represent opposite extremes of the trade-off space:A greedy-based policy optimized for scheduling speed, and an ILP-based policy optimized for plan quality, both with manually tuned rescheduling frequencies."
+    ],
+    "keywords": [
+      "Baselines",
+      "compare",
+      "evolved",
+      "policy",
+      "against",
+      "static",
+      "baselines",
+      "that"
+    ],
+    "source_text": "Baselines.We compare our evolved policy against two static baselines that represent opposite extremes of the trade-off space:A greedy-based policy optimized for scheduling speed, and an ILP-based policy optimized for plan quality, both with manually tuned rescheduling frequencies."
+  },
+  {
+    "paragraph_id": "p15-0131",
+    "translation": "Resultsanalysis.Table2summarizestheresults.Averagedacrossbothtraces,thegreedy-basedpolicy reschedules at every transition (N=10), achieving comparable serving latency to the evolved policy (271.3s vs. 266.1s) but accumul",
+    "info_points": [
+      "Resultsanalysis.Table2summarizestheresults.Averagedacrossbothtraces,thegreedy-basedpolicy reschedules at every transition (N=10), achieving comparable serving latency to the evolved policy (271.3s vs."
+    ],
+    "keywords": [
+      "Resultsanalysis",
+      "Table2summarizestheresults",
+      "Averagedacrossbothtraces",
+      "thegreedy-basedpolicy",
+      "reschedules",
+      "every",
+      "transition",
+      "achieving"
+    ],
+    "source_text": "Resultsanalysis.Table2summarizestheresults.Averagedacrossbothtraces,thegreedy-basedpolicy reschedules at every transition (N=10), achieving comparable serving latency to the evolved policy (271.3s vs. 266.1s) but accumulating 1.5× higher combined scheduling and reconfiguration overhead (187.6s vs.121.8s, composed of 46.1s scheduling + 141.4s reconfiguration), resulting in a 1.2× degradation in Ttotalcompared to the evolved policy (458.8s vs.387.8s).The ILP-based policy reschedules only once at initialization (N=1),"
+  },
+  {
+    "paragraph_id": "p16-0132",
+    "translation": "reducing combined overhead to 69.5s but serving under a stale plan as workload conditions shift, producing 50%higherservinglatencythantheevolvedpolicy(399.9svs.266.1s)anda1.2×degradationinTtotal (469.4s vs.387.8s).Notabl",
+    "info_points": [
+      "reducing combined overhead to 69.5s but serving under a stale plan as workload conditions shift, producing 50%higherservinglatencythantheevolvedpolicy(399.9svs.266.1s)anda1.2×degradationinTtotal (469.4s vs.387.8s).Notably, the greedy-based policy outperforms the ILP-based policy on the volatile trac"
+    ],
+    "keywords": [
+      "reducing",
+      "combined",
+      "overhead",
+      "serving",
+      "under",
+      "stale",
+      "plan",
+      "workload"
+    ],
+    "source_text": "reducing combined overhead to 69.5s but serving under a stale plan as workload conditions shift, producing 50%higherservinglatencythantheevolvedpolicy(399.9svs.266.1s)anda1.2×degradationinTtotal (469.4s vs.387.8s).Notably, the greedy-based policy outperforms the ILP-based policy on the volatile trace (732.0s vs.791.2s) where frequent rescheduling matters most, while the ILP-based policy outperforms the greedy-based policy on the stable trace (147.6s vs.185.6s) where the initial plan remains effective, indicating that neither baseline is universally superior.The evolved policy reduces combined overhead to 121.8s (10.9s scheduling+110.9sreconfiguration)whilemaintainingthelowestservinglatency,adaptingtodifferent workloadtracesbybalancingtheschedulingandreconfigurationoverheadagainsttheservinglatencyto minimize the overall end-to-end time."
+  }
+]

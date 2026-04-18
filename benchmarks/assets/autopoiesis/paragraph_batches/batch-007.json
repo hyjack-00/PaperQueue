@@ -1,0 +1,211 @@
+[
+  {
+    "paragraph_id": "p09-0073",
+    "translation": "The program synthesis workflow addresses the challenge of navigating this trade-off space by combining the code-generation capabilities of an LLM with population-based exploration to systematically explore the serving po",
+    "info_points": [
+      "The program synthesis workflow addresses the challenge of navigating this trade-off space by combining the code-generation capabilities of an LLM with population-based exploration to systematically explore the serving policy space.It proceeds as follows:"
+    ],
+    "keywords": [
+      "program",
+      "synthesis",
+      "workflow",
+      "addresses",
+      "challenge",
+      "navigating",
+      "this",
+      "trade-off"
+    ],
+    "source_text": "The program synthesis workflow addresses the challenge of navigating this trade-off space by combining the code-generation capabilities of an LLM with population-based exploration to systematically explore the serving policy space.It proceeds as follows:"
+  },
+  {
+    "paragraph_id": "p09-0074",
+    "translation": "•Step 1:Initialization.A population of candidate policies is initialized according to the synthesis configura- tion (§5.4).Each candidate consists of a schedule and should_reschedule function pair, representing a complet",
+    "info_points": [
+      "•Step 1:Initialization.A population of candidate policies is initialized according to the synthesis configura- tion (§5.4).Each candidate consists of a schedule and should_reschedule function pair, representing a complete serving policy."
+    ],
+    "keywords": [
+      "Step",
+      "Initialization",
+      "population",
+      "candidate",
+      "policies",
+      "initialized",
+      "according",
+      "synthesis"
+    ],
+    "source_text": "•Step 1:Initialization.A population of candidate policies is initialized according to the synthesis configura- tion (§5.4).Each candidate consists of a schedule and should_reschedule function pair, representing a complete serving policy."
+  },
+  {
+    "paragraph_id": "p09-0075",
+    "translation": "•Step 2:Mutation.In each iteration, the LLM mutates candidates from the current population to generate new policies, guided by the synthesis configuration (§5.4).",
+    "info_points": [
+      "•Step 2:Mutation.In each iteration, the LLM mutates candidates from the current population to generate new policies, guided by the synthesis configuration (§5.4)."
+    ],
+    "keywords": [
+      "Step",
+      "Mutation",
+      "each",
+      "iteration",
+      "mutates",
+      "candidates",
+      "from",
+      "current"
+    ],
+    "source_text": "•Step 2:Mutation.In each iteration, the LLM mutates candidates from the current population to generate new policies, guided by the synthesis configuration (§5.4)."
+  },
+  {
+    "paragraph_id": "p09-0076",
+    "translation": "•Step 3:Evaluation and feedback.The evaluator (§5.3) executes the should_reschedule and schedule functions of each candidate on the snapshotted runtime trace, producing both the fitness score Ttotaland structured artifac",
+    "info_points": [
+      "•Step 3:Evaluation and feedback.The evaluator (§5.3) executes the should_reschedule and schedule functions of each candidate on the snapshotted runtime trace, producing both the fitness score Ttotaland structured artifact feedback to guide subsequent mutations (§5.4)."
+    ],
+    "keywords": [
+      "Step",
+      "Evaluation",
+      "feedback",
+      "evaluator",
+      "executes",
+      "should_reschedule",
+      "schedule",
+      "functions"
+    ],
+    "source_text": "•Step 3:Evaluation and feedback.The evaluator (§5.3) executes the should_reschedule and schedule functions of each candidate on the snapshotted runtime trace, producing both the fitness score Ttotaland structured artifact feedback to guide subsequent mutations (§5.4)."
+  },
+  {
+    "paragraph_id": "p09-0077",
+    "translation": "•Step 4:Selection and iteration.The synthesis workflow employs a MAP-Elites-inspired [23, 33] candidate selection mechanism combined with island-based population management [36] to retain high-performing candidateswhilem",
+    "info_points": [
+      "•Step 4:Selection and iteration.The synthesis workflow employs a MAP-Elites-inspired [23, 33] candidate selection mechanism combined with island-based population management [36] to retain high-performing candidateswhilemaintainingpopulationdiversity.Steps2-4repeatuntiltheevolutionaryprocess converge"
+    ],
+    "keywords": [
+      "Step",
+      "Selection",
+      "iteration",
+      "synthesis",
+      "workflow",
+      "employs",
+      "MAP-Elites-inspired",
+      "candidate"
+    ],
+    "source_text": "•Step 4:Selection and iteration.The synthesis workflow employs a MAP-Elites-inspired [23, 33] candidate selection mechanism combined with island-based population management [36] to retain high-performing candidateswhilemaintainingpopulationdiversity.Steps2-4repeatuntiltheevolutionaryprocess converges or a computational budget is exhausted."
+  },
+  {
+    "paragraph_id": "p09-0078",
+    "translation": "The illustration of this workflow is shown in Figure 5.This workflow operates within the control plane (§4), running asynchronously alongside live serving in the data plane.",
+    "info_points": [
+      "The illustration of this workflow is shown in Figure 5.This workflow operates within the control plane (§4), running asynchronously alongside live serving in the data plane."
+    ],
+    "keywords": [
+      "illustration",
+      "this",
+      "workflow",
+      "shown",
+      "Figure",
+      "This",
+      "workflow",
+      "operates"
+    ],
+    "source_text": "The illustration of this workflow is shown in Figure 5.This workflow operates within the control plane (§4), running asynchronously alongside live serving in the data plane."
+  },
+  {
+    "paragraph_id": "p09-0079",
+    "translation": "5.3 Evaluator",
+    "info_points": [
+      "5.3 Evaluator"
+    ],
+    "keywords": [
+      "Evaluator"
+    ],
+    "source_text": "5.3 Evaluator"
+  },
+  {
+    "paragraph_id": "p09-0080",
+    "translation": "The evaluator is the critical bridge between the synthesis process and real-world runtime dynamics.Its role is to faithfully assess how a candidate policy would perform under the current serving conditions, capturing the",
+    "info_points": [
+      "The evaluator is the critical bridge between the synthesis process and real-world runtime dynamics.Its role is to faithfully assess how a candidate policy would perform under the current serving conditions, capturing the deeply intertwined trade-offs that govern Ttotal.The evaluator achieves this th"
+    ],
+    "keywords": [
+      "evaluator",
+      "critical",
+      "bridge",
+      "between",
+      "synthesis",
+      "process",
+      "real-world",
+      "runtime"
+    ],
+    "source_text": "The evaluator is the critical bridge between the synthesis process and real-world runtime dynamics.Its role is to faithfully assess how a candidate policy would perform under the current serving conditions, capturing the deeply intertwined trade-offs that govern Ttotal.The evaluator achieves this through a trace-replay process backed by a serving simulator and produces structured artifact feedback to inform the mutation process."
+  },
+  {
+    "paragraph_id": "p10-0081",
+    "translation": "Table 1Example artifact feedback comparing a parent candidate with two child candidates.The cost breakdown helps identify the strengths of high-performing candidates and informs the direction of subsequent code modificat",
+    "info_points": [
+      "Table 1Example artifact feedback comparing a parent candidate with two child candidates.The cost breakdown helps identify the strengths of high-performing candidates and informs the direction of subsequent code modifications."
+    ],
+    "keywords": [
+      "Table",
+      "Example",
+      "artifact",
+      "feedback",
+      "comparing",
+      "parent",
+      "candidate",
+      "with"
+    ],
+    "source_text": "Table 1Example artifact feedback comparing a parent candidate with two child candidates.The cost breakdown helps identify the strengths of high-performing candidates and informs the direction of subsequent code modifications."
+  },
+  {
+    "paragraph_id": "p10-0082",
+    "translation": "Candidate N Σtstale Σtreconfig Σtserve Ttotal Parent 2 7.6s 12.0s 25.2s 44.8s Child A 5 5.5s 4.0s 24.0s 33.5s Child B 1 10.0s 17.0s 23.0s 50.0s Serving simulator.The serving simulator produces the cost estimates used by ",
+    "info_points": [
+      "Candidate N Σtstale Σtreconfig Σtserve Ttotal Parent 2 7.6s 12.0s 25.2s 44.8s Child A 5 5.5s 4.0s 24.0s 33.5s Child B 1 10.0s 17.0s 23.0s 50.0s Serving simulator.The serving simulator produces the cost estimates used by the evaluator during trace replay.It supports two types of estimation:(i) Servin"
+    ],
+    "keywords": [
+      "Candidate",
+      "tstale",
+      "treconfig",
+      "tserve",
+      "Ttotal",
+      "Parent",
+      "Child",
+      "Child"
+    ],
+    "source_text": "Candidate N Σtstale Σtreconfig Σtserve Ttotal Parent 2 7.6s 12.0s 25.2s 44.8s Child A 5 5.5s 4.0s 24.0s 33.5s Child B 1 10.0s 17.0s 23.0s 50.0s Serving simulator.The serving simulator produces the cost estimates used by the evaluator during trace replay.It supports two types of estimation:(i) Serving time estimation computes the expected serving time of a given plan under a given workload.It accepts four categories of input:The current workload characteristics (e.g., request arrival rates, sequence length distributions), model specifications (e.g., layer count, hidden size), hardware characteristics(e.g.,computeTFLOPS,memorybandwidth,inter-GPUcommunicationbandwidth),anda serving plan (i.e., workload assignment, resource allocation, and parallelism strategy).The output is used to derive both tserveand tstalein the execution model.(ii) Reconfiguration cost estimation computes the transition overhead between two consecutive serving plans.It accepts four categories of input:Model specifications, transmissionbandwidth,thepreviousplan,andthenewplan.Theoutputisusedtoderivetreconfiginthe execution model.Internally, the simulator analytically models serving details including per-operator execution time [37], continuous batching [15], model parallelism [26], and reconfiguration overhead [7].We detail the simulator’s analytical methodology and validate its fidelity in Appendix B."
+  },
+  {
+    "paragraph_id": "p10-0083",
+    "translation": "Evaluator process.Rather than evaluating candidates against synthetic benchmarks, the evaluator replays the actual runtime trace snapshotted from the data plane (§4) against each candidate policy.The replay proceeds in t",
+    "info_points": [
+      "Evaluator process.Rather than evaluating candidates against synthetic benchmarks, the evaluator replays the actual runtime trace snapshotted from the data plane (§4) against each candidate policy.The replay proceeds in three stages:(i) Monitoring and triggering:The evaluator monitors the simulated w"
+    ],
+    "keywords": [
+      "Evaluator",
+      "process",
+      "Rather",
+      "than",
+      "evaluating",
+      "candidates",
+      "against",
+      "synthetic"
+    ],
+    "source_text": "Evaluator process.Rather than evaluating candidates against synthetic benchmarks, the evaluator replays the actual runtime trace snapshotted from the data plane (§4) against each candidate policy.The replay proceeds in three stages:(i) Monitoring and triggering:The evaluator monitors the simulated workload at periodic time steps(e.g.,5secondsperstep).Ateachmonitoringpoint,thecandidate’sshould_reschedule functionis invoked to determine whether rescheduling is warranted.(ii) Scheduling and simulation:If rescheduling is triggered, the candidate’s schedule function produces a new plan, and the evaluator records its wall-clock scheduling time astsched.The evaluator then invokes the serving simulator to compute the remaining cost components for the triggered interval.(iii) Aggregation:The per-interval costs across all triggered intervals are aggregated into Ttotalas defined in Equation 13 (§5.1), ensuring that each candidate is scored against the runtime workload and cluster conditions observed during live serving."
+  },
+  {
+    "paragraph_id": "p10-0084",
+    "translation": "Artifact feedback.Beyond the scalar fitness score Ttotal, the evaluator produces a structured cost breakdown as artifact feedback to the synthesis configuration,which drives the LLM-based population mutation (Step 2).Ass",
+    "info_points": [
+      "Artifact feedback.Beyond the scalar fitness score Ttotal, the evaluator produces a structured cost breakdown as artifact feedback to the synthesis configuration,which drives the LLM-based population mutation (Step 2).AsshowninTable1,foreachevaluatedcandidate,thefeedbackreportstheobservedrescheduling"
+    ],
+    "keywords": [
+      "Artifact",
+      "feedback",
+      "Beyond",
+      "scalar",
+      "fitness",
+      "score",
+      "Ttotal",
+      "evaluator"
+    ],
+    "source_text": "Artifact feedback.Beyond the scalar fitness score Ttotal, the evaluator produces a structured cost breakdown as artifact feedback to the synthesis configuration,which drives the LLM-based population mutation (Step 2).AsshowninTable1,foreachevaluatedcandidate,thefeedbackreportstheobservedrescheduling frequency N and the accumulated cost for each component (Σtstale, Σtreconfig, Σtserve).By comparing the cost breakdown of a child candidate against its parent, the LLM can identify how its code modification shifted the cost structure.For example, in Table 1, Child A is characterized by higher rescheduling frequency (N:2 →5), loweraccumulatedstalecost(Σtstale:7.6s→5.5s),andreducedreconfigurationcost(Σtreconfig:12s→4s), yielding a net improvement in Ttotal.In contrast, Child B is characterized by lower rescheduling frequency (N:2 →1), higher accumulated stale cost (Σtstale:7.6s →10s), and increased reconfiguration cost (Σtreconfig: 12s →17s), degrading Ttotal.From this, the LLM can infer that lightweight, frequent rescheduling outperforms thorough, infrequent replanning under the current workload, and steer mutations accordingly."
+  }
+]

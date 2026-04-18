@@ -1,0 +1,210 @@
+[
+  {
+    "paragraph_id": "p24-0241",
+    "translation": "•SERVE-COST(σi):the serving latency (or execution time) to process workloads at timestamp i; •RECONFIG-COST(σi−1, σi):the reconfiguration overhead due to changes in scheduling decisions across consecutive timestamps, i.e",
+    "info_points": [
+      "•SERVE-COST(σi):the serving latency (or execution time) to process workloads at timestamp i; •RECONFIG-COST(σi−1, σi):the reconfiguration overhead due to changes in scheduling decisions across consecutive timestamps, i.e., from σi−1to σi; •STALE-COST(σi):the penalty incurred due to stale or delayed "
+    ],
+    "keywords": [
+      "SERVE-COST",
+      "serving",
+      "latency",
+      "execution",
+      "time",
+      "process",
+      "workloads",
+      "timestamp"
+    ],
+    "source_text": "•SERVE-COST(σi):the serving latency (or execution time) to process workloads at timestamp i; •RECONFIG-COST(σi−1, σi):the reconfiguration overhead due to changes in scheduling decisions across consecutive timestamps, i.e., from σi−1to σi; •STALE-COST(σi):the penalty incurred due to stale or delayed serving at timestamp i; •SCHED-COST:the scheduling overhead at the first timestamp."
+  },
+  {
+    "paragraph_id": "p24-0242",
+    "translation": "The end-to-end latency for serving the workload over the time horizon is:",
+    "info_points": [
+      "The end-to-end latency for serving the workload over the time horizon is:"
+    ],
+    "keywords": [
+      "end-to-end",
+      "latency",
+      "serving",
+      "workload",
+      "over",
+      "time",
+      "horizon"
+    ],
+    "source_text": "The end-to-end latency for serving the workload over the time horizon is:"
+  },
+  {
+    "paragraph_id": "p24-0243",
+    "translation": "Our objective is to find a sequence of scheduling plansσ={σ1, σ2, . . . , σN} that minimizes the total trace completion time: min σ Ttotal The search space of possible scheduling plans is combinatorial due to (i) heterog",
+    "info_points": [
+      "Our objective is to find a sequence of scheduling plansσ={σ1, σ2, ."
+    ],
+    "keywords": [
+      "objective",
+      "find",
+      "sequence",
+      "scheduling",
+      "plans",
+      "that",
+      "minimizes",
+      "total"
+    ],
+    "source_text": "Our objective is to find a sequence of scheduling plansσ={σ1, σ2, . . . , σN} that minimizes the total trace completion time: min σ Ttotal The search space of possible scheduling plans is combinatorial due to (i) heterogeneous device capabilities, (ii) multiple models and workload types, (iii) flexible parallel execution strategies, and (iv) temporal dependencies introduced by reconfiguration costs.Consequently, identifying the optimal sequence of scheduling plans is NP-hard.In practice, we seek efficient heuristic or approximate algorithms to find a near-optimal solution."
+  },
+  {
+    "paragraph_id": "p24-0244",
+    "translation": "Agentic Request Scheduling Formulation.Given a disaggregated prefill-decode serving cluster, we consider the problemofonlineschedulingformulti-callagenticworkflows.LetPandQdenotethesetsofprefilland decode instances, resp",
+    "info_points": [
+      "Agentic Request Scheduling Formulation.Given a disaggregated prefill-decode serving cluster, we consider the problemofonlineschedulingformulti-callagenticworkflows.LetPandQdenotethesetsofprefilland decode instances, respectively.Each decode instance has a finite token-capacity budget, and different "
+    ],
+    "keywords": [
+      "Agentic",
+      "Request",
+      "Scheduling",
+      "Formulation",
+      "Given",
+      "disaggregated",
+      "prefill-decode",
+      "serving"
+    ],
+    "source_text": "Agentic Request Scheduling Formulation.Given a disaggregated prefill-decode serving cluster, we consider the problemofonlineschedulingformulti-callagenticworkflows.LetPandQdenotethesetsofprefilland decode instances, respectively.Each decode instance has a finite token-capacity budget, and different instances may have different serving characteristics."
+  },
+  {
+    "paragraph_id": "p25-0245",
+    "translation": "Let Ω= {ω1, . . . , ωB} denote a set of workflow requests.Each workflow ωarrives over time and involves a series of LLM calls, each with an input length and an output length.A call becomes schedulable only after all of i",
+    "info_points": [
+      "Let Ω= {ω1, ."
+    ],
+    "keywords": [
+      "denote",
+      "workflow",
+      "requests",
+      "Each",
+      "workflow",
+      "arrives",
+      "over",
+      "time"
+    ],
+    "source_text": "Let Ω= {ω1, . . . , ωB} denote a set of workflow requests.Each workflow ωarrives over time and involves a series of LLM calls, each with an input length and an output length.A call becomes schedulable only after all of its predecessor calls have completed, so the scheduler must make decisions under online call revelation."
+  },
+  {
+    "paragraph_id": "p25-0246",
+    "translation": "Ateachschedulingtriggeri∈{1, . . . , N},thesystemobservesthecurrentlywaitingcallsandcomputesa scheduling plan σi.A plan specifies (i) the assignment of each waiting call to a prefill instance and a decode instance,and (i",
+    "info_points": [
+      "Ateachschedulingtriggeri∈{1, ."
+    ],
+    "keywords": [
+      "Ateachschedulingtriggeri",
+      "thesystemobservesthecurrentlywaitingcallsandcomputesa",
+      "scheduling",
+      "plan",
+      "plan",
+      "specifies",
+      "assignment",
+      "each"
+    ],
+    "source_text": "Ateachschedulingtriggeri∈{1, . . . , N},thesystemobservesthecurrentlywaitingcallsandcomputesa scheduling plan σi.A plan specifies (i) the assignment of each waiting call to a prefill instance and a decode instance,and (ii) the queue order on each instance.The plan must satisfy stage-wise capacity constraints: prefill instances process one call at a time, while decode instances must respect cumulative token-capacity limits."
+  },
+  {
+    "paragraph_id": "p25-0247",
+    "translation": "EachworkflowωhasacommittedhorizonSLOωandanactualcompletiontimeCω.Thequalityofa scheduling policy is measured by the completion ratio Cω/SLOω, and we use trace-level metrics such as 95th percentile, 99thpercentile, and me",
+    "info_points": [
+      "EachworkflowωhasacommittedhorizonSLOωandanactualcompletiontimeCω.Thequalityofa scheduling policy is measured by the completion ratio Cω/SLOω, and we use trace-level metrics such as 95th percentile, 99thpercentile, and mean Cω/SLOωto evaluate end-to-end performance."
+    ],
+    "keywords": [
+      "Eachworkflow",
+      "hasacommittedhorizonSLO",
+      "andanactualcompletiontimeC",
+      "Thequalityofa",
+      "scheduling",
+      "policy",
+      "measured",
+      "completion"
+    ],
+    "source_text": "EachworkflowωhasacommittedhorizonSLOωandanactualcompletiontimeCω.Thequalityofa scheduling policy is measured by the completion ratio Cω/SLOω, and we use trace-level metrics such as 95th percentile, 99thpercentile, and mean Cω/SLOωto evaluate end-to-end performance."
+  },
+  {
+    "paragraph_id": "p25-0248",
+    "translation": "Because scheduling is performed online, each plan σiincurs both a scheduling overhead and a serving cost.Let SCHED-COST(σi) denote the planning time at trigger i, and letSERVE-COST(σi) denote the resulting serving latenc",
+    "info_points": [
+      "Because scheduling is performed online, each plan σiincurs both a scheduling overhead and a serving cost.Let SCHED-COST(σi) denote the planning time at trigger i, and letSERVE-COST(σi) denote the resulting serving latency contribution.The total trace completion cost is:"
+    ],
+    "keywords": [
+      "Because",
+      "scheduling",
+      "performed",
+      "online",
+      "each",
+      "plan",
+      "iincurs",
+      "both"
+    ],
+    "source_text": "Because scheduling is performed online, each plan σiincurs both a scheduling overhead and a serving cost.Let SCHED-COST(σi) denote the planning time at trigger i, and letSERVE-COST(σi) denote the resulting serving latency contribution.The total trace completion cost is:"
+  },
+  {
+    "paragraph_id": "p25-0249",
+    "translation": "h SCHED-COST(σi) + SERVE-COST(σi) i (15) Ourobjectiveistofindasequenceofschedulingplansσ={σ1, σ2, . . . , σN}thatminimizesend-to-end workflowcompletiondegradation,i.e.,improveshigh-percentileandaverageCω/SLOωwhilekeeping",
+    "info_points": [
+      "h SCHED-COST(σi) + SERVE-COST(σi) i (15) Ourobjectiveistofindasequenceofschedulingplansσ={σ1, σ2, ."
+    ],
+    "keywords": [
+      "SCHED-COST",
+      "SERVE-COST",
+      "Ourobjectiveistofindasequenceofschedulingplans",
+      "thatminimizesend-to-end",
+      "workflowcompletiondegradation",
+      "improveshigh-percentileandaverageC",
+      "whilekeeping",
+      "schedulingoverheadlowenoughforonlineuse"
+    ],
+    "source_text": "h SCHED-COST(σi) + SERVE-COST(σi) i (15) Ourobjectiveistofindasequenceofschedulingplansσ={σ1, σ2, . . . , σN}thatminimizesend-to-end workflowcompletiondegradation,i.e.,improveshigh-percentileandaverageCω/SLOωwhilekeeping schedulingoverheadlowenoughforonlineuse.Thesearchspaceiscombinatorialduetoheterogeneous resources, multi-stage assignment and ordering decisions, token-capacity constraints, and online workflow revelation.Consequently, exact online optimization is expensive, and in practice we seek efficient schedulers that achieve a strong quality-latency trade-off."
+  },
+  {
+    "paragraph_id": "p25-0250",
+    "translation": "D Initialization Configuration",
+    "info_points": [
+      "D Initialization Configuration"
+    ],
+    "keywords": [
+      "Initialization",
+      "Configuration"
+    ],
+    "source_text": "D Initialization Configuration"
+  },
+  {
+    "paragraph_id": "p25-0251",
+    "translation": "InTable6,wepresenttheinitializationconfigurationofAUTOPOIESISfortheevolutionaryprocess.These configurations are fine-tuned to achieve the optimal performance in the experiments presented in our paper.",
+    "info_points": [
+      "InTable6,wepresenttheinitializationconfigurationofAUTOPOIESISfortheevolutionaryprocess.These configurations are fine-tuned to achieve the optimal performance in the experiments presented in our paper."
+    ],
+    "keywords": [
+      "InTable6",
+      "wepresenttheinitializationconfigurationofAUTOPOIESISfortheevolutionaryprocess",
+      "These",
+      "configurations",
+      "fine-tuned",
+      "achieve",
+      "optimal",
+      "performance"
+    ],
+    "source_text": "InTable6,wepresenttheinitializationconfigurationofAUTOPOIESISfortheevolutionaryprocess.These configurations are fine-tuned to achieve the optimal performance in the experiments presented in our paper."
+  },
+  {
+    "paragraph_id": "p25-0252",
+    "translation": "Table 6Configuration parameters used inAUTOPOIESISduring the evolutionary process.",
+    "info_points": [
+      "Table 6Configuration parameters used inAUTOPOIESISduring the evolutionary process."
+    ],
+    "keywords": [
+      "Table",
+      "Configuration",
+      "parameters",
+      "used",
+      "inAUTOPOIESISduring",
+      "evolutionary",
+      "process"
+    ],
+    "source_text": "Table 6Configuration parameters used inAUTOPOIESISduring the evolutionary process."
+  }
+]

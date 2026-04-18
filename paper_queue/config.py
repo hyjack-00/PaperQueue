@@ -69,6 +69,33 @@ class Settings:
     obsidian_sync_branch: str = os.environ.get("OBSIDIAN_SYNC_BRANCH", "main")
     obsidian_sync_subdir: str = os.environ.get("OBSIDIAN_SYNC_SUBDIR", str(_config_get("storage.subdir", "paper")))
     framework_version: str = _default_framework_version()
+    evaluation_assets_dir: Path = Path(
+        os.environ.get(
+            "PAPER_QUEUE_EVAL_ASSETS_DIR",
+            str(BASE_DIR / str(_config_get("evaluation.assets_dir", "benchmarks/assets"))),
+        )
+    )
+    evaluation_paragraph_batch_size: int = int(
+        os.environ.get("PAPER_QUEUE_EVAL_PARAGRAPH_BATCH_SIZE", str(_config_get("evaluation.paragraph_batch_size", "12")))
+    )
+    evaluation_self_review_rounds: int = int(
+        os.environ.get("PAPER_QUEUE_EVAL_SELF_REVIEW_ROUNDS", str(_config_get("evaluation.self_review_rounds", "3")))
+    )
+    evaluation_max_paragraph_chars: int = int(
+        os.environ.get("PAPER_QUEUE_EVAL_MAX_PARAGRAPH_CHARS", str(_config_get("evaluation.max_paragraph_chars", "1800")))
+    )
+    evaluation_agent_timeout_seconds: float = float(
+        os.environ.get(
+            "PAPER_QUEUE_EVAL_AGENT_TIMEOUT_SECONDS",
+            str(_config_get("evaluation.agent_timeout_seconds", "45")),
+        )
+    )
+    evaluation_swiftscholar_pdf_dir: Path = Path(
+        os.environ.get(
+            "PAPER_QUEUE_EVAL_SWIFTSCHOLAR_PDF_DIR",
+            str(_config_get("evaluation.swiftscholar_pdf_dir", "/workspace/paper_reading/benchmarks/swiftscholar_pdfs")),
+        )
+    )
     worker_poll_seconds: float = float(os.environ.get("PAPER_QUEUE_WORKER_POLL", "2.0"))
     recent_log_lines: int = int(os.environ.get("PAPER_QUEUE_RECENT_LOG_LINES", "8"))
     auth_cache_ttl_seconds: float = float(os.environ.get("PAPER_QUEUE_AUTH_CACHE_TTL", "60"))
@@ -93,6 +120,18 @@ class Settings:
     notes_prompt_file: str = str(_config_get("prompts.notes", "notes_v1.txt"))
     structure_prompt_file: str = str(_config_get("prompts.structure_analysis", "structure_analysis_v1.txt"))
     readability_prompt_file: str = str(_config_get("prompts.readability_review", "readability_review_v1.txt"))
+    benchmark_paragraph_points_prompt_file: str = str(
+        _config_get("prompts.benchmark_paragraph_points", "benchmark_paragraph_points_v1.txt")
+    )
+    benchmark_coverage_prompt_file: str = str(
+        _config_get("prompts.benchmark_coverage_review", "benchmark_coverage_review_v1.txt")
+    )
+    benchmark_placement_prompt_file: str = str(
+        _config_get("prompts.benchmark_placement_review", "benchmark_placement_review_v1.txt")
+    )
+    benchmark_length_prompt_file: str = str(
+        _config_get("prompts.benchmark_length_review", "benchmark_length_review_v1.txt")
+    )
 
     @property
     def skill_install_dir(self) -> Path:

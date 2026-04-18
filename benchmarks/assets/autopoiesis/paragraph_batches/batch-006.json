@@ -1,0 +1,209 @@
+[
+  {
+    "paragraph_id": "p08-0061",
+    "translation": "•Phase1:Scheduling.schedule(ctxi) generates the new plan plani;meanwhile, the system continues serving under previous plan plani−1at degraded efficiency due to the workload-plan mismatch.The stale serving cost tstale(i) ",
+    "info_points": [
+      "•Phase1:Scheduling.schedule(ctxi) generates the new plan plani;meanwhile, the system continues serving under previous plan plani−1at degraded efficiency due to the workload-plan mismatch.The stale serving cost tstale(i) corresponds to this scheduling period on the timeline."
+    ],
+    "keywords": [
+      "Phase1",
+      "Scheduling",
+      "schedule",
+      "ctxi",
+      "generates",
+      "plan",
+      "plani",
+      "meanwhile"
+    ],
+    "source_text": "•Phase1:Scheduling.schedule(ctxi) generates the new plan plani;meanwhile, the system continues serving under previous plan plani−1at degraded efficiency due to the workload-plan mismatch.The stale serving cost tstale(i) corresponds to this scheduling period on the timeline."
+  },
+  {
+    "paragraph_id": "p08-0062",
+    "translation": "•Phase2:Reconfiguration.Thesystemtransitionsfromplani−1toplani;meanwhile,theoverlapping portionoftheservingplancontinuesservingatreducedefficiencyasthenon-overlappingportionis being reconfigured (e.g., migrating KV cache",
+    "info_points": [
+      "•Phase2:Reconfiguration.Thesystemtransitionsfromplani−1toplani;meanwhile,theoverlapping portionoftheservingplancontinuesservingatreducedefficiencyasthenon-overlappingportionis being reconfigured (e.g., migrating KV caches, redistributing model weights, or adjusting parallelism configurations).The re"
+    ],
+    "keywords": [
+      "Phase2",
+      "Reconfiguration",
+      "Thesystemtransitionsfromplani",
+      "toplani",
+      "meanwhile",
+      "theoverlapping",
+      "portionoftheservingplancontinuesservingatreducedefficiencyasthenon-overlappingportionis",
+      "being"
+    ],
+    "source_text": "•Phase2:Reconfiguration.Thesystemtransitionsfromplani−1toplani;meanwhile,theoverlapping portionoftheservingplancontinuesservingatreducedefficiencyasthenon-overlappingportionis being reconfigured (e.g., migrating KV caches, redistributing model weights, or adjusting parallelism configurations).The reconfiguration serving cost treconfig(i) corresponds to this reconfiguration period on the timeline."
+  },
+  {
+    "paragraph_id": "p08-0063",
+    "translation": "•Phase 3:Serving.The system serves under the new plan planiat full efficiency until the next rescheduling trigger; all resources are now aligned with the current workload.The serving cost tserve(i) corresponds to this st",
+    "info_points": [
+      "•Phase 3:Serving.The system serves under the new plan planiat full efficiency until the next rescheduling trigger; all resources are now aligned with the current workload.The serving cost tserve(i) corresponds to this stable serving period on the timeline."
+    ],
+    "keywords": [
+      "Phase",
+      "Serving",
+      "system",
+      "serves",
+      "under",
+      "plan",
+      "planiat",
+      "full"
+    ],
+    "source_text": "•Phase 3:Serving.The system serves under the new plan planiat full efficiency until the next rescheduling trigger; all resources are now aligned with the current workload.The serving cost tserve(i) corresponds to this stable serving period on the timeline."
+  },
+  {
+    "paragraph_id": "p08-0064",
+    "translation": "The total trace completion time is therefore:",
+    "info_points": [
+      "The total trace completion time is therefore:"
+    ],
+    "keywords": [
+      "total",
+      "trace",
+      "completion",
+      "time",
+      "therefore"
+    ],
+    "source_text": "The total trace completion time is therefore:"
+  },
+  {
+    "paragraph_id": "p08-0065",
+    "translation": "h tstale(i) + treconfig(i) + tserve(i) i (1) whereNisnotafixedconstantbutdeterminedbyhowoftenshould_rescheduletriggersrescheduling during the trace,and each cost component within the summation reflects the behavior ofsch",
+    "info_points": [
+      "h tstale(i) + treconfig(i) + tserve(i) i (1) whereNisnotafixedconstantbutdeterminedbyhowoftenshould_rescheduletriggersrescheduling during the trace,and each cost component within the summation reflects the behavior ofschedule at the corresponding interval.The objective of our program synthesis workf"
+    ],
+    "keywords": [
+      "tstale",
+      "treconfig",
+      "tserve",
+      "whereNisnotafixedconstantbutdeterminedbyhowoftenshould_rescheduletriggersrescheduling",
+      "during",
+      "trace",
+      "each",
+      "cost"
+    ],
+    "source_text": "h tstale(i) + treconfig(i) + tserve(i) i (1) whereNisnotafixedconstantbutdeterminedbyhowoftenshould_rescheduletriggersrescheduling during the trace,and each cost component within the summation reflects the behavior ofschedule at the corresponding interval.The objective of our program synthesis workflow is to evolve the algorithmic imple- mentation of both should_reschedule and schedule, including their decision thresholds and computational strategies,tojointlyminimizeTtotal.Asthesetwofunctionsgoverneveryruntimedecisionduringserving, optimizing their implementation directly determines the system’s runtime behavior.Notably, this execution model naturally generalizes to diverse runtime dynamics, including workload fluctuations, cluster autoscaling, and spot instance preemptions, as any such event is reflected in ctx and processed through the same trigger- schedule-reconfigure pipeline.Moreover, the cost components within each phase can be calibrated to match anyspecificsystemimplementation(e.g.,thespecializedreconfigurationmechanisminSpotServe[11]), making the formulation portable across different serving frameworks."
+  },
+  {
+    "paragraph_id": "p08-0066",
+    "translation": "Trade-off space.However, minimizing Ttotalis not straightforward:The cost components in Equation 13 (i.e., tstale, treconfig, tserving) are interdependent, and improvements along one axis frequently come at the expense o",
+    "info_points": [
+      "Trade-off space.However, minimizing Ttotalis not straightforward:The cost components in Equation 13 (i.e., tstale, treconfig, tserving) are interdependent, and improvements along one axis frequently come at the expense of another, creating a multi-dimensional trade-off space that should_reschedule a"
+    ],
+    "keywords": [
+      "Trade-off",
+      "space",
+      "However",
+      "minimizing",
+      "Ttotalis",
+      "straightforward",
+      "cost",
+      "components"
+    ],
+    "source_text": "Trade-off space.However, minimizing Ttotalis not straightforward:The cost components in Equation 13 (i.e., tstale, treconfig, tserving) are interdependent, and improvements along one axis frequently come at the expense of another, creating a multi-dimensional trade-off space that should_reschedule and schedule must jointly navigate.The trade-offs characterized empirically in §3 are examples of this broader space:"
+  },
+  {
+    "paragraph_id": "p08-0067",
+    "translation": "•Trade-off(i):Reschedulingfrequencyvs.per-intervaloverhead.Frequentrescheduling(largeN)keeps plans fresh but accumulates scheduling and reconfiguration overhead; infrequent rescheduling (small N) avoids this overhead but",
+    "info_points": [
+      "•Trade-off(i):Reschedulingfrequencyvs.per-intervaloverhead.Frequentrescheduling(largeN)keeps plans fresh but accumulates scheduling and reconfiguration overhead; infrequent rescheduling (small N) avoids this overhead but permits serving under suboptimal plans."
+    ],
+    "keywords": [
+      "Trade-off",
+      "Reschedulingfrequencyvs",
+      "per-intervaloverhead",
+      "Frequentrescheduling",
+      "largeN",
+      "keeps",
+      "plans",
+      "fresh"
+    ],
+    "source_text": "•Trade-off(i):Reschedulingfrequencyvs.per-intervaloverhead.Frequentrescheduling(largeN)keeps plans fresh but accumulates scheduling and reconfiguration overhead; infrequent rescheduling (small N) avoids this overhead but permits serving under suboptimal plans."
+  },
+  {
+    "paragraph_id": "p09-0068",
+    "translation": "Figure 5Overview of LLM-driven program synthesis workflow.The evaluator (§5.3) scores each candidate and produces artifact feedback.The synthesis configuration (§5.4) configures the population initialization and guides m",
+    "info_points": [
+      "Figure 5Overview of LLM-driven program synthesis workflow.The evaluator (§5.3) scores each candidate and produces artifact feedback.The synthesis configuration (§5.4) configures the population initialization and guides mutations using the artifact feedback."
+    ],
+    "keywords": [
+      "Figure",
+      "Overview",
+      "LLM-driven",
+      "program",
+      "synthesis",
+      "workflow",
+      "evaluator",
+      "scores"
+    ],
+    "source_text": "Figure 5Overview of LLM-driven program synthesis workflow.The evaluator (§5.3) scores each candidate and produces artifact feedback.The synthesis configuration (§5.4) configures the population initialization and guides mutations using the artifact feedback."
+  },
+  {
+    "paragraph_id": "p09-0069",
+    "translation": "•Trade-off (ii):Scheduling thoroughness vs. stale serving cost.Thorough scheduling produces higher-quality plans(lowertserve)butextendsthestale-planservingwindow(highertstale);lightweightscheduling minimizes stale cost b",
+    "info_points": [
+      "•Trade-off (ii):Scheduling thoroughness vs."
+    ],
+    "keywords": [
+      "Trade-off",
+      "Scheduling",
+      "thoroughness",
+      "stale",
+      "serving",
+      "cost",
+      "Thorough",
+      "scheduling"
+    ],
+    "source_text": "•Trade-off (ii):Scheduling thoroughness vs. stale serving cost.Thorough scheduling produces higher-quality plans(lowertserve)butextendsthestale-planservingwindow(highertstale);lightweightscheduling minimizes stale cost but may degrade plan quality."
+  },
+  {
+    "paragraph_id": "p09-0070",
+    "translation": "•Trade-off (iii):Reconfiguration aggressiveness vs. reconfiguration overhead.Aggressive reconfiguration achievesagloballyoptimalplan(lowertserve)butincursprolongedtransitiondegradation(higher treconfig); conservative rec",
+    "info_points": [
+      "•Trade-off (iii):Reconfiguration aggressiveness vs."
+    ],
+    "keywords": [
+      "Trade-off",
+      "Reconfiguration",
+      "aggressiveness",
+      "reconfiguration",
+      "overhead",
+      "Aggressive",
+      "reconfiguration",
+      "achievesagloballyoptimalplan"
+    ],
+    "source_text": "•Trade-off (iii):Reconfiguration aggressiveness vs. reconfiguration overhead.Aggressive reconfiguration achievesagloballyoptimalplan(lowertserve)butincursprolongedtransitiondegradation(higher treconfig); conservative reconfiguration minimizes transition cost but yields limited serving improvement."
+  },
+  {
+    "paragraph_id": "p09-0071",
+    "translation": "Toprovideconcreteintuitionforhowthesetrade-offsmanifestinpractice,wepresentadetailedanalysis in §8, illustrating how the optimal runtime decisions differ across diverse serving scenarios such as workload fluctuations [2]",
+    "info_points": [
+      "Toprovideconcreteintuitionforhowthesetrade-offsmanifestinpractice,wepresentadetailedanalysis in §8, illustrating how the optimal runtime decisions differ across diverse serving scenarios such as workload fluctuations [2], spot instance preemptions [11], and agentic workflow serving [35]."
+    ],
+    "keywords": [
+      "Toprovideconcreteintuitionforhowthesetrade-offsmanifestinpractice",
+      "wepresentadetailedanalysis",
+      "illustrating",
+      "optimal",
+      "runtime",
+      "decisions",
+      "differ",
+      "across"
+    ],
+    "source_text": "Toprovideconcreteintuitionforhowthesetrade-offsmanifestinpractice,wepresentadetailedanalysis in §8, illustrating how the optimal runtime decisions differ across diverse serving scenarios such as workload fluctuations [2], spot instance preemptions [11], and agentic workflow serving [35]."
+  },
+  {
+    "paragraph_id": "p09-0072",
+    "translation": "5.2 Workflow Overview",
+    "info_points": [
+      "5.2 Workflow Overview"
+    ],
+    "keywords": [
+      "Workflow",
+      "Overview"
+    ],
+    "source_text": "5.2 Workflow Overview"
+  }
+]

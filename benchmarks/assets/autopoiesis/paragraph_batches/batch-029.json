@@ -1,0 +1,156 @@
+[
+  {
+    "paragraph_id": "p32-0337",
+    "translation": "Evolutiontimeoverhead.Eachevolutioncycleincurswall-clocktimeforcandidategeneration,evaluation, andselection.Weaddressthisthroughtwomechanisms:(i)Warm-startre-evolution(§6),whichreduces convergence time by up to 83% when ",
+    "info_points": [
+      "Evolutiontimeoverhead.Eachevolutioncycleincurswall-clocktimeforcandidategeneration,evaluation, andselection.Weaddressthisthroughtwomechanisms:(i)Warm-startre-evolution(§6),whichreduces convergence time by up to 83% when consecutive snapshots reflect gradual shifts, and (ii) parallel candidate evalua"
+    ],
+    "keywords": [
+      "Evolutiontimeoverhead",
+      "Eachevolutioncycleincurswall-clocktimeforcandidategeneration",
+      "evaluation",
+      "andselection",
+      "Weaddressthisthroughtwomechanisms",
+      "Warm-startre-evolution",
+      "whichreduces",
+      "convergence"
+    ],
+    "source_text": "Evolutiontimeoverhead.Eachevolutioncycleincurswall-clocktimeforcandidategeneration,evaluation, andselection.Weaddressthisthroughtwomechanisms:(i)Warm-startre-evolution(§6),whichreduces convergence time by up to 83% when consecutive snapshots reflect gradual shifts, and (ii) parallel candidate evaluation,whichacceleratestheevaluationstagebyupto8×with10×moreconcurrentCPUthreads. Further reduction through speculative evaluation or early termination of unpromising candidates remains an avenue for future optimization."
+  },
+  {
+    "paragraph_id": "p32-0338",
+    "translation": "Adaptabilitytodiverseservingobjectives.Ourexecutionmodelandevaluatorareformulatedaroundend- to-endtracecompletiontime,butthischoiceisnotfundamentaltothearchitecture.Thepolicyinterface",
+    "info_points": [
+      "Adaptabilitytodiverseservingobjectives.Ourexecutionmodelandevaluatorareformulatedaroundend- to-endtracecompletiontime,butthischoiceisnotfundamentaltothearchitecture.Thepolicyinterface"
+    ],
+    "keywords": [
+      "Adaptabilitytodiverseservingobjectives",
+      "Ourexecutionmodelandevaluatorareformulatedaroundend-",
+      "to-endtracecompletiontime",
+      "butthischoiceisnotfundamentaltothearchitecture",
+      "Thepolicyinterface"
+    ],
+    "source_text": "Adaptabilitytodiverseservingobjectives.Ourexecutionmodelandevaluatorareformulatedaroundend- to-endtracecompletiontime,butthischoiceisnotfundamentaltothearchitecture.Thepolicyinterface"
+  },
+  {
+    "paragraph_id": "p33-0339",
+    "translation": "Table 14Phase-wise workload profiles used by DistServe and HexGen:The mean prefill length and decode length in each phase are presented.",
+    "info_points": [
+      "Table 14Phase-wise workload profiles used by DistServe and HexGen:The mean prefill length and decode length in each phase are presented."
+    ],
+    "keywords": [
+      "Table",
+      "Phase-wise",
+      "workload",
+      "profiles",
+      "used",
+      "DistServe",
+      "HexGen",
+      "mean"
+    ],
+    "source_text": "Table 14Phase-wise workload profiles used by DistServe and HexGen:The mean prefill length and decode length in each phase are presented."
+  },
+  {
+    "paragraph_id": "p33-0340",
+    "translation": "ts0 Prefill-heavy 1231.9 14.0 ts1 Decode-heavy 535.2 545.4 ts2 Balanced-short 549.0 17.5 ts3 Stable-mixed 1093.9 290.3 ts4 Stable-mixed 1100.6 292.4 ts5 Stable-mixed 1096.8 288.5 ts0 Prefill-heavy 2035.2 4.8 ts1 Prefill-",
+    "info_points": [
+      "ts0 Prefill-heavy 1231.9 14.0 ts1 Decode-heavy 535.2 545.4 ts2 Balanced-short 549.0 17.5 ts3 Stable-mixed 1093.9 290.3 ts4 Stable-mixed 1100.6 292.4 ts5 Stable-mixed 1096.8 288.5 ts0 Prefill-heavy 2035.2 4.8 ts1 Prefill-heavy 2036.8 3.2 ts2 Decode-heavy 1596.6 372.6 ts3 Stable-decode-heavy 1604.8 37"
+    ],
+    "keywords": [
+      "Prefill-heavy",
+      "Decode-heavy",
+      "Balanced-short",
+      "Stable-mixed",
+      "Stable-mixed",
+      "Stable-mixed",
+      "Prefill-heavy",
+      "Prefill-heavy"
+    ],
+    "source_text": "ts0 Prefill-heavy 1231.9 14.0 ts1 Decode-heavy 535.2 545.4 ts2 Balanced-short 549.0 17.5 ts3 Stable-mixed 1093.9 290.3 ts4 Stable-mixed 1100.6 292.4 ts5 Stable-mixed 1096.8 288.5 ts0 Prefill-heavy 2035.2 4.8 ts1 Prefill-heavy 2036.8 3.2 ts2 Decode-heavy 1596.6 372.6 ts3 Stable-decode-heavy 1604.8 373.1 ts4 Stable-decode-heavy 1553.7 396.7 ts5 Stable-decode-heavy 1582.4 386.8 Table 15SpotServe traces:hidden workload phases used in the SpotServe evaluation."
+  },
+  {
+    "paragraph_id": "p33-0341",
+    "translation": "ts0 Decode-heavy 512 1024 ts1 Mixed 2048 256 ts2 Prefill-heavy 4096 128 ts3 Mixed-stable 2048 256 ts0 Prefill-heavy 4096 128 ts1 Mixed 2048 256 ts2 Decode-heavy 512 1024 ts3 Mixed-stable 2048 256 Table 16Shared SpotServe",
+    "info_points": [
+      "ts0 Decode-heavy 512 1024 ts1 Mixed 2048 256 ts2 Prefill-heavy 4096 128 ts3 Mixed-stable 2048 256 ts0 Prefill-heavy 4096 128 ts1 Mixed 2048 256 ts2 Decode-heavy 512 1024 ts3 Mixed-stable 2048 256 Table 16Shared SpotServe cluster schedule:planner-visible elastic cluster sizes for both MAF traces.Each"
+    ],
+    "keywords": [
+      "Decode-heavy",
+      "Mixed",
+      "Prefill-heavy",
+      "Mixed-stable",
+      "Prefill-heavy",
+      "Mixed",
+      "Decode-heavy",
+      "Mixed-stable"
+    ],
+    "source_text": "ts0 Decode-heavy 512 1024 ts1 Mixed 2048 256 ts2 Prefill-heavy 4096 128 ts3 Mixed-stable 2048 256 ts0 Prefill-heavy 4096 128 ts1 Mixed 2048 256 ts2 Decode-heavy 512 1024 ts3 Mixed-stable 2048 256 Table 16Shared SpotServe cluster schedule:planner-visible elastic cluster sizes for both MAF traces.Each control bucket spans 3 seconds."
+  },
+  {
+    "paragraph_id": "p33-0342",
+    "translation": "Time Interval (s) [0,3) [3,6) [6,9) [9,12) [12,15) [15,18) [18,21) [21,24) [24,27) [27,30) [30,33) [33,36) Cluster Size 24 25 26 27 29 30 32 33 36 38 42 45 Time Interval (s) [36,39) [39,42) [42,45) [45,48) [48,54) [54,57",
+    "info_points": [
+      "Time Interval (s) [0,3) [3,6) [6,9) [9,12) [12,15) [15,18) [18,21) [21,24) [24,27) [27,30) [30,33) [33,36) Cluster Size 24 25 26 27 29 30 32 33 36 38 42 45 Time Interval (s) [36,39) [39,42) [42,45) [45,48) [48,54) [54,57) [57,60) [60,63) [63,66) [66,69) [69,75) [75,78) Cluster Size 48 51 54 55 60 63"
+    ],
+    "keywords": [
+      "Time",
+      "Interval",
+      "Cluster",
+      "Size",
+      "Time",
+      "Interval",
+      "Cluster",
+      "Size"
+    ],
+    "source_text": "Time Interval (s) [0,3) [3,6) [6,9) [9,12) [12,15) [15,18) [18,21) [21,24) [24,27) [27,30) [30,33) [33,36) Cluster Size 24 25 26 27 29 30 32 33 36 38 42 45 Time Interval (s) [36,39) [39,42) [42,45) [45,48) [48,54) [54,57) [57,60) [60,63) [63,66) [66,69) [69,75) [75,78) Cluster Size 48 51 54 55 60 63 62 64 61 62 60 57 Time Interval (s) [78,81) [81,87) [87,90) [90,93) [93,96) [96,99) [99,105) [105,108) [108,114) [114,117) [117,120) Cluster Size 56 54 55 53 51 50 49 47 45 44 43 (should_reschedule and schedule) and the three-phase interval structure remain unchanged regardless of the objective.To optimize for alternative metrics such as P95 latency or SLO attainment, only the evaluator’s aggregation logic needs modification:Instead of summing per-interval costs into Ttotal, the simulator tracks per- request latency across the trace replay and the evaluator computes the target metric (e.g., the 95th-percentile latency or the fraction of requests meeting a latency threshold) as the scalar fitness score.Since the synthesis workflow treats the fitness score as a black-box scalar, this substitution requires no changes to the mutation, selection, or deployment mechanisms, enablingAUTOPOIESISto optimize for the serving metric most relevant to a given deployment scenario."
+  },
+  {
+    "paragraph_id": "p33-0343",
+    "translation": "J Extended Related Work",
+    "info_points": [
+      "J Extended Related Work"
+    ],
+    "keywords": [
+      "Extended",
+      "Related",
+      "Work"
+    ],
+    "source_text": "J Extended Related Work"
+  },
+  {
+    "paragraph_id": "p33-0344",
+    "translation": "LLMservingsystems.RecentworkshaveproposedseveralsystemsandmethodsforhighlyefficientLLM serving[12,19,35,44–51].AlpaServe[4]optimizessystemservicelevelobjectives(SLOs)byutilizing dataandmodelparallelism;DistServe[6]andSpl",
+    "info_points": [
+      "LLMservingsystems.RecentworkshaveproposedseveralsystemsandmethodsforhighlyefficientLLM serving[12,19,35,44–51].AlpaServe[4]optimizessystemservicelevelobjectives(SLOs)byutilizing dataandmodelparallelism;DistServe[6]andSplitwise[52]splittheprefillanddecodingphasesonto separate GPUs to eliminate interf"
+    ],
+    "keywords": [
+      "LLMservingsystems",
+      "RecentworkshaveproposedseveralsystemsandmethodsforhighlyefficientLLM",
+      "serving",
+      "AlpaServe",
+      "optimizessystemservicelevelobjectives",
+      "SLOs",
+      "byutilizing",
+      "dataandmodelparallelism"
+    ],
+    "source_text": "LLMservingsystems.RecentworkshaveproposedseveralsystemsandmethodsforhighlyefficientLLM serving[12,19,35,44–51].AlpaServe[4]optimizessystemservicelevelobjectives(SLOs)byutilizing dataandmodelparallelism;DistServe[6]andSplitwise[52]splittheprefillanddecodingphasesonto separate GPUs to eliminate interference between them; SarathiServe [3] optimizes request batching through prefillchunkingtomitigateinterferencebetweentheprefillanddecodingstages;vLLM[14]introduces PagedAttentionforefficientmemorymanagement,enablinghigherbatchsizesandimprovedthroughput; FastServe[53]employsapreemptiveschedulingmechanismthatprioritizesshorterjobstominimizejob completion time.These works primarily focus on improving serving performance through techniques such asbatchingoptimization,phaseseparation,andmemorymanagement.Incontrast,ourworkfocuseson deployment scheduling with heterogeneous LLMs and GPU types to achieve cost-efficient LLM serving."
+  },
+  {
+    "paragraph_id": "p34-0345",
+    "translation": "Parallelism strategies.Training and serving LLMs that exceed the memory capacity of a single GPU requires a combination of parallelism strategies.Data parallelism replicates the full model across devices and partitions t",
+    "info_points": [
+      "Parallelism strategies.Training and serving LLMs that exceed the memory capacity of a single GPU requires a combination of parallelism strategies.Data parallelism replicates the full model across devices and partitions trainingbatchesordistributesinferencerequestsamongreplicas,scalingthroughputbutre"
+    ],
+    "keywords": [
+      "Parallelism",
+      "strategies",
+      "Training",
+      "serving",
+      "LLMs",
+      "that",
+      "exceed",
+      "memory"
+    ],
+    "source_text": "Parallelism strategies.Training and serving LLMs that exceed the memory capacity of a single GPU requires a combination of parallelism strategies.Data parallelism replicates the full model across devices and partitions trainingbatchesordistributesinferencerequestsamongreplicas,scalingthroughputbutrequiringeach device to hold the entire model [4].Tensor parallelism partitions individual operations — such as the large matrix multiplications in attention and feed-forward layers — across devices within a node, reducing per-GPU memory usage and per-step or per-request latency at the cost of frequent all-reduce communication [26, 54]. Pipelineparallelismdividesthemodelintosequentialstagesacrossdevices,enablinglargermodelstobe trained or served by overlapping the execution of different micro-batches across stages, though it introduces pipeline bubbles and increased latency [27].Hybrid parallelism combines all three approaches to efficiently scale massive models while jointly balancing latency, throughput, and memory constraints [55–58]."
+  }
+]

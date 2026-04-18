@@ -1,0 +1,217 @@
+[
+  {
+    "paragraph_id": "p20-0181",
+    "translation": "[23]Asankhaya Sharma.Openevolve:An open-source evolutionary coding agent, 2025.",
+    "info_points": [
+      "[23]Asankhaya Sharma.Openevolve:An open-source evolutionary coding agent, 2025."
+    ],
+    "keywords": [
+      "Asankhaya",
+      "Sharma",
+      "Openevolve",
+      "open-source",
+      "evolutionary",
+      "coding",
+      "agent"
+    ],
+    "source_text": "[23]Asankhaya Sharma.Openevolve:An open-source evolutionary coding agent, 2025."
+  },
+  {
+    "paragraph_id": "p20-0182",
+    "translation": "[24]Gang Liao, Hongsen Qin, Ying Wang, Alicia Golden, Michael Kuchnik, Yavuz Yetim, Jia Jiunn Ang, Chunli Fu, Yihan He, Samuel Hsia, et al.Kernelevolve:Scaling agentic kernel coding for heterogeneous ai accelerators at m",
+    "info_points": [
+      "[24]Gang Liao, Hongsen Qin, Ying Wang, Alicia Golden, Michael Kuchnik, Yavuz Yetim, Jia Jiunn Ang, Chunli Fu, Yihan He, Samuel Hsia, et al.Kernelevolve:Scaling agentic kernel coding for heterogeneous ai accelerators at meta.arXiv preprint arXiv:2512.23236, 2025."
+    ],
+    "keywords": [
+      "Gang",
+      "Liao",
+      "Hongsen",
+      "Ying",
+      "Wang",
+      "Alicia",
+      "Golden",
+      "Michael"
+    ],
+    "source_text": "[24]Gang Liao, Hongsen Qin, Ying Wang, Alicia Golden, Michael Kuchnik, Yavuz Yetim, Jia Jiunn Ang, Chunli Fu, Yihan He, Samuel Hsia, et al.Kernelevolve:Scaling agentic kernel coding for heterogeneous ai accelerators at meta.arXiv preprint arXiv:2512.23236, 2025."
+  },
+  {
+    "paragraph_id": "p20-0183",
+    "translation": "[25]Audrey Cheng, Shu Liu, Melissa Pan, Zhifei Li, Bowen Wang, Alex Krentsel, Tian Xia, Mert Cemri, Jongseok Park, Shuo Yang, et al.Barbarians at the gate:How ai is upending systems research.arXiv preprint arXiv:2510.061",
+    "info_points": [
+      "[25]Audrey Cheng, Shu Liu, Melissa Pan, Zhifei Li, Bowen Wang, Alex Krentsel, Tian Xia, Mert Cemri, Jongseok Park, Shuo Yang, et al.Barbarians at the gate:How ai is upending systems research.arXiv preprint arXiv:2510.06189, 2025."
+    ],
+    "keywords": [
+      "Audrey",
+      "Cheng",
+      "Melissa",
+      "Zhifei",
+      "Bowen",
+      "Wang",
+      "Alex",
+      "Krentsel"
+    ],
+    "source_text": "[25]Audrey Cheng, Shu Liu, Melissa Pan, Zhifei Li, Bowen Wang, Alex Krentsel, Tian Xia, Mert Cemri, Jongseok Park, Shuo Yang, et al.Barbarians at the gate:How ai is upending systems research.arXiv preprint arXiv:2510.06189, 2025."
+  },
+  {
+    "paragraph_id": "p20-0184",
+    "translation": "[26]Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, and Bryan Catanzaro.Megatron- lm:Training multi-billion parameter language models using model parallelism.arXiv preprint arXiv:1909.08053",
+    "info_points": [
+      "[26]Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, and Bryan Catanzaro.Megatron- lm:Training multi-billion parameter language models using model parallelism.arXiv preprint arXiv:1909.08053, 2019."
+    ],
+    "keywords": [
+      "Mohammad",
+      "Shoeybi",
+      "Mostofa",
+      "Patwary",
+      "Raul",
+      "Puri",
+      "Patrick",
+      "LeGresley"
+    ],
+    "source_text": "[26]Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, and Bryan Catanzaro.Megatron- lm:Training multi-billion parameter language models using model parallelism.arXiv preprint arXiv:1909.08053, 2019."
+  },
+  {
+    "paragraph_id": "p20-0185",
+    "translation": "[27]Yanping Huang, Youlong Cheng, Ankur Bapna, Orhan Firat, Dehao Chen, Mia Chen, HyoukJoong Lee, Jiquan Ngiam, Quoc V Le, Yonghui Wu, et al.Gpipe:Efficient training of giant neural networks using pipeline parallelism.Ad",
+    "info_points": [
+      "[27]Yanping Huang, Youlong Cheng, Ankur Bapna, Orhan Firat, Dehao Chen, Mia Chen, HyoukJoong Lee, Jiquan Ngiam, Quoc V Le, Yonghui Wu, et al.Gpipe:Efficient training of giant neural networks using pipeline parallelism.Advances in neural information processing systems, 32, 2019."
+    ],
+    "keywords": [
+      "Yanping",
+      "Huang",
+      "Youlong",
+      "Cheng",
+      "Ankur",
+      "Bapna",
+      "Orhan",
+      "Firat"
+    ],
+    "source_text": "[27]Yanping Huang, Youlong Cheng, Ankur Bapna, Orhan Firat, Dehao Chen, Mia Chen, HyoukJoong Lee, Jiquan Ngiam, Quoc V Le, Yonghui Wu, et al.Gpipe:Efficient training of giant neural networks using pipeline parallelism.Advances in neural information processing systems, 32, 2019."
+  },
+  {
+    "paragraph_id": "p20-0186",
+    "translation": "[28]Sam Ade Jacobs, Masahiro Tanaka, Chengming Zhang, Minjia Zhang, Shuaiwen Leon Song, Samyam Rajbhandari, and Yuxiong He. Deepspeed ulysses:System optimizations for enabling training of extreme long sequence transforme",
+    "info_points": [
+      "[28]Sam Ade Jacobs, Masahiro Tanaka, Chengming Zhang, Minjia Zhang, Shuaiwen Leon Song, Samyam Rajbhandari, and Yuxiong He."
+    ],
+    "keywords": [
+      "Jacobs",
+      "Masahiro",
+      "Tanaka",
+      "Chengming",
+      "Zhang",
+      "Minjia",
+      "Zhang",
+      "Shuaiwen"
+    ],
+    "source_text": "[28]Sam Ade Jacobs, Masahiro Tanaka, Chengming Zhang, Minjia Zhang, Shuaiwen Leon Song, Samyam Rajbhandari, and Yuxiong He. Deepspeed ulysses:System optimizations for enabling training of extreme long sequence transformer models.arXiv preprint arXiv:2309.14509, 2023."
+  },
+  {
+    "paragraph_id": "p20-0187",
+    "translation": "[29]SamyamRajbhandari,ConglongLi,ZheweiYao,MinjiaZhang,RezaYazdaniAminabadi,AmmarAhmadAwan, JeffRasley,andYuxiongHe.Deepspeed-moe:Advancingmixture-of-expertsinferenceandtrainingtopower next-generation ai scale.In Interna",
+    "info_points": [
+      "[29]SamyamRajbhandari,ConglongLi,ZheweiYao,MinjiaZhang,RezaYazdaniAminabadi,AmmarAhmadAwan, JeffRasley,andYuxiongHe.Deepspeed-moe:Advancingmixture-of-expertsinferenceandtrainingtopower next-generation ai scale.In International conference on machine learning, pages 18332–18346."
+    ],
+    "keywords": [
+      "SamyamRajbhandari",
+      "ConglongLi",
+      "ZheweiYao",
+      "MinjiaZhang",
+      "RezaYazdaniAminabadi",
+      "AmmarAhmadAwan",
+      "JeffRasley",
+      "andYuxiongHe"
+    ],
+    "source_text": "[29]SamyamRajbhandari,ConglongLi,ZheweiYao,MinjiaZhang,RezaYazdaniAminabadi,AmmarAhmadAwan, JeffRasley,andYuxiongHe.Deepspeed-moe:Advancingmixture-of-expertsinferenceandtrainingtopower next-generation ai scale.In International conference on machine learning, pages 18332–18346. PMLR, 2022."
+  },
+  {
+    "paragraph_id": "p20-0188",
+    "translation": "[30]Henrique Assumpção, Diego Ferreira, Leandro Campos, and Fabricio Murai.Codeevolve:An open source evolutionary coding agent for algorithm discovery and optimization.arXiv preprint arXiv:2510.14150, 2025.",
+    "info_points": [
+      "[30]Henrique Assumpção, Diego Ferreira, Leandro Campos, and Fabricio Murai.Codeevolve:An open source evolutionary coding agent for algorithm discovery and optimization.arXiv preprint arXiv:2510.14150, 2025."
+    ],
+    "keywords": [
+      "Henrique",
+      "Assump",
+      "Diego",
+      "Ferreira",
+      "Leandro",
+      "Campos",
+      "Fabricio",
+      "Murai"
+    ],
+    "source_text": "[30]Henrique Assumpção, Diego Ferreira, Leandro Campos, and Fabricio Murai.Codeevolve:An open source evolutionary coding agent for algorithm discovery and optimization.arXiv preprint arXiv:2510.14150, 2025."
+  },
+  {
+    "paragraph_id": "p20-0189",
+    "translation": "[31]JohnRKoza.Geneticprogrammingasameansforprogrammingcomputersbynaturalselection.Statisticsand [32]Siyuan Chen, Zhichao Lu, and Qingfu Zhang.Evolution of kernels:Automated risc-v kernel optimization with large language ",
+    "info_points": [
+      "[31]JohnRKoza.Geneticprogrammingasameansforprogrammingcomputersbynaturalselection.Statisticsand [32]Siyuan Chen, Zhichao Lu, and Qingfu Zhang.Evolution of kernels:Automated risc-v kernel optimization with large language models.arXiv preprint arXiv:2509.14265, 2025."
+    ],
+    "keywords": [
+      "JohnRKoza",
+      "Geneticprogrammingasameansforprogrammingcomputersbynaturalselection",
+      "Statisticsand",
+      "Siyuan",
+      "Chen",
+      "Zhichao",
+      "Qingfu",
+      "Zhang"
+    ],
+    "source_text": "[31]JohnRKoza.Geneticprogrammingasameansforprogrammingcomputersbynaturalselection.Statisticsand [32]Siyuan Chen, Zhichao Lu, and Qingfu Zhang.Evolution of kernels:Automated risc-v kernel optimization with large language models.arXiv preprint arXiv:2509.14265, 2025."
+  },
+  {
+    "paragraph_id": "p20-0190",
+    "translation": "[33]Jean-Baptiste Mouret and Jeff Clune.Illuminating search spaces by mapping elites.arXiv preprint arXiv:1504.04909, 2015.",
+    "info_points": [
+      "[33]Jean-Baptiste Mouret and Jeff Clune.Illuminating search spaces by mapping elites.arXiv preprint arXiv:1504.04909, 2015."
+    ],
+    "keywords": [
+      "Jean-Baptiste",
+      "Mouret",
+      "Jeff",
+      "Clune",
+      "Illuminating",
+      "search",
+      "spaces",
+      "mapping"
+    ],
+    "source_text": "[33]Jean-Baptiste Mouret and Jeff Clune.Illuminating search spaces by mapping elites.arXiv preprint arXiv:1504.04909, 2015."
+  },
+  {
+    "paragraph_id": "p20-0191",
+    "translation": "[34]Xiaozhe Yao.How SwissAI uses OpenTela for scalable LLM serving.Xiaozhe Yao (Blog),March 2026.Accessed: 2026-03-16.",
+    "info_points": [
+      "[34]Xiaozhe Yao.How SwissAI uses OpenTela for scalable LLM serving.Xiaozhe Yao (Blog),March 2026.Accessed: 2026-03-16."
+    ],
+    "keywords": [
+      "Xiaozhe",
+      "SwissAI",
+      "uses",
+      "OpenTela",
+      "scalable",
+      "serving",
+      "Xiaozhe",
+      "Blog"
+    ],
+    "source_text": "[34]Xiaozhe Yao.How SwissAI uses OpenTela for scalable LLM serving.Xiaozhe Yao (Blog),March 2026.Accessed: 2026-03-16."
+  },
+  {
+    "paragraph_id": "p20-0192",
+    "translation": "[35]You Peng, Youhe Jiang, Wenqi Jiang, Chen Wang, and Binhang Yuan.Hexgen-flow:Optimizing llm inference request scheduling for agentic text-to-sql.arXiv preprint arXiv:2505.05286, 2025.",
+    "info_points": [
+      "[35]You Peng, Youhe Jiang, Wenqi Jiang, Chen Wang, and Binhang Yuan.Hexgen-flow:Optimizing llm inference request scheduling for agentic text-to-sql.arXiv preprint arXiv:2505.05286, 2025."
+    ],
+    "keywords": [
+      "Peng",
+      "Youhe",
+      "Jiang",
+      "Wenqi",
+      "Jiang",
+      "Chen",
+      "Wang",
+      "Binhang"
+    ],
+    "source_text": "[35]You Peng, Youhe Jiang, Wenqi Jiang, Chen Wang, and Binhang Yuan.Hexgen-flow:Optimizing llm inference request scheduling for agentic text-to-sql.arXiv preprint arXiv:2505.05286, 2025."
+  }
+]

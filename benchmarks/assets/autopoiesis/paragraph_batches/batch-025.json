@@ -1,0 +1,207 @@
+[
+  {
+    "paragraph_id": "p27-0289",
+    "translation": "•Net:−0.4 s →STAY PUT (keep the same placement from ts0to ts1).",
+    "info_points": [
+      "•Net:−0.4 s →STAY PUT (keep the same placement from ts0to ts1)."
+    ],
+    "keywords": [
+      "STAY",
+      "keep",
+      "same",
+      "placement",
+      "from",
+      "ts0to"
+    ],
+    "source_text": "•Net:−0.4 s →STAY PUT (keep the same placement from ts0to ts1)."
+  },
+  {
+    "paragraph_id": "p27-0290",
+    "translation": "F Additional Case Study",
+    "info_points": [
+      "F Additional Case Study"
+    ],
+    "keywords": [
+      "Additional",
+      "Case",
+      "Study"
+    ],
+    "source_text": "F Additional Case Study"
+  },
+  {
+    "paragraph_id": "p27-0291",
+    "translation": "Setup.We consider a real-world LLM serving deployment at the Swiss AI Center [34], where a heterogeneous GPUclusterservesmultipleLLMsunderdynamicworkloads.Inthisscenario,weisolatethescheduling algorithm as the optimizati",
+    "info_points": [
+      "Setup.We consider a real-world LLM serving deployment at the Swiss AI Center [34], where a heterogeneous GPUclusterservesmultipleLLMsunderdynamicworkloads.Inthisscenario,weisolatethescheduling algorithm as the optimization target:Given a fixed workload snapshot and cluster configuration, the objecti"
+    ],
+    "keywords": [
+      "Setup",
+      "consider",
+      "real-world",
+      "serving",
+      "deployment",
+      "Swiss",
+      "Center",
+      "where"
+    ],
+    "source_text": "Setup.We consider a real-world LLM serving deployment at the Swiss AI Center [34], where a heterogeneous GPUclusterservesmultipleLLMsunderdynamicworkloads.Inthisscenario,weisolatethescheduling algorithm as the optimization target:Given a fixed workload snapshot and cluster configuration, the objective is"
+  },
+  {
+    "paragraph_id": "p28-0292",
+    "translation": "to evolve a scheduling algorithm that produces serving plans (i.e., workload assignments, resource allocations, and parallelism strategies) of equivalent quality to a ILP-based [43] scheduling algorithm while minimizing ",
+    "info_points": [
+      "to evolve a scheduling algorithm that produces serving plans (i.e., workload assignments, resource allocations, and parallelism strategies) of equivalent quality to a ILP-based [43] scheduling algorithm while minimizing plan generation time."
+    ],
+    "keywords": [
+      "evolve",
+      "scheduling",
+      "algorithm",
+      "that",
+      "produces",
+      "serving",
+      "plans",
+      "workload"
+    ],
+    "source_text": "to evolve a scheduling algorithm that produces serving plans (i.e., workload assignments, resource allocations, and parallelism strategies) of equivalent quality to a ILP-based [43] scheduling algorithm while minimizing plan generation time."
+  },
+  {
+    "paragraph_id": "p28-0293",
+    "translation": "Traces.WeusetwoworkloadsnapshotsfromSwissAICenter[34],eachrepresentingadistinctworkload and cluster configuration.Detailed problem formulation and trace information are shown in Appendix C and Appendix H.",
+    "info_points": [
+      "Traces.WeusetwoworkloadsnapshotsfromSwissAICenter[34],eachrepresentingadistinctworkload and cluster configuration.Detailed problem formulation and trace information are shown in Appendix C and Appendix H."
+    ],
+    "keywords": [
+      "Traces",
+      "WeusetwoworkloadsnapshotsfromSwissAICenter",
+      "eachrepresentingadistinctworkload",
+      "cluster",
+      "configuration",
+      "Detailed",
+      "problem",
+      "formulation"
+    ],
+    "source_text": "Traces.WeusetwoworkloadsnapshotsfromSwissAICenter[34],eachrepresentingadistinctworkload and cluster configuration.Detailed problem formulation and trace information are shown in Appendix C and Appendix H."
+  },
+  {
+    "paragraph_id": "p28-0294",
+    "translation": "Results analysis.The baseline ILP-based scheduler requires an average of 120s per invocation across the two traces.The evolved scheduling algorithm reduces this to 9s, a 13× speedup, with less than 3% degradation in plan",
+    "info_points": [
+      "Results analysis.The baseline ILP-based scheduler requires an average of 120s per invocation across the two traces.The evolved scheduling algorithm reduces this to 9s, a 13× speedup, with less than 3% degradation in plan quality.Examining the evolved code reveals complementary modifications across m"
+    ],
+    "keywords": [
+      "Results",
+      "analysis",
+      "baseline",
+      "ILP-based",
+      "scheduler",
+      "requires",
+      "average",
+      "invocation"
+    ],
+    "source_text": "Results analysis.The baseline ILP-based scheduler requires an average of 120s per invocation across the two traces.The evolved scheduling algorithm reduces this to 9s, a 13× speedup, with less than 3% degradation in plan quality.Examining the evolved code reveals complementary modifications across multiple algorithmic layers:Searchspacereductionthroughcuratedcandidateselection,tighterLPrelaxationviaper-variable bounds, valid inequalities encoding domain-specific constraints, strengthened secondary objectives for better solution guidance, and optimized solver parameters.A detailed comparison of the baseline and evolved code is provided in Appendix G."
+  },
+  {
+    "paragraph_id": "p28-0295",
+    "translation": "Insight 5: Synthesis discovers deployment-tailored algorithmic optimizations.Rather than converging on a single type of improvement, the synthesis workflow discovers complementary optimizations spanning problem formulati",
+    "info_points": [
+      "Insight 5: Synthesis discovers deployment-tailored algorithmic optimizations.Rather than converging on a single type of improvement, the synthesis workflow discovers complementary optimizations spanning problem formulation, domain knowledge injection, objective shaping, and solver configuration.Cruc"
+    ],
+    "keywords": [
+      "Insight",
+      "Synthesis",
+      "discovers",
+      "deployment-tailored",
+      "algorithmic",
+      "optimizations",
+      "Rather",
+      "than"
+    ],
+    "source_text": "Insight 5: Synthesis discovers deployment-tailored algorithmic optimizations.Rather than converging on a single type of improvement, the synthesis workflow discovers complementary optimizations spanning problem formulation, domain knowledge injection, objective shaping, and solver configuration.Crucially, these optimizations are tailored to the specific workload and cluster configuration and would shift under different deployment conditions, highlighting the value of LLM-driven program synthesis over manual algorithm tuning."
+  },
+  {
+    "paragraph_id": "p28-0296",
+    "translation": "G Evolved Scheduling Algorithm Analysis",
+    "info_points": [
+      "G Evolved Scheduling Algorithm Analysis"
+    ],
+    "keywords": [
+      "Evolved",
+      "Scheduling",
+      "Algorithm",
+      "Analysis"
+    ],
+    "source_text": "G Evolved Scheduling Algorithm Analysis"
+  },
+  {
+    "paragraph_id": "p28-0297",
+    "translation": "In this section, we analyze the details of the code generated by LLMs.The LLM-driven improvements include smarter batch selection, per-variable bounds, stronger weighted objective, and solver-specific tuning.These enhanc",
+    "info_points": [
+      "In this section, we analyze the details of the code generated by LLMs.The LLM-driven improvements include smarter batch selection, per-variable bounds, stronger weighted objective, and solver-specific tuning.These enhancements significantly reduce ILP solve time while preserving the optimal makespan"
+    ],
+    "keywords": [
+      "this",
+      "section",
+      "analyze",
+      "details",
+      "code",
+      "generated",
+      "LLMs",
+      "LLM-driven"
+    ],
+    "source_text": "In this section, we analyze the details of the code generated by LLMs.The LLM-driven improvements include smarter batch selection, per-variable bounds, stronger weighted objective, and solver-specific tuning.These enhancements significantly reduce ILP solve time while preserving the optimal makespan, highlighting the value of integrating domain knowledge with automated code refinement.The details are discussed below."
+  },
+  {
+    "paragraph_id": "p28-0298",
+    "translation": "Optimizationonbatchcandidateselection.In the LLM-generated program, the selection of batch candidates was refined compared to the naive exhaustive search employed in the initial program, which served as the starting poin",
+    "info_points": [
+      "Optimizationonbatchcandidateselection.In the LLM-generated program, the selection of batch candidates was refined compared to the naive exhaustive search employed in the initial program, which served as the starting point for the LLM’s evolutionary improvements.Instead of traversing all possible bat"
+    ],
+    "keywords": [
+      "Optimizationonbatchcandidateselection",
+      "LLM-generated",
+      "program",
+      "selection",
+      "batch",
+      "candidates",
+      "refined",
+      "compared"
+    ],
+    "source_text": "Optimizationonbatchcandidateselection.In the LLM-generated program, the selection of batch candidates was refined compared to the naive exhaustive search employed in the initial program, which served as the starting point for the LLM’s evolutionary improvements.Instead of traversing all possible batch sizes, the LLM generates a curated set of candidates, combining powers of 2, divisors of the total batch size, and manually selectedsweetspots.Specifically,theresultingbatchcandidatesaredesignedtobalancecomputational efficiency and hardware utilization.The detailed batch candidates are shown as follows:"
+  },
+  {
+    "paragraph_id": "p28-0299",
+    "translation": "Batch Candidates = {1, 2, 3, 4, 6}∪{2k| k= 2, . . . , 6} Optimizationonparallelstrategy.TheLLMincorporatesadomain-specificconstraintforlargemodels(e.g., 70B), requiring a sufficiently high tensor parallelism degree, spec",
+    "info_points": [
+      "Batch Candidates = {1, 2, 3, 4, 6}∪{2k| k= 2, ."
+    ],
+    "keywords": [
+      "Batch",
+      "Candidates",
+      "Optimizationonparallelstrategy",
+      "TheLLMincorporatesadomain-specificconstraintforlargemodels",
+      "requiring",
+      "sufficiently",
+      "high",
+      "tensor"
+    ],
+    "source_text": "Batch Candidates = {1, 2, 3, 4, 6}∪{2k| k= 2, . . . , 6} Optimizationonparallelstrategy.TheLLMincorporatesadomain-specificconstraintforlargemodels(e.g., 70B), requiring a sufficiently high tensor parallelism degree, specifically enforcing t ≥4.This ensures that large models are allocated adequate parallel resources, preventing inefficient configurations that often result in out-of-memory errors."
+  },
+  {
+    "paragraph_id": "p28-0300",
+    "translation": "Optimizations on the objective function and formulation.To enhance the efficiency of the ILP solver, the LLM- generated code incorporates two key optimizations:(i) tighter per-variable Big-M bounds, which strengthen the ",
+    "info_points": [
+      "Optimizations on the objective function and formulation.To enhance the efficiency of the ILP solver, the LLM- generated code incorporates two key optimizations:(i) tighter per-variable Big-M bounds, which strengthen the LP relaxation, and (ii) a weighted objective, which provides improved guidance w"
+    ],
+    "keywords": [
+      "Optimizations",
+      "objective",
+      "function",
+      "formulation",
+      "enhance",
+      "efficiency",
+      "solver",
+      "LLM-"
+    ],
+    "source_text": "Optimizations on the objective function and formulation.To enhance the efficiency of the ILP solver, the LLM- generated code incorporates two key optimizations:(i) tighter per-variable Big-M bounds, which strengthen the LP relaxation, and (ii) a weighted objective, which provides improved guidance when multiple solutions share the same makespan.The notations used below are defined in Table 5."
+  }
+]

@@ -1,0 +1,206 @@
+[
+  {
+    "paragraph_id": "p04-0025",
+    "translation": "Limitations.Despite the sophistication of existing frameworks, current approaches for policy design exhibit three key limitations:First, they rely on human-engineered heuristics and case-specific constraints; a policy tu",
+    "info_points": [
+      "Limitations.Despite the sophistication of existing frameworks, current approaches for policy design exhibit three key limitations:First, they rely on human-engineered heuristics and case-specific constraints; a policy tunedforaparticularworkloaddistributionorhardwaretopologyrarelygeneralizestoothers"
+    ],
+    "keywords": [
+      "Limitations",
+      "Despite",
+      "sophistication",
+      "existing",
+      "frameworks",
+      "current",
+      "approaches",
+      "policy"
+    ],
+    "source_text": "Limitations.Despite the sophistication of existing frameworks, current approaches for policy design exhibit three key limitations:First, they rely on human-engineered heuristics and case-specific constraints; a policy tunedforaparticularworkloaddistributionorhardwaretopologyrarelygeneralizestoothers.Second, thesemanuallydesignedpolicieslackaholisticmechanismtonavigatethedeeplyintertwinedruntime trade-offs detailed in §1, such as balancing scheduling thoroughness against execution efficiency, or weighing rescheduling frequency against the latency cost of cluster reconfiguration.Third, these policies remain entirely static throughout the serving phase.Because runtime dynamics continuously shift the optimal balance of these trade-offs, a fixed policy inevitably becomes suboptimal as conditions evolve, leaving the system unable to adapt its own governing logic to maintain performance under real-world volatility."
+  },
+  {
+    "paragraph_id": "p04-0026",
+    "translation": "2.2 LLM-Driven Program Synthesis",
+    "info_points": [
+      "2.2 LLM-Driven Program Synthesis"
+    ],
+    "keywords": [
+      "LLM-Driven",
+      "Program",
+      "Synthesis"
+    ],
+    "source_text": "2.2 LLM-Driven Program Synthesis"
+  },
+  {
+    "paragraph_id": "p04-0027",
+    "translation": "LLM-driven program synthesis isan emerging paradigm that combines the code-generationcapabilities of LLMswiththeiterativerefinementofevolutionaryalgorithmstoautomaticallydiscoverhigh-performing programs.",
+    "info_points": [
+      "LLM-driven program synthesis isan emerging paradigm that combines the code-generationcapabilities of LLMswiththeiterativerefinementofevolutionaryalgorithmstoautomaticallydiscoverhigh-performing programs."
+    ],
+    "keywords": [
+      "LLM-driven",
+      "program",
+      "synthesis",
+      "isan",
+      "emerging",
+      "paradigm",
+      "that",
+      "combines"
+    ],
+    "source_text": "LLM-driven program synthesis isan emerging paradigm that combines the code-generationcapabilities of LLMswiththeiterativerefinementofevolutionaryalgorithmstoautomaticallydiscoverhigh-performing programs."
+  },
+  {
+    "paragraph_id": "p04-0028",
+    "translation": "LLM-drivenprogramsynthesis.TheLLM-drivenprogramsynthesisincludesfourprimarystages:(i)Seed initialization and program representation determines the starting population and the level of abstraction at whichevolutionoperate",
+    "info_points": [
+      "LLM-drivenprogramsynthesis.TheLLM-drivenprogramsynthesisincludesfourprimarystages:(i)Seed initialization and program representation determines the starting population and the level of abstraction at whichevolutionoperates;e.g.,AlphaEvolve[21]andCodeEvolve[30]supportcodebase-scaleevolution spanning m"
+    ],
+    "keywords": [
+      "LLM-drivenprogramsynthesis",
+      "TheLLM-drivenprogramsynthesisincludesfourprimarystages",
+      "Seed",
+      "initialization",
+      "program",
+      "representation",
+      "determines",
+      "starting"
+    ],
+    "source_text": "LLM-drivenprogramsynthesis.TheLLM-drivenprogramsynthesisincludesfourprimarystages:(i)Seed initialization and program representation determines the starting population and the level of abstraction at whichevolutionoperates;e.g.,AlphaEvolve[21]andCodeEvolve[30]supportcodebase-scaleevolution spanning multiple functions and programming languages.(ii) LLM-driven variation replaces the hand-crafted mutation and crossover operators of classical genetic programming [31] with the semantic code-transformation capabilities of LLMs; AlphaEvolve [21] employs an LLM ensemble with structured diff-based modifications for precise, localized code changes, while EoK [32] guides LLM-driven mutation with RAG-enriched prompts that incorporate actionable optimization thoughts mined from established kernel libraries’ development histories. (iii) Automated evaluation assesses each candidate against a well-defined fitness criterion, serving as the critical safeguardagainstLLMhallucinations;KernelEvolve[24]integratescorrectnessvalidation,performance benchmarking, and hardware profiling into a unified evaluation pipeline across heterogeneous accelerators. (iv) Selection and population management governs the exploration–exploitation balance by determining which candidates survive to inform future generations; OpenEvolve [23] adopts MAP-Elites-inspired [33] program databases that preserve diverse high-quality candidates across a discretized feature space."
+  },
+  {
+    "paragraph_id": "p04-0029",
+    "translation": "Accommodating dynamics in LLM serving.While existing LLM-driven evolutionary frameworks have achieved remarkablesuccess,applyingthemtotheruntimedynamicsofLLMservingrequiresovercomingtwokey challenges.First, capturing run",
+    "info_points": [
+      "Accommodating dynamics in LLM serving.While existing LLM-driven evolutionary frameworks have achieved remarkablesuccess,applyingthemtotheruntimedynamicsofLLMservingrequiresovercomingtwokey challenges.First, capturing runtime trade-offs:Candidate evaluation in standard evolutionary processes fails to"
+    ],
+    "keywords": [
+      "Accommodating",
+      "dynamics",
+      "serving",
+      "While",
+      "existing",
+      "LLM-driven",
+      "evolutionary",
+      "frameworks"
+    ],
+    "source_text": "Accommodating dynamics in LLM serving.While existing LLM-driven evolutionary frameworks have achieved remarkablesuccess,applyingthemtotheruntimedynamicsofLLMservingrequiresovercomingtwokey challenges.First, capturing runtime trade-offs:Candidate evaluation in standard evolutionary processes fails to capture how policy decisions physically impact system execution.Addressing this requires a domain-specific evolutionary workflow:An evaluation methodology that faithfully reproduces real-world conditions to measure deeply intertwined runtime trade-offs (e.g., reconfiguration overhead vs.throughput gains), coupled with a synthesis configuration that actively steers LLM mutations to navigate this multi-dimensional space.Second, evolving with runtime dynamics:Offline program synthesis produces static policies optimized for a snapshot ofconditions,whichareunabletoadaptasthoseconditionsshift.Addressingthisrequiresrearchitecting the synthesis paradigm into a continuous, online control loop that monitors live cluster state, grounds fitness evaluation in real-time telemetry, and deploys evolved policy code in live serving."
+  },
+  {
+    "paragraph_id": "p05-0030",
+    "translation": "Figure2Left:Runtimetrade-offnavigation:PoliciesA(maximumschedulingandreconfigurationintensity)andB (minimumintensity)comparedtoanoptimaloracle.Right:Shiftingtrade-offadaptation:PoliciesC(optimizedfor steady-state) and D ",
+    "info_points": [
+      "Figure2Left:Runtimetrade-offnavigation:PoliciesA(maximumschedulingandreconfigurationintensity)andB (minimumintensity)comparedtoanoptimaloracle.Right:Shiftingtrade-offadaptation:PoliciesC(optimizedfor steady-state) and D (optimized for burst periods) compared to a dynamically adaptive baseline."
+    ],
+    "keywords": [
+      "Figure2Left",
+      "Runtimetrade-offnavigation",
+      "PoliciesA",
+      "maximumschedulingandreconfigurationintensity",
+      "andB",
+      "minimumintensity",
+      "comparedtoanoptimaloracle",
+      "Right"
+    ],
+    "source_text": "Figure2Left:Runtimetrade-offnavigation:PoliciesA(maximumschedulingandreconfigurationintensity)andB (minimumintensity)comparedtoanoptimaloracle.Right:Shiftingtrade-offadaptation:PoliciesC(optimizedfor steady-state) and D (optimized for burst periods) compared to a dynamically adaptive baseline."
+  },
+  {
+    "paragraph_id": "p05-0031",
+    "translation": "3 Motivation",
+    "info_points": [
+      "3 Motivation"
+    ],
+    "keywords": [
+      "Motivation"
+    ],
+    "source_text": "3 Motivation"
+  },
+  {
+    "paragraph_id": "p05-0032",
+    "translation": "We conduct two empirical studies on real-world subsampled workload traces [34] to motivate the design of AUTOPOIESIS(trace information detailed in Appendix H).The first motivation demonstrates that finding the optimal ru",
+    "info_points": [
+      "We conduct two empirical studies on real-world subsampled workload traces [34] to motivate the design of AUTOPOIESIS(trace information detailed in Appendix H).The first motivation demonstrates that finding the optimal runtime trade-off balance is critical to serving performance.The second motivation"
+    ],
+    "keywords": [
+      "conduct",
+      "empirical",
+      "studies",
+      "real-world",
+      "subsampled",
+      "workload",
+      "traces",
+      "motivate"
+    ],
+    "source_text": "We conduct two empirical studies on real-world subsampled workload traces [34] to motivate the design of AUTOPOIESIS(trace information detailed in Appendix H).The first motivation demonstrates that finding the optimal runtime trade-off balance is critical to serving performance.The second motivation demonstrates that this optimal balance shifts as runtime conditions evolve, necessitating continuous re-exploration.Each study is structured as a characterization of the phenomenon, an analysis of its root cause, and a motivation for the design requirement ofAUTOPOIESIS."
+  },
+  {
+    "paragraph_id": "p05-0033",
+    "translation": "Characterization 1:Navigating runtime trade-offs is critical to serving performance.We evaluate LLM serving acrossaworkloadtracespanningthreereschedulingintervals,examininghowschedulingthoroughness (i.e.,thecomputational",
+    "info_points": [
+      "Characterization 1:Navigating runtime trade-offs is critical to serving performance.We evaluate LLM serving acrossaworkloadtracespanningthreereschedulingintervals,examininghowschedulingthoroughness (i.e.,thecomputationalbudgetallocatedtogeneratingservingplans)andreconfigurationaggressiveness (i.e.,t"
+    ],
+    "keywords": [
+      "Characterization",
+      "Navigating",
+      "runtime",
+      "trade-offs",
+      "critical",
+      "serving",
+      "performance",
+      "evaluate"
+    ],
+    "source_text": "Characterization 1:Navigating runtime trade-offs is critical to serving performance.We evaluate LLM serving acrossaworkloadtracespanningthreereschedulingintervals,examininghowschedulingthoroughness (i.e.,thecomputationalbudgetallocatedtogeneratingservingplans)andreconfigurationaggressiveness (i.e.,thevolumeofsystemstatereconfiguredtoachieveoptimalplacement)jointlyaffecttotalexecution time.AsshowninFigure2(left),wecomparetwoextremepoliciesagainstanoptimaloracle.PolicyA maximizes both scheduling thoroughness and reconfiguration aggressiveness.While this minimizes the actual serving time, the extended scheduling and reconfiguration window forces the cluster to operate under a stale plan in the interim, increasing total execution time by 33%.Conversely, Policy B minimizes scheduling and reconfiguration overhead via a lightweight greedy algorithm.However, the resulting suboptimal plans lead to inefficient resource utilization, increasing total execution time by 40%.Neither extreme achieves competitive performance; the optimal operating point lies in a narrow, workload-specific region between them."
+  },
+  {
+    "paragraph_id": "p05-0034",
+    "translation": "Analysis.Theruntimetrade-offspaceistoocomplexforhumanengineeringtonavigate.Whiletheabove characterization establishes that finding the right trade-off balance is critical, identifying this balance through humanengineerin",
+    "info_points": [
+      "Analysis.Theruntimetrade-offspaceistoocomplexforhumanengineeringtonavigate.Whiletheabove characterization establishes that finding the right trade-off balance is critical, identifying this balance through humanengineeringfacescompoundingdifficulty.First,therelationshipamongschedulingthoroughness, re"
+    ],
+    "keywords": [
+      "Analysis",
+      "Theruntimetrade-offspaceistoocomplexforhumanengineeringtonavigate",
+      "Whiletheabove",
+      "characterization",
+      "establishes",
+      "that",
+      "finding",
+      "right"
+    ],
+    "source_text": "Analysis.Theruntimetrade-offspaceistoocomplexforhumanengineeringtonavigate.Whiletheabove characterization establishes that finding the right trade-off balance is critical, identifying this balance through humanengineeringfacescompoundingdifficulty.First,therelationshipamongschedulingthoroughness, reconfiguration aggressiveness, and serving throughput is highly nonlinear, requiring exhaustive trial and error to locate even a single effective configuration.Second, the optimal balance is strictly deployment-specific:Any variation in hardware topology or workload distribution shifts the trade-off surface, invalidating prior design choices and demanding complete recalibration.Third, while the above analysis isolates only two variables, production environments require jointly co-optimizing these alongside rescheduling frequency, causing the designspacetoexpandexponentially.Thesecompoundingchallengesmakemanualpolicyengineering struggle to discover optimal trade-off balances across diverse deployment conditions."
+  },
+  {
+    "paragraph_id": "p05-0035",
+    "translation": "Motivation1:LLM-drivenpolicysynthesis(§1,Requirement1).Thecomplexityanddeployment-specificityof theruntimetrade-offspacedemandanapproachthatcansystematicallyexplorethemulti-dimensionalspaceand discover policies precisely",
+    "info_points": [
+      "Motivation1:LLM-drivenpolicysynthesis(§1,Requirement1).Thecomplexityanddeployment-specificityof theruntimetrade-offspacedemandanapproachthatcansystematicallyexplorethemulti-dimensionalspaceand discover policies precisely tailored to the current conditions—capabilities that exceed the reach of manual"
+    ],
+    "keywords": [
+      "Motivation1",
+      "LLM-drivenpolicysynthesis",
+      "Requirement1",
+      "Thecomplexityanddeployment-specificityof",
+      "theruntimetrade-offspacedemandanapproachthatcansystematicallyexplorethemulti-dimensionalspaceand",
+      "discover",
+      "policies",
+      "precisely"
+    ],
+    "source_text": "Motivation1:LLM-drivenpolicysynthesis(§1,Requirement1).Thecomplexityanddeployment-specificityof theruntimetrade-offspacedemandanapproachthatcansystematicallyexplorethemulti-dimensionalspaceand discover policies precisely tailored to the current conditions—capabilities that exceed the reach of manual engineering. This motivates the design of an LLM-driven program synthesis workflow that evolves serving policies with respect to real-world runtime dynamics."
+  },
+  {
+    "paragraph_id": "p05-0036",
+    "translation": "Characterization 2:Continuous adaptation to shifting runtime trade-offs is necessary.We further evaluate LLM servingunderadynamicworkloadtracethatalternatesbetweensteady-staterequestarrivals(i.e.,low workload variation) ",
+    "info_points": [
+      "Characterization 2:Continuous adaptation to shifting runtime trade-offs is necessary.We further evaluate LLM servingunderadynamicworkloadtracethatalternatesbetweensteady-staterequestarrivals(i.e.,low workload variation) and sudden traffic bursts (i.e., high workload variation).As shown in Figure 2 ("
+    ],
+    "keywords": [
+      "Characterization",
+      "Continuous",
+      "adaptation",
+      "shifting",
+      "runtime",
+      "trade-offs",
+      "necessary",
+      "further"
+    ],
+    "source_text": "Characterization 2:Continuous adaptation to shifting runtime trade-offs is necessary.We further evaluate LLM servingunderadynamicworkloadtracethatalternatesbetweensteady-staterequestarrivals(i.e.,low workload variation) and sudden traffic bursts (i.e., high workload variation).As shown in Figure 2 (right), we compare two statically tuned policies against an optimally adaptive baseline.Policy C, tuned for the optimal trade-off during steady-state operations, achieves peak throughput during stable phases but collapses under"
+  }
+]
