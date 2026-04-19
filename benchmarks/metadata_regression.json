@@ -1,0 +1,74 @@
+[
+  {
+    "name": "AutoKernel",
+    "paper_url": "https://arxiv.org/abs/2603.21331",
+    "initial_metadata": {
+      "paper_title": "AutoKernel: Autonomous GPU Kernel Optimization via Iterative Agent-Driven Search",
+      "conference": "arXiv",
+      "year": "2026",
+      "authors": "",
+      "university": "",
+      "repo": "未开源"
+    },
+    "expected": {
+      "title": "AutoKernel: Autonomous GPU Kernel Optimization via Iterative Agent-Driven Search",
+      "venue": "arXiv",
+      "author_keywords": ["Jaber"],
+      "institution_keywords": ["RightNow AI"]
+    }
+  },
+  {
+    "name": "CUDA Agent",
+    "paper_url": "https://arxiv.org/abs/2602.24286",
+    "initial_metadata": {
+      "paper_title": "CUDA Agent: Large-Scale Agentic RL for High-Performance CUDA Kernel Generation",
+      "conference": "arXiv",
+      "year": "2026",
+      "authors": "",
+      "university": "",
+      "repo": "未开源"
+    },
+    "expected": {
+      "title": "CUDA Agent: Large-Scale Agentic RL for High-Performance CUDA Kernel Generation",
+      "venue": "arXiv",
+      "author_keywords": ["Dai", "Zhou"],
+      "institution_keywords": ["ByteDance", "Tsinghua"]
+    }
+  },
+  {
+    "name": "OpenAgentSafety",
+    "paper_url": "https://arxiv.org/abs/2507.06134",
+    "initial_metadata": {
+      "paper_title": "OpenAgentSafety: A Comprehensive Framework for Evaluating Real-World AI Agent Safety",
+      "conference": "ICLR",
+      "year": "2026",
+      "authors": "",
+      "university": "",
+      "repo": "未开源"
+    },
+    "expected": {
+      "title": "OpenAgentSafety: A Comprehensive Framework for Evaluating Real-World AI Agent Safety",
+      "venue": "ICLR",
+      "author_keywords": ["Vijayvargiya", "Sap"],
+      "institution_keywords": ["Carnegie Mellon", "Allen Institute"]
+    }
+  },
+  {
+    "name": "Autopoiesis",
+    "paper_url": "https://arxiv.org/abs/2604.07144",
+    "initial_metadata": {
+      "paper_title": "Autopoiesis: A Self-Evolving System Paradigm for LLM Serving Under Runtime Dynamics",
+      "conference": "arXiv",
+      "year": "2026",
+      "authors": "",
+      "university": "",
+      "repo": "未开源"
+    },
+    "expected": {
+      "title": "Autopoiesis: A Self-Evolving System Paradigm for LLM Serving Under Runtime Dynamics",
+      "venue": "arXiv",
+      "author_keywords": ["Jiang", "Yuan"],
+      "institution_keywords": ["HKUST", "Shanghai Jiao Tong", "Powersense"]
+    }
+  }
+]

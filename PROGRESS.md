@@ -76,6 +76,17 @@ Last updated: 2026-04-18
   - placement_ratio 偏低的 figure section 对位
   - distribution_ratio 偏低的方法/结果篇幅不足
   - 已开始：`notes_v1.txt` 增加强制要求，要求背景/方法/实验/结果保留更多原文细节，不再只保留高层摘要
+- [x] Implement 22: metadata recovery 强化为多证据汇聚链：HTML citation meta（多值）、arXiv API、LaTeX source、PDF frontmatter、OpenAlex，再用 agent 做最终 evidence fusion。
+- [x] Evaluate 9: 对历史 institution 缺失样本做 metadata regression 回归，输出 `benchmarks/metadata_regression.latest.json`。
+  - 当前回归集：
+    - `AutoKernel`
+    - `CUDA Agent`
+    - `OpenAgentSafety`
+    - `Autopoiesis`
+  - 当前结果：4/4 通过
+  - 产物：
+    - `benchmarks/metadata_regression.json`
+    - `benchmarks/metadata_regression.latest.json`
 - [ ] Design 8: Future non-arXiv support——source acquisition 改为语义内容提交（无 URL 时给 NotebookLM 标题让其自搜）；figure extraction 跳过（无 LaTeX 源码包）；metadata fallback 补充策略。
 
 ## Queued Review Fixes
@@ -107,6 +118,7 @@ Last updated: 2026-04-18
 - [ ] institution 展示：
   - 默认第一机构
   - 并列主机构或关键企业合作时保留多项
+  - metadata recovery 已能补出缺失 institution，但字符串规范化仍可继续细化（例如 `ByteDance Seed 2Institute...` 这类清洗质量）
 
 ## Version Log
 

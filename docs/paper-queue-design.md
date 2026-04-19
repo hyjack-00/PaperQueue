@@ -160,7 +160,7 @@ flowchart TD
    - 输出结构化 property 格式（非自由文本）。
    - 确保完整获取 institution、authors、venue。
    - 确认第三标题。
-   - 用 HTML citation tags 做 fallback 补全，最后做强校验。
+   - 用多证据 fallback 做补全：HTML citation meta、arXiv API、LaTeX source、PDF frontmatter、OpenAlex，再做 evidence fusion 与强校验。
    - **当前实现**：通过 `nlm notebook query` 发送 metadata prompt，解析自由文本；待重构为 agent 结构化输出。
 
 5. `structure analysis`

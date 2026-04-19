@@ -10,7 +10,7 @@ import tarfile
 import fitz
 from urllib.error import URLError
 from urllib.request import Request, urlopen
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -364,6 +364,249 @@ def _extract_meta_content(html: str, names: list[str]) -> str:
     return ""
 
 
+def _extract_meta_contents(html: str, names: list[str]) -> list[str]:
+    values: list[str] = []
+    for name in names:
+        patterns = [
+            rf'<meta\s+name="{re.escape(name)}"\s+content="([^"]+)"',
+            rf'<meta\s+property="{re.escape(name)}"\s+content="([^"]+)"',
+        ]
+        for pattern in patterns:
+            for match in re.finditer(pattern, html, flags=re.I):
+                value = unescape(match.group(1)).strip()
+                if value and value not in values:
+                    values.append(value)
+    return values
+
+
+def _merge_text_values(values: list[str], *, limit: int | None = None) -> str:
+    merged: list[str] = []
+    for raw in values:
+        text = _clean_metadata_text(raw, "")
+        if not text:
+            continue
+        if text not in merged:
+            merged.append(text)
+        if limit and len(merged) >= limit:
+            break
+    return ", ".join(merged) if merged else ""
+
+
+def _normalize_author_list(value: str) -> str:
+    text = _clean_metadata_text(value or "", "")
+    if not text:
+        return ""
+    parts = [part.strip() for part in text.split(",") if part.strip()]
+    even_parts = parts[0::2]
+    odd_parts = parts[1::2]
+    if (
+        len(parts) >= 2
+        and len(parts) % 2 == 0
+        and even_parts
+        and odd_parts
+        and all(len(part.split()) == 1 for part in even_parts)
+        and all(1 <= len(part.split()) <= 4 for part in odd_parts)
+    ):
+        paired: list[str] = []
+        for i in range(0, len(parts), 2):
+            last = parts[i]
+            first = parts[i + 1]
+            candidate = f"{first} {last}".strip()
+            if candidate not in paired:
+                paired.append(candidate)
+        if paired:
+            return ", ".join(paired)
+    return text
+
+
+def _normalize_institution_text(value: str) -> str:
+    text = _clean_metadata_text(value or "", "")
+    if not text:
+        return ""
+    cleaned_parts: list[str] = []
+    for part in re.split(r"\s*/\s*", text):
+        item = re.sub(r"\$\^\d+\$", "", part)
+        item = re.sub(r"\b\^\d+\b", "", item)
+        item = re.sub(r"\{[^}]*\}", "", item).strip(" ,;")
+        item = re.sub(r"\b[\w.+-]+@[\w.-]+\b", "", item).strip(" ,;")
+        item = re.sub(r"@\S+", "", item).strip(" ,;")
+        item = re.sub(r"\s+", " ", item).strip()
+        if item and item not in cleaned_parts:
+            cleaned_parts.append(item)
+    return " / ".join(cleaned_parts)
+
+
+def _invalid_title(value: str) -> bool:
+    cleaned = _clean_metadata_text(value or "", "")
+    lowered = cleaned.lower()
+    if not cleaned:
+        return True
+    if lowered in {"untitled paper", "available in the text", "unknown", "center", "anonymous"}:
+        return True
+    return any(token in lowered for token in {"untitled", "available in the text"})
+
+
+def _missing_metadata_fields(metadata: dict[str, str]) -> list[str]:
+    missing: list[str] = []
+    if _invalid_title(metadata.get("paper_title") or ""):
+        missing.append("paper_title")
+    if not _clean_metadata_text(metadata.get("authors") or "", ""):
+        missing.append("authors")
+    if not _clean_metadata_text(metadata.get("university") or "", ""):
+        missing.append("university")
+    if not _normalize_venue_name(metadata.get("conference") or ""):
+        missing.append("conference")
+    return missing
+
+
+def _authors_quality_score(value: str) -> int:
+    text = _clean_metadata_text(value or "", "")
+    if not text:
+        return 0
+    parts = [part.strip() for part in text.split(",") if part.strip()]
+    score = len(parts)
+    if any(len(part.split()) >= 2 for part in parts):
+        score += 2
+    if all(len(part.split()) >= 2 for part in parts):
+        score += 2
+    return score
+
+
+def _institution_quality_score(value: str) -> int:
+    text = _clean_metadata_text(value or "", "")
+    if not text:
+        return 0
+    parts = [part.strip() for part in text.split(" / ") if part.strip()]
+    score = len(parts)
+    if any(_looks_like_institution(part) for part in parts):
+        score += 2
+    if any("http" in part.lower() or len(part.split()) > 15 for part in parts):
+        score -= 3
+    return score
+
+
+def _merge_metadata_candidate(metadata: dict[str, str], candidate: dict[str, str]) -> None:
+    title = _clean_metadata_text(candidate.get("paper_title") or "", "")
+    authors = _normalize_author_list(candidate.get("authors") or "")
+    institution = _normalize_institution_text(candidate.get("university") or "")
+    conference = _normalize_venue_name(candidate.get("conference") or "")
+    paper_url = _first_url(candidate.get("paper_url") or "") or ""
+    repo = _first_url(candidate.get("repo") or "") or ""
+    year = _extract_field([r"(20\d{2})"], candidate.get("year") or "", "")
+
+    if title and _invalid_title(metadata.get("paper_title") or ""):
+        metadata["paper_title"] = title
+    if authors and _authors_quality_score(authors) > _authors_quality_score(metadata.get("authors") or ""):
+        metadata["authors"] = authors
+    if institution and _institution_quality_score(institution) > _institution_quality_score(metadata.get("university") or ""):
+        metadata["university"] = institution
+    if conference and (_normalize_venue_name(metadata.get("conference") or "") == "arXiv" or not metadata.get("conference")):
+        metadata["conference"] = conference
+    if paper_url and not metadata.get("paper_url"):
+        metadata["paper_url"] = paper_url
+    if repo and (metadata.get("repo") in {"", "未开源"}):
+        metadata["repo"] = repo
+    if year and not metadata.get("year"):
+        metadata["year"] = year
+
+
+def _arxiv_id_from_url(paper_url: str) -> str:
+    match = re.search(r"arxiv\.org/(?:abs|pdf)/(\d{4}\.\d{4,5})(?:v\d+)?", paper_url, flags=re.I)
+    return match.group(1) if match else ""
+
+
+def _parse_simple_xml_tag(text: str, tag: str) -> list[str]:
+    return [unescape(m.strip()) for m in re.findall(rf"<{tag}>(.*?)</{tag}>", text, flags=re.S | re.I)]
+
+
+def _fetch_arxiv_api_metadata(paper_url: str) -> dict[str, str]:
+    arxiv_id = _arxiv_id_from_url(paper_url)
+    if not arxiv_id:
+        return {}
+    request = Request(
+        f"https://export.arxiv.org/api/query?id_list={arxiv_id}",
+        headers={"User-Agent": "paper-queue/1.0"},
+    )
+    try:
+        xml = urlopen(request, timeout=20).read().decode("utf-8", errors="ignore")
+    except (TimeoutError, URLError, OSError):
+        return {}
+    entry_match = re.search(r"<entry>(.*?)</entry>", xml, flags=re.S | re.I)
+    if not entry_match:
+        return {}
+    entry = entry_match.group(1)
+    title_values = _parse_simple_xml_tag(entry, "title")
+    authors = []
+    for block in re.findall(r"<author>(.*?)</author>", entry, flags=re.S | re.I):
+        names = _parse_simple_xml_tag(block, "name")
+        for name in names:
+            if name and name not in authors:
+                authors.append(name)
+    updated_values = _parse_simple_xml_tag(entry, "published") or _parse_simple_xml_tag(entry, "updated")
+    year = _extract_field([r"(20\d{2})"], " ".join(updated_values), "")
+    paper_urls = re.findall(r'<link[^>]+href="([^"]+)"[^>]+rel="alternate"', entry, flags=re.I)
+    return {
+        "paper_title": _clean_source_title(title_values[0] if title_values else ""),
+        "authors": ", ".join(authors),
+        "year": year,
+        "paper_url": paper_urls[0] if paper_urls else paper_url,
+        "conference": "arXiv",
+    }
+
+
+def _fetch_openalex_metadata(title: str, paper_url: str) -> dict[str, str]:
+    query = title.strip() or _arxiv_id_from_url(paper_url)
+    if not query:
+        return {}
+    request = Request(
+        f"https://api.openalex.org/works?search={quote(query)}&per-page=5",
+        headers={"User-Agent": "paper-queue/1.0"},
+    )
+    try:
+        payload = json.loads(urlopen(request, timeout=20).read().decode("utf-8", errors="ignore"))
+    except (TimeoutError, URLError, OSError, json.JSONDecodeError):
+        return {}
+    results = payload.get("results") or []
+    arxiv_id = _arxiv_id_from_url(paper_url)
+    best: dict[str, str] = {}
+    best_score = -1
+    for item in results[:5]:
+        display_title = str(item.get("display_name") or item.get("title") or "").strip()
+        landing = str((((item.get("primary_location") or {}).get("landing_page_url")) or "")).strip()
+        authorships = item.get("authorships") or []
+        authors: list[str] = []
+        institutions: list[str] = []
+        for authorship in authorships:
+            author_name = str(((authorship.get("author") or {}).get("display_name")) or "").strip()
+            if author_name and author_name not in authors:
+                authors.append(author_name)
+            for inst in authorship.get("institutions") or []:
+                inst_name = str(inst.get("display_name") or "").strip()
+                if inst_name and inst_name not in institutions:
+                    institutions.append(inst_name)
+        score = 0
+        if arxiv_id and arxiv_id in landing:
+            score += 5
+        if display_title and title and _canonical_paper_key(display_title) == _canonical_paper_key(title):
+            score += 4
+        if authors:
+            score += 1
+        if institutions:
+            score += 2
+        if score > best_score:
+            source = ((item.get("primary_location") or {}).get("source") or {})
+            best_score = score
+            best = {
+                "paper_title": display_title,
+                "authors": ", ".join(authors),
+                "university": " / ".join(institutions[:3]),
+                "conference": _normalize_venue_name(str(source.get("display_name") or "")),
+                "year": str(item.get("publication_year") or ""),
+                "paper_url": landing or paper_url,
+            }
+    return best
+
+
 def _strip_tex_commands(value: str) -> str:
     cleaned = re.sub(r"\\(?:textbf|textit|mathrm|mathbf|underline|emph)\{([^}]*)\}", r"\1", value)
     cleaned = re.sub(r"\\(?:thanks|footnote|email|href)\{[^}]*\}", "", cleaned)
@@ -381,8 +624,21 @@ def _looks_like_institution(value: str) -> bool:
         "research", "department", "center", "centre", "meta", "google", "microsoft",
         "nvidia", "openai", "anthropic", "amazon", "apple", "bytedance", "alibaba",
         "tencent", "mit", "cmu", "stanford", "berkeley", "tsinghua", "pku",
+        "hospital", "foundation", "consortium", "deepmind", "salesforce", "huawei",
+        "baidu", "xiaomi", "national", "state key", "cnrs", "max planck", "polytechnic",
+        "polytechnique", "université", "universität", "universidad", "clinic", "inria",
+        " ai", " ai ", "research group",
     )
     return any(token in lowered for token in tokens)
+
+
+def _looks_like_author_name(value: str) -> bool:
+    cleaned = re.sub(r"[\d,*†‡]+", "", value).strip()
+    if "@" in cleaned or _looks_like_institution(cleaned):
+        return False
+    if len(cleaned) > 120 or len(cleaned.split()) < 2 or len(cleaned.split()) > 8:
+        return False
+    return bool(re.fullmatch(r"[A-Z][A-Za-z'`.\-]+(?:\s+[A-Z][A-Za-z'`.\-]+){1,7}", cleaned))
 
 
 def _suggest_topic_notebook(subject_text: str) -> tuple[str, list[str]]:
@@ -1060,34 +1316,35 @@ class PaperWorkflow:
         paper_url = source_info.get("paper_url") or metadata.get("paper_url") or ""
         title = metadata.get("paper_title") or source_info.get("source_title") or ""
         html = _fetch_html(paper_url) if paper_url else ""
+        evidence_chunks: list[str] = []
+        if metadata.get("metadata_answer"):
+            evidence_chunks.append(f"[NotebookLM]\n{metadata['metadata_answer']}")
         if html:
-            title = title or _extract_meta_content(html, ["citation_title", "og:title"])
-            authors = metadata.get("authors") or _extract_meta_content(html, ["citation_author"])
-            institution = metadata.get("university") or _extract_meta_content(html, ["citation_author_institution"])
-            venue = metadata.get("conference") or _extract_meta_content(
-                html,
-                ["citation_conference_title", "citation_journal_title"],
-            )
-            year = metadata.get("year") or _extract_meta_content(html, ["citation_publication_date", "citation_date"])
-            repo = metadata.get("repo") or _first_url(html) or "未开源"
-            metadata.update(
-                {
-                    "paper_title": _clean_metadata_text(title, ""),
-                    "authors": _clean_metadata_text(authors, ""),
-                    "university": _clean_metadata_text(institution, ""),
-                    "conference": _normalize_venue_name(venue or metadata.get("conference") or "arXiv"),
-                    "year": re.search(r"(20\d{2})", year or "") and re.search(r"(20\d{2})", year or "").group(1) or metadata.get("year") or "2026",
-                    "repo": repo,
-                    "paper_url": paper_url,
-                }
-            )
+            html_candidate = {
+                "paper_title": title or _extract_meta_content(html, ["citation_title", "og:title"]),
+                "authors": _merge_text_values(_extract_meta_contents(html, ["citation_author"])),
+                "university": _merge_text_values(_extract_meta_contents(html, ["citation_author_institution"]), limit=3),
+                "conference": _extract_meta_content(html, ["citation_conference_title", "citation_journal_title"]),
+                "year": _extract_meta_content(html, ["citation_publication_date", "citation_date"]),
+                "repo": metadata.get("repo") or "未开源",
+                "paper_url": paper_url,
+            }
+            evidence_chunks.append(f"[HTML meta]\n{json.dumps(html_candidate, ensure_ascii=False)}")
+            _merge_metadata_candidate(metadata, html_candidate)
         input_text = str(job.get("input_text") or "")
+        hinted_venue = _normalize_venue_name(input_text)
+        if hinted_venue and hinted_venue != "arXiv" and _normalize_venue_name(metadata.get("conference") or "") == "arXiv":
+            metadata["conference"] = hinted_venue
         if not metadata.get("paper_title"):
             match = re.match(r"([A-Z][^(\n]+)", input_text)
             if match:
                 metadata["paper_title"] = _clean_source_title(match.group(1))
         if not metadata.get("paper_url") and _is_url(input_text):
             metadata["paper_url"] = input_text.strip()
+        arxiv_api_meta = _fetch_arxiv_api_metadata(paper_url)
+        if arxiv_api_meta:
+            evidence_chunks.append(f"[arXiv API]\n{json.dumps(arxiv_api_meta, ensure_ascii=False)}")
+            _merge_metadata_candidate(metadata, arxiv_api_meta)
         if (
             paper_url
             and "arxiv.org" in paper_url
@@ -1099,15 +1356,32 @@ class PaperWorkflow:
         ):
             archive_meta = self._source_archive_metadata(job, paper_url, log)
             if archive_meta:
-                metadata["paper_title"] = metadata.get("paper_title") or archive_meta.get("paper_title", "")
-                metadata["authors"] = metadata.get("authors") or archive_meta.get("authors", "")
-                metadata["university"] = metadata.get("university") or archive_meta.get("university", "")
+                evidence_chunks.append(f"[LaTeX source]\n{json.dumps(archive_meta, ensure_ascii=False)}")
+                _merge_metadata_candidate(metadata, archive_meta)
         if not metadata.get("university"):
             pdf_meta = self._pdf_frontmatter_metadata(job, paper_url, log)
             if pdf_meta:
-                metadata["paper_title"] = metadata.get("paper_title") or pdf_meta.get("paper_title", "")
-                metadata["authors"] = metadata.get("authors") or pdf_meta.get("authors", "")
-                metadata["university"] = metadata.get("university") or pdf_meta.get("university", "")
+                evidence_chunks.append(f"[PDF frontmatter]\n{json.dumps(pdf_meta, ensure_ascii=False)}")
+                _merge_metadata_candidate(metadata, pdf_meta)
+        openalex_meta = _fetch_openalex_metadata(metadata.get("paper_title") or title, paper_url)
+        if openalex_meta:
+            evidence_chunks.append(f"[OpenAlex]\n{json.dumps(openalex_meta, ensure_ascii=False)}")
+            _merge_metadata_candidate(metadata, openalex_meta)
+        if _missing_metadata_fields(metadata):
+            evidence = "\n\n".join(chunk for chunk in evidence_chunks if chunk)
+            if evidence:
+                fused_meta = self._agent_extract_metadata(evidence, log)
+                if fused_meta:
+                    agent_candidate = {
+                        "paper_title": str(fused_meta.get("third_title") or ""),
+                        "authors": str(fused_meta.get("authors") or ""),
+                        "university": str(fused_meta.get("institution") or ""),
+                        "conference": str(fused_meta.get("venue") or ""),
+                        "year": str(fused_meta.get("year") or ""),
+                        "paper_url": str(fused_meta.get("paper_url") or ""),
+                        "repo": str(fused_meta.get("repo") or ""),
+                    }
+                    _merge_metadata_candidate(metadata, agent_candidate)
         if metadata.get("conference"):
             metadata["conference"] = _normalize_venue_name(metadata["conference"])
         log("metadata", f"Resolved metadata title='{metadata.get('paper_title') or '-'}' venue='{metadata.get('conference') or '-'}'", "INFO")
@@ -1118,6 +1392,7 @@ class PaperWorkflow:
         if not source_url:
             return {}
         artifact_dir = Path(str(job.get("artifact_dir") or self.runtime.config.artifacts_dir / str(job.get("id") or "unknown")))
+        artifact_dir.mkdir(parents=True, exist_ok=True)
         archive_path = artifact_dir / "metadata-source.tar"
         extract_root = artifact_dir / "metadata-source"
         try:
@@ -1156,17 +1431,26 @@ class PaperWorkflow:
             title_match = re.search(r"\\title\*?\{(.+?)\}", content, flags=re.S)
             if title_match:
                 title = _clean_source_title(_strip_tex_commands(title_match.group(1)))
+                if _invalid_title(title):
+                    title = ""
 
             for pattern in [
                 r"\\affiliation\*?\{(.+?)\}",
                 r"\\institute\*?\{(.+?)\}",
                 r"\\affil\*?\{(.+?)\}",
                 r"\\address\*?\{(.+?)\}",
+                r"\\authorblockA\{(.+?)\}",
+                r"\\icmlaffiliation\{[^}]*\}\{(.+?)\}",
             ]:
                 for match in re.finditer(pattern, content, flags=re.S):
                     candidate = _strip_tex_commands(match.group(1))
                     if candidate and _looks_like_institution(candidate):
                         institutions.append(candidate)
+
+            for match in re.finditer(r"\\thanks\{(.+?)\}", content, flags=re.S):
+                candidate = _strip_tex_commands(match.group(1))
+                if candidate and _looks_like_institution(candidate):
+                    institutions.append(candidate)
 
             author_match = re.search(r"\\author\*?\{(.+?)\}", content, flags=re.S)
             if author_match:
@@ -1181,6 +1465,15 @@ class PaperWorkflow:
                     if len(part.split()) <= 8:
                         author_names.append(part)
                 authors = ", ".join(dict.fromkeys(author_names))
+            if not authors:
+                author_names = []
+                for pattern in [r"\\authorblockN\{(.+?)\}", r"\\icmlauthor\{(.+?)\}"]:
+                    for match in re.finditer(pattern, content, flags=re.S):
+                        candidate = _strip_tex_commands(match.group(1))
+                        if candidate and len(candidate.split()) <= 10 and not _looks_like_institution(candidate):
+                            author_names.append(candidate)
+                if author_names:
+                    authors = ", ".join(dict.fromkeys(author_names))
 
             score = int(bool(title)) + int(bool(authors)) + min(2, len(institutions))
             if score > best_score:
@@ -1201,6 +1494,7 @@ class PaperWorkflow:
         if not pdf_url:
             return {}
         artifact_dir = Path(str(job.get("artifact_dir") or self.runtime.config.artifacts_dir / str(job.get("id") or "unknown")))
+        artifact_dir.mkdir(parents=True, exist_ok=True)
         pdf_path = artifact_dir / "metadata-frontmatter.pdf"
         try:
             self._download_binary(pdf_url, pdf_path)
@@ -1215,24 +1509,40 @@ class PaperWorkflow:
 
         lines = [re.sub(r"\s+", " ", line).strip() for line in text.splitlines()]
         lines = [line for line in lines if line]
+        abstract_idx = next((idx for idx, line in enumerate(lines[:60]) if line.lower().startswith("abstract")), min(len(lines), 20))
+        frontmatter_lines = lines[:abstract_idx]
         institutions = []
         authors = ""
         title = ""
-        for line in lines[:40]:
-            if not title and len(line.split()) >= 4 and not _looks_like_institution(line) and len(line) < 220:
-                if not re.search(r"^\d+$", line) and not line.lower().startswith("abstract"):
-                    title = line
-            if _looks_like_institution(line):
-                institutions.append(line)
-        for idx, line in enumerate(lines[:20]):
-            if "@" in line or _looks_like_institution(line):
+        title_lines: list[str] = []
+        for line in frontmatter_lines[:8]:
+            normalized = re.sub(r"^[\d,*†‡\s]+", "", line).strip()
+            if normalized.lower().startswith("abstract"):
+                break
+            if _looks_like_author_name(normalized) or _looks_like_institution(normalized) or "@" in normalized:
+                break
+            if not re.search(r"^\d+$", normalized) and len(normalized.split()) >= 2:
+                title_lines.append(normalized)
+        if title_lines:
+            title = _clean_source_title(" ".join(title_lines[:2]))
+
+        body_lines = frontmatter_lines[len(title_lines):]
+        for idx, line in enumerate(body_lines[:20]):
+            normalized = re.sub(r"^[\d,*†‡\s]+", "", line).strip()
+            if _looks_like_institution(normalized):
+                institutions.append(normalized)
                 continue
-            if "," in line and len(line.split(",")) >= 2 and len(line) < 220:
-                authors = line
-                break
-            if idx > 0 and lines[idx - 1] == title:
-                authors = line
-                break
+            if "@" in normalized:
+                continue
+            if not authors and _looks_like_author_name(normalized):
+                authors = normalized
+                next_line = re.sub(r"^[\d,*†‡\s]+", "", body_lines[idx + 1]).strip() if idx + 1 < len(body_lines) else ""
+                if next_line and _looks_like_institution(next_line):
+                    institutions.append(next_line)
+                continue
+            if not authors and "," in normalized and len(normalized.split(",")) >= 2 and len(normalized) < 260:
+                authors = normalized
+                continue
         dedup_institutions = []
         for item in institutions:
             item = item.strip(" ,;")
@@ -1249,8 +1559,8 @@ class PaperWorkflow:
 
     def _validate_metadata(self, metadata: dict[str, str]) -> dict[str, str]:
         title = _clean_metadata_text(metadata.get("paper_title") or "", "")
-        authors = _clean_metadata_text(metadata.get("authors") or "", "")
-        institution = _clean_metadata_text(metadata.get("university") or "", "")
+        authors = _normalize_author_list(metadata.get("authors") or "")
+        institution = _normalize_institution_text(metadata.get("university") or "")
         venue = _normalize_venue_name(metadata.get("conference") or "arXiv")
         if title.lower() in {"untitled paper", "available in the text"}:
             title = ""
@@ -1260,7 +1570,7 @@ class PaperWorkflow:
             raise RuntimeError("metadata incomplete: missing paper title")
         if not authors or authors in {"论文未明确说明", "未知"}:
             raise RuntimeError("metadata incomplete: missing authors")
-        if not institution or institution in {"论文未明确说明", "未知"}:
+        if not institution or institution in {"论文未明确说明", "未知"} or _institution_quality_score(institution) <= 0:
             raise RuntimeError("metadata incomplete: missing institution")
         if not venue:
             raise RuntimeError("metadata incomplete: missing venue")
